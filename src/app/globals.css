@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+@theme {
+  /* === LUX COLOR SYSTEM === */
+
+  /* Dark backgrounds */
+  --color-lux-bg:       #080c08;
+  --color-lux-surface:  #0f1a10;
+  --color-lux-surface2: #162318;
+  --color-lux-border:   #1e2e1f;
+  --color-lux-border2:  #2a3e2b;
+
+  /* Gold */
+  --color-lux-gold:       #C9A84C;
+  --color-lux-gold-light: #e4c878;
+  --color-lux-gold-muted: #8a6f2e;
+  --color-lux-gold-dim:   rgba(201,168,76,0.15);
+
+  /* Text */
+  --color-lux-text:        #f5f0e8;
+  --color-lux-text-muted:  #9a8f7a;
+  --color-lux-text-subtle: #5a5248;
+
+  /* Light / cream sections */
+  --color-lux-cream:  #f8f4ee;
+  --color-lux-cream2: #efe9de;
+  --color-lux-cream3: #e5ddd0;
+
+  /* Status */
+  --color-lux-available:    #4caf72;
+  --color-lux-under-offer:  #e8a84c;
+  --color-lux-sold:         #e85c4c;
+
+  /* Fonts */
+  --font-playfair: 'Playfair Display', Didot, Georgia, serif;
+  --font-inter:    'Inter', system-ui, sans-serif;
+}
+
+/* === BASE STYLES === */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-lux-bg);
+  color: var(--color-lux-text);
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === TYPOGRAPHY === */
+.font-playfair {
+  font-family: var(--font-playfair);
+}
+
+.font-inter {
+  font-family: var(--font-inter);
+}
+
+/* === GOLD GLOW EFFECTS === */
+.glow-gold {
+  box-shadow: 0 0 30px rgba(201, 168, 76, 0.15), 0 0 60px rgba(201, 168, 76, 0.05);
+}
+
+.glow-gold-sm {
+  box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
+}
+
+.text-glow-gold {
+  text-shadow: 0 0 40px rgba(201, 168, 76, 0.4);
+}
+
+/* === GOLD GRADIENT TEXT === */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #C9A84C 0%, #e4c878 50%, #C9A84C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* === LUXURY CARD === */
+.lux-card {
+  background: var(--color-lux-surface);
+  border: 1px solid var(--color-lux-border);
+  transition: all 0.35s ease;
+}
+
+.lux-card:hover {
+  border-color: var(--color-lux-gold-muted);
+  box-shadow: 0 0 30px rgba(201, 168, 76, 0.12), 0 20px 60px rgba(0,0,0,0.4);
+  transform: translateY(-3px);
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-lux-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-lux-gold-muted);
+  border-radius: 3px;
+}
+
+/* === SECTION DIVIDER === */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-lux-gold), transparent);
+  opacity: 0.4;
+}
+
+/* === OVERLAY PATTERNS === */
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* === HERO GRADIENT === */
+.hero-gradient {
+  background: linear-gradient(
+    180deg,
+    rgba(8,12,8,0) 0%,
+    rgba(8,12,8,0.5) 50%,
+    rgba(8,12,8,0.95) 100%
+  );
+}
+
+/* === ANIMATE UTILITIES === */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg,
+    var(--color-lux-surface) 25%,
+    var(--color-lux-surface2) 50%,
+    var(--color-lux-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.6s ease forwards;
+}
+
+/* === CREAM SECTION OVERRIDES === */
+.cream-section {
+  background: var(--color-lux-cream);
+  color: #1a1208;
+}
+
+.cream-section .text-lux-text {
+  color: #1a1208;
+}

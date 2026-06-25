@@ -1,0 +1,53 @@
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <rect width="500" height="500" fill="#0d0a06"/>
+
+  <!-- Outer frame — barely-there gold border -->
+  <rect x="28" y="28" width="444" height="444" fill="none" stroke="#C9A84C" stroke-width="0.8" opacity="0.35"/>
+
+  <!-- === COLUMN MARK === -->
+
+  <!-- Pediment — two thin lines only, no fill -->
+  <line x1="188" y1="220" x2="250" y2="178" stroke="#C9A84C" stroke-width="1.6" stroke-linecap="square"/>
+  <line x1="312" y1="220" x2="250" y2="178" stroke="#C9A84C" stroke-width="1.6" stroke-linecap="square"/>
+
+  <!-- Architrave cap -->
+  <rect x="186" y="220" width="128" height="3" fill="#C9A84C"/>
+
+  <!-- Four slim columns -->
+  <rect x="207" y="223" width="5" height="76" fill="#C9A84C"/>
+  <rect x="232" y="223" width="5" height="76" fill="#C9A84C"/>
+  <rect x="257" y="223" width="5" height="76" fill="#C9A84C"/>
+  <rect x="282" y="223" width="5" height="76" fill="#C9A84C"/>
+
+  <!-- Stylobate base -->
+  <rect x="186" y="299" width="128" height="3" fill="#C9A84C"/>
+
+  <!-- === TYPOGRAPHY === -->
+
+  <!-- LUX — large, tracked -->
+  <text
+    x="250"
+    y="348"
+    font-family="'Playfair Display', Didot, Georgia, serif"
+    font-size="46"
+    font-weight="400"
+    fill="#C9A84C"
+    text-anchor="middle"
+    letter-spacing="16"
+  >LUX</text>
+
+  <!-- Hairline separator -->
+  <line x1="192" y1="360" x2="308" y2="360" stroke="#C9A84C" stroke-width="0.5" opacity="0.55"/>
+
+  <!-- CATALOG — smaller, very wide tracking -->
+  <text
+    x="252"
+    y="387"
+    font-family="'Playfair Display', Didot, Georgia, serif"
+    font-size="19"
+    font-weight="400"
+    fill="#C9A84C"
+    text-anchor="middle"
+    letter-spacing="12"
+  >CATALOG</text>
+</svg>

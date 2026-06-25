@@ -1,0 +1,48 @@
+<svg width="280" height="64" viewBox="0 0 280 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- === COLUMN MARK (compact) === -->
+
+  <!-- Pediment -->
+  <line x1="8"  y1="22" x2="26" y2="8"  stroke="#C9A84C" stroke-width="1.4" stroke-linecap="square"/>
+  <line x1="44" y1="22" x2="26" y2="8"  stroke="#C9A84C" stroke-width="1.4" stroke-linecap="square"/>
+
+  <!-- Architrave cap -->
+  <rect x="7"  y="22" width="38" height="2.5" fill="#C9A84C"/>
+
+  <!-- Four columns -->
+  <rect x="11" y="24.5" width="3.5" height="24" fill="#C9A84C"/>
+  <rect x="19" y="24.5" width="3.5" height="24" fill="#C9A84C"/>
+  <rect x="27" y="24.5" width="3.5" height="24" fill="#C9A84C"/>
+  <rect x="35" y="24.5" width="3.5" height="24" fill="#C9A84C"/>
+
+  <!-- Base -->
+  <rect x="7" y="48.5" width="38" height="2.5" fill="#C9A84C"/>
+
+  <!-- Vertical divider -->
+  <line x1="58" y1="14" x2="58" y2="50" stroke="#C9A84C" stroke-width="0.6" opacity="0.45"/>
+
+  <!-- === TYPE === -->
+  <!-- LUX -->
+  <text
+    x="72"
+    y="34"
+    font-family="'Playfair Display', Didot, Georgia, serif"
+    font-size="22"
+    font-weight="400"
+    fill="#C9A84C"
+    letter-spacing="6"
+  >LUX</text>
+
+  <!-- Hairline below LUX -->
+  <line x1="72" y1="39" x2="200" y2="39" stroke="#C9A84C" stroke-width="0.4" opacity="0.5"/>
+
+  <!-- CATALOG -->
+  <text
+    x="73"
+    y="54"
+    font-family="'Playfair Display', Didot, Georgia, serif"
+    font-size="10"
+    font-weight="400"
+    fill="#C9A84C"
+    letter-spacing="5"
+  >CATALOG</text>
+</svg>
