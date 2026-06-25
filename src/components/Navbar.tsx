@@ -14,6 +14,9 @@ const navLinks = [
   { label: 'Saved', href: '/saved' },
 ]
 
+// NEXT_PUBLIC_ vars are inlined at build time — false when keys aren't set
+const hasClerk = !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
+
 export default function Navbar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
@@ -60,24 +63,34 @@ export default function Navbar() {
 
         {/* Right side */}
         <div className="flex items-center gap-4">
-          <Show when="signed-out">
+          {hasClerk ? (
+            <>
+              <Show when="signed-out">
+                <Link
+                  href="/sign-in"
+                  className="hidden md:inline-flex text-xs tracking-[0.18em] uppercase text-lux-text-muted hover:text-lux-text transition-colors"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  Sign In
+                </Link>
+              </Show>
+              <Show when="signed-in">
+                <UserButton
+                  appearance={{
+                    elements: { avatarBox: 'w-8 h-8 ring-1 ring-lux-gold-muted' },
+                  }}
+                />
+              </Show>
+            </>
+          ) : (
             <Link
               href="/sign-in"
-              className="hidden md:inline-flex text-xs tracking-[0.18em] uppercase text-lux-text-muted hover:text-lux-text transition-colors"
-              style={{ fontFamily: 'var(--font-inter)' }}
+              className="hidden md:inline-flex text-xs tracking-[0.18em] uppercase transition-colors"
+              style={{ fontFamily: 'var(--font-inter)', color: '#9a8f7a' }}
             >
               Sign In
             </Link>
-          </Show>
-          <Show when="signed-in">
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: 'w-8 h-8 ring-1 ring-lux-gold-muted',
-                },
-              }}
-            />
-          </Show>
+          )}
 
           {/* Book a call CTA */}
           <Link
@@ -135,7 +148,18 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Show when="signed-out">
+            {hasClerk ? (
+              <Show when="signed-out">
+                <Link
+                  href="/sign-in"
+                  className="text-sm tracking-[0.2em] uppercase text-lux-text-muted hover:text-lux-gold transition-colors"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                  onClick={() => setOpen(false)}
+                >
+                  Sign In
+                </Link>
+              </Show>
+            ) : (
               <Link
                 href="/sign-in"
                 className="text-sm tracking-[0.2em] uppercase text-lux-text-muted hover:text-lux-gold transition-colors"
@@ -144,7 +168,7 @@ export default function Navbar() {
               >
                 Sign In
               </Link>
-            </Show>
+            )}
             <Link
               href="/contact"
               className="inline-flex w-fit items-center px-6 py-3 text-xs tracking-[0.18em] uppercase"
