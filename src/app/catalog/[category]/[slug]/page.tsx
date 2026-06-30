@@ -270,6 +270,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
             <InquiryModal
               listingId={listing.id}
               listingTitle={listing.title}
+              listingPrice={listing.price}
             />
 
             <p
