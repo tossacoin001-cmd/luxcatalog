@@ -13,6 +13,8 @@ enum Category {
   decor
   commercial
   lifestyle
+  shortlet
+  executive_services
 }
 
 enum ListingStatus {
@@ -25,6 +27,18 @@ enum InquiryStatus {
   new
   in_progress
   closed
+}
+
+enum OrderStatus {
+  pending
+  paid
+  fulfilled
+  cancelled
+}
+
+enum PaymentProvider {
+  stripe
+  paystack
 }
 
 model Listing {
@@ -42,10 +56,32 @@ model Listing {
   features     String[]
   status       ListingStatus @default(available)
   featured     Boolean       @default(false)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  savedBy      SavedListing[]
-  inquiries    Inquiry[]
+
+  // Dual-purpose: a supercar (or any asset) can be for sale AND available for
+  // chauffeur-driven hire (Lux Drive) without needing a separate listing/category.
+  hireAvailable   Boolean  @default(false)
+  hireRatePerDay  Decimal?
+  hireRateDisplay String?
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  savedBy           SavedListing[]
+  inquiries         Inquiry[]
+  unavailableDates  UnavailableDate[]
+  orderItems        OrderItem[]
+}
+
+// Manually blocked date ranges for shortlet listings (e.g. Aqua). Booking
+// stays inquiry-based for v1 — this only powers the "unavailable" calendar
+// state shown to guests, not a live payment/reservation system.
+model UnavailableDate {
+  id        String   @id @default(uuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  startDate DateTime
+  endDate   DateTime
+  note      String?
+  createdAt DateTime @default(now())
 }
 
 model SavedListing {
@@ -68,5 +104,58 @@ model Inquiry {
   phone     String?
   message   String
   status    InquiryStatus @default(new)
+
+  // Populated for shortlet (Aqua) requests-to-book and Lux Drive/Escort/Arrival
+  // date-bound service requests. Null for ordinary asset enquiries.
+  checkIn  DateTime?
+  checkOut DateTime?
+
   createdAt DateTime      @default(now())
+}
+
+// Single-row cache of the NGN->USD rate so the storefront currency toggle
+// doesn't call a live FX API on every request. Refreshed by a scheduled job.
+model FxRate {
+  id        String   @id @default(uuid())
+  base      String   @default("NGN")
+  quote     String   @default("USD")
+  rate      Decimal
+  source    String?
+  updatedAt DateTime @updatedAt
+}
+
+// Real cart + checkout + delivery for Interior Decor. Separate from the
+// Listing/Inquiry "reserve with a holding deposit" pattern used by
+// real estate/cars/jets/yachts, which stays inquiry-based.
+model Order {
+  id              String          @id @default(uuid())
+  userId          String?
+  email           String
+  phone           String?
+  currency        String          @default("NGN")
+  subtotal        Decimal
+  shippingFee     Decimal
+  total           Decimal
+  shippingName    String
+  shippingAddress String
+  shippingCity    String
+  shippingState   String
+  shippingCountry String
+  paymentProvider PaymentProvider
+  paymentRef      String?
+  status          OrderStatus     @default(pending)
+  items           OrderItem[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model OrderItem {
+  id            String  @id @default(uuid())
+  orderId       String
+  order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  listingId     String
+  listing       Listing @relation(fields: [listingId], references: [id])
+  titleSnapshot String
+  priceSnapshot Decimal
+  quantity      Int     @default(1)
 }

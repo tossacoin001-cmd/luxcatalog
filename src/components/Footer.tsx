@@ -1,11 +1,15 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { MessageCircle, Phone } from 'lucide-react'
+import { whatsappLink, PHONE_LINK, PHONE_DISPLAY } from '@/lib/contact'
 
 const footerLinks = {
   Catalog: [
     { label: 'Real Estate', href: '/catalog/real-estate' },
+    { label: 'Shortlets', href: '/catalog/shortlets' },
     { label: 'Supercars', href: '/catalog/supercars' },
     { label: 'Yachts', href: '/catalog/yachts' },
+    { label: 'Chauffeur & Security', href: '/catalog/executive-services' },
     { label: 'Interior Decor', href: '/catalog/decor' },
     { label: 'Commercial', href: '/catalog/commercial' },
     { label: 'Lifestyle', href: '/catalog/lifestyle' },
@@ -59,6 +63,28 @@ export default function Footer() {
             >
               The definitive platform for discovering and acquiring the world&apos;s finest luxury assets.
             </p>
+            {/* Direct contact */}
+            <div className="mt-6 flex flex-col gap-2.5">
+              <a
+                href={whatsappLink("Hello, I'd like to speak with a Lux Catalog specialist.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm transition-colors hover:text-lux-gold w-fit"
+                style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+              >
+                <MessageCircle size={14} />
+                WhatsApp: {PHONE_DISPLAY}
+              </a>
+              <a
+                href={PHONE_LINK}
+                className="inline-flex items-center gap-2 text-sm transition-colors hover:text-lux-gold w-fit"
+                style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+              >
+                <Phone size={14} />
+                Call: {PHONE_DISPLAY}
+              </a>
+            </div>
+
             {/* Social links placeholder */}
             <div className="mt-6 flex gap-4">
               {['IG', 'X', 'LI'].map((s) => (

@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { MessageCircle, Phone } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { whatsappLink, PHONE_LINK, PHONE_DISPLAY } from '@/lib/contact'
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
@@ -12,11 +14,20 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    // In production: POST to /api/inquiries
-    await new Promise((r) => setTimeout(r, 800))
-    toast.success('Thank you. A specialist will be in touch within 24 hours.')
-    setForm({ name: '', email: '', phone: '', message: '' })
-    setLoading(false)
+    try {
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) throw new Error()
+      toast.success('Thank you. A specialist will be in touch within 24 hours.')
+      setForm({ name: '', email: '', phone: '', message: '' })
+    } catch {
+      toast.error('Something went wrong. Please try again or reach us on WhatsApp.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -30,6 +41,27 @@ export default function ContactPage() {
         <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
           Speak with a Specialist
         </h1>
+
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a
+            href={whatsappLink("Hello, I'd like to speak with a Lux Catalog specialist.")}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 text-xs tracking-[0.18em] uppercase transition-all duration-300 hover:opacity-90"
+            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          >
+            <MessageCircle size={14} />
+            Chat on WhatsApp
+          </a>
+          <a
+            href={PHONE_LINK}
+            className="inline-flex items-center gap-2 px-6 py-3 text-xs tracking-[0.18em] uppercase transition-all duration-300"
+            style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+          >
+            <Phone size={14} />
+            {PHONE_DISPLAY}
+          </a>
+        </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-6 md:px-12 py-16">

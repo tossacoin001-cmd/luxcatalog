@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { usePathname, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { X, ShieldCheck, Lock, CheckCircle, ArrowRight } from 'lucide-react'
+import { X, ShieldCheck, Lock, CheckCircle, ArrowRight, MessageCircle } from 'lucide-react'
+import { whatsappLink } from '@/lib/contact'
 
 interface InquiryModalProps {
   listingId: string
@@ -196,6 +197,17 @@ export default function InquiryModal({ listingId, listingTitle, listingPrice }: 
                     Your enquiry has been received. A specialist will respond within 24 hours.
                   </p>
                 </div>
+
+                <a
+                  href={whatsappLink(`Hello, I just submitted an enquiry about "${listingTitle}" on Lux Catalog.`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 text-xs tracking-[0.18em] uppercase transition-all duration-300 flex items-center justify-center gap-2"
+                  style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                >
+                  <MessageCircle size={13} />
+                  Continue on WhatsApp
+                </a>
 
                 {depositDisplay && (
                   <>
