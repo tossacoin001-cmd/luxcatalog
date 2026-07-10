@@ -21,6 +21,7 @@ export interface AdminListingFormValues {
   category: string
   description: string
   priceDisplay: string
+  price: string
   location: string
   country: string
   images: string[]
@@ -36,6 +37,7 @@ const emptyForm: AdminListingFormValues = {
   category: 'real_estate',
   description: '',
   priceDisplay: '',
+  price: '',
   location: '',
   country: '',
   images: [],
@@ -172,13 +174,31 @@ export default function AdminListingForm({ listing }: { listing?: AdminListingFo
 
           <div>
             <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              Price (NGN)
+            </label>
+            <input
+              type="number"
+              value={form.price}
+              onChange={(e) => set('price', e.target.value)}
+              placeholder="e.g. 450000000"
+              className={fieldClass}
+              style={inputStyle}
+              {...focusHandlers}
+            />
+            <p className="mt-1.5 text-[10px]" style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}>
+              Leave blank for &ldquo;Price On Application&rdquo; listings. Powers the NGN/USD toggle and sorting.
+            </p>
+          </div>
+
+          <div>
+            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
               Price Display <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input
               type="text"
               value={form.priceDisplay}
               onChange={(e) => set('priceDisplay', e.target.value)}
-              placeholder="e.g. ₦450,000,000 or Price On Application"
+              placeholder="e.g. Price On Application (shown when Price NGN is blank)"
               required
               className={fieldClass}
               style={inputStyle}

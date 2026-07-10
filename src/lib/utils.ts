@@ -5,10 +5,25 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatPrice(price: number | null | undefined, display?: string | null): string {
-  if (display) return display
-  if (!price) return 'Price On Application'
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price)
+// Listing prices are stored in NGN (the source of truth). This formats for
+// display in whichever currency the visitor has toggled to, converting via
+// the cached FxRate when USD is selected. Falls back to priceDisplay (e.g.
+// "Price On Application") when there's no numeric price, or the rate hasn't
+// loaded yet for a USD conversion.
+export function formatListingPrice(
+  price: number | null | undefined,
+  priceDisplay: string | null | undefined,
+  currency: 'NGN' | 'USD',
+  rate: number | null
+): string {
+  if (!price) return priceDisplay || 'Price On Application'
+
+  if (currency === 'NGN') {
+    return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(price)
+  }
+
+  if (rate == null) return priceDisplay || 'Price On Application'
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price * rate)
 }
 
 export function slugify(text: string): string {

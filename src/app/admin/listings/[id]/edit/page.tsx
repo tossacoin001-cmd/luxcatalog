@@ -39,6 +39,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
             category: listing.category,
             description: listing.description,
             priceDisplay: listing.priceDisplay,
+            price: listing.price ? String(listing.price) : '',
             location: listing.location,
             country: listing.country,
             images: listing.images,

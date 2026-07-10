@@ -7,6 +7,7 @@ import { Show, UserButton } from '@clerk/nextjs'
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useCurrency } from '@/components/CurrencyProvider'
 
 const navLinks = [
   { label: 'Discover', href: '/discover' },
@@ -16,6 +17,57 @@ const navLinks = [
 
 // NEXT_PUBLIC_ vars are inlined at build time — false when keys aren't set
 const hasClerk = !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
+
+function CurrencyToggle() {
+  const { currency, setCurrency } = useCurrency()
+  return (
+    <div
+      className="hidden md:flex items-center text-[10px] tracking-[0.1em]"
+      style={{ fontFamily: 'var(--font-inter)', border: '1px solid rgba(201,168,76,0.25)' }}
+    >
+      {(['NGN', 'USD'] as const).map((c) => (
+        <button
+          key={c}
+          onClick={() => setCurrency(c)}
+          className="px-2.5 py-1.5 transition-colors"
+          style={{
+            background: currency === c ? '#C9A84C' : 'transparent',
+            color: currency === c ? '#080c08' : '#9a8f7a',
+          }}
+        >
+          {c}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function MobileCurrencyToggle() {
+  const { currency, setCurrency } = useCurrency()
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-xs tracking-[0.2em] uppercase" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+        Currency
+      </span>
+      <div className="flex" style={{ border: '1px solid rgba(201,168,76,0.25)' }}>
+        {(['NGN', 'USD'] as const).map((c) => (
+          <button
+            key={c}
+            onClick={() => setCurrency(c)}
+            className="px-3 py-1.5 text-xs tracking-wider transition-colors"
+            style={{
+              fontFamily: 'var(--font-inter)',
+              background: currency === c ? '#C9A84C' : 'transparent',
+              color: currency === c ? '#080c08' : '#9a8f7a',
+            }}
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -63,6 +115,7 @@ export default function Navbar() {
 
         {/* Right side */}
         <div className="flex items-center gap-4">
+          <CurrencyToggle />
           {hasClerk ? (
             <>
               <Show when="signed-out">
@@ -148,6 +201,7 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <MobileCurrencyToggle />
             {hasClerk ? (
               <Show when="signed-out">
                 <Link
