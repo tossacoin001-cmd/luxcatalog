@@ -5,7 +5,7 @@ import Link from 'next/link'
 import AdminListingForm from '@/components/AdminListingForm'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Add Listing — Admin' }
+export const metadata: Metadata = { title: 'Add Listing | Admin' }
 
 export default async function NewListingPage() {
   const { userId, sessionClaims } = await auth()

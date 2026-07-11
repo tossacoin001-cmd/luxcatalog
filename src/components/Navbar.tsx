@@ -15,10 +15,10 @@ const navLinks = [
   { label: 'Saved', href: '/saved' },
 ]
 
-// NEXT_PUBLIC_ vars are inlined at build time — false when keys aren't set
+// NEXT_PUBLIC_ vars are inlined at build time: false when keys aren't set
 const hasClerk = !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
 
-// useUser() requires a ClerkProvider — only ever mounted when hasClerk is
+// useUser() requires a ClerkProvider, only ever mounted when hasClerk is
 // true (a stable build-time constant), so this never runs without one.
 function useIsAdmin() {
   const { user } = useUser()

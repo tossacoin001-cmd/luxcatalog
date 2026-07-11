@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import { put } from '@vercel/blob'
 
 // Uses OIDC (VERCEL_OIDC_TOKEN + BLOB_STORE_ID), no static BLOB_READ_WRITE_TOKEN
-// needed — matches how the Blob store is connected to this project.
+// needed, matches how the Blob store is connected to this project.
 export async function POST(req: Request) {
   const { userId, sessionClaims } = await auth()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

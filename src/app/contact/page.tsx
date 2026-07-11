@@ -115,7 +115,7 @@ export default function ContactPage() {
               <textarea
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
-                placeholder="Tell us what you're looking for — asset type, budget, timeline, location…"
+                placeholder="Tell us what you're looking for: asset type, budget, timeline, location…"
                 rows={5}
                 required
                 className="w-full px-4 py-3 text-sm focus:outline-none transition-colors resize-none"

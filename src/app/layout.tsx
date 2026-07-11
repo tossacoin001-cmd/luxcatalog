@@ -19,15 +19,15 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Lux Catalog — The Definitive Luxury Asset Discovery Platform',
+    default: 'Lux Catalog | The Definitive Luxury Asset Discovery Platform',
     template: '%s | Lux Catalog',
   },
-  description: "Discover and acquire the world's finest assets — prime real estate, supercars, superyachts, bespoke interior decor, and more.",
+  description: "Discover and acquire the world's finest assets: prime real estate, supercars, superyachts, bespoke interior decor, and more.",
   keywords: ['luxury real estate', 'supercars', 'superyachts', 'luxury assets', 'premium properties'],
   openGraph: {
     type: 'website',
     siteName: 'Lux Catalog',
-    title: 'Lux Catalog — The Definitive Luxury Asset Discovery Platform',
+    title: 'Lux Catalog | The Definitive Luxury Asset Discovery Platform',
     description: 'Every luxury asset. One destination.',
   },
 }

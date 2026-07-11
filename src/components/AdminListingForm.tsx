@@ -132,7 +132,7 @@ export default function AdminListingForm({ listing }: { listing?: AdminListingFo
               type="text"
               value={form.title}
               onChange={(e) => set('title', e.target.value)}
-              placeholder="e.g. Aqua — Lekki Sailing Apartment"
+              placeholder="e.g. Aqua: Lekki Sailing Apartment"
               required
               className={fieldClass}
               style={inputStyle}

@@ -37,7 +37,7 @@ export async function POST(req: Request) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: `Holding Deposit — ${listingTitle}`,
+              name: `Holding Deposit: ${listingTitle}`,
               description:
                 'Refundable holding deposit to secure this asset while due diligence is completed. A member of our team will contact you within 24 hours.',
               metadata: { listingId },

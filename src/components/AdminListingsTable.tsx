@@ -86,7 +86,7 @@ export default function AdminListingsTable({ listings }: { listings: ListingRow[
               </td>
               <td className="py-4 pr-6">
                 <span className="text-xs" style={{ color: listing.featured ? '#C9A84C' : '#3a3028', fontFamily: 'var(--font-inter)' }}>
-                  {listing.featured ? '★ Yes' : '—'}
+                  {listing.featured ? '★ Yes' : 'No'}
                 </span>
               </td>
               <td className="py-4">

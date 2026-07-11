@@ -73,7 +73,7 @@ export default async function HomePage() {
               className="text-base md:text-lg mb-10 max-w-xl leading-relaxed"
               style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
             >
-              Curated luxury assets — discovered, desired, acquired. An AI-powered engine matches you to your perfect asset before you even know you want it.
+              Curated luxury assets: discovered, desired, acquired. An AI-powered engine matches you to your perfect asset before you even know you want it.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -127,7 +127,7 @@ export default async function HomePage() {
       {/* CATEGORIES */}
       <CategoryGrid />
 
-      {/* FEATURED LISTINGS — cream section */}
+      {/* FEATURED LISTINGS: cream section */}
       <section style={{ background: '#f8f4ee' }} className="py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
@@ -182,7 +182,7 @@ export default async function HomePage() {
             <em style={{ color: '#C9A84C' }}>Found Before You Ask</em>
           </h2>
           <p className="text-base mb-10 max-w-xl mx-auto leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-            Our AI engine learns your preferences, lifestyle, and aspirations — then surfaces assets that are precisely right for you.
+            Our AI engine learns your preferences, lifestyle, and aspirations, then surfaces assets that are precisely right for you.
           </p>
 
           <div className="flex flex-wrap gap-3 justify-center mb-10">
@@ -212,7 +212,7 @@ export default async function HomePage() {
         <div className="max-w-4xl mx-auto text-center px-6 md:px-12">
           <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, #8a6f2e, transparent)', marginBottom: '2rem' }} />
           <blockquote className="text-2xl md:text-3xl leading-snug mb-6 italic" style={{ fontFamily: 'var(--font-playfair)', color: '#1a1208' }}>
-            &ldquo;Curated luxury assets — discovered, desired, acquired.&rdquo;
+            &ldquo;Curated luxury assets: discovered, desired, acquired.&rdquo;
           </blockquote>
           <p className="text-[10px] tracking-[0.3em] uppercase" style={{ color: '#8a6f2e', fontFamily: 'var(--font-inter)' }}>
             The Lux Catalog Promise
@@ -233,7 +233,7 @@ export default async function HomePage() {
               <br />Global Buyers
             </h2>
             <p className="text-sm leading-relaxed mb-8" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-              Lux Catalog is the single destination for discovering and acquiring the world&apos;s finest assets — prime real estate, supercars, superyachts, bespoke interior decor, and everything that defines the luxury lifestyle.
+              Lux Catalog is the single destination for discovering and acquiring the world&apos;s finest assets: prime real estate, supercars, superyachts, bespoke interior decor, and everything that defines the luxury lifestyle.
             </p>
             <Link
               href="/contact"

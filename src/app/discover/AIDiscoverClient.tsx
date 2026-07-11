@@ -28,8 +28,8 @@ const steps = [
     type: 'single',
     options: [
       { key: 'under_100m', label: 'Under ₦100M' },
-      { key: '100m_500m', label: '₦100M – ₦500M' },
-      { key: '500m_2b', label: '₦500M – ₦2B' },
+      { key: '100m_500m', label: '₦100M - ₦500M' },
+      { key: '500m_2b', label: '₦500M - ₦2B' },
       { key: '2b_plus', label: '₦2B+' },
       { key: 'poa', label: 'Price On Application' },
     ],
@@ -128,7 +128,7 @@ export default function AIDiscoverClient() {
       setResults(data)
     } catch {
       // Never surface the technical reason (missing key, billing, network,
-      // etc.) to a visitor — hand off to a human instead.
+      // etc.) to a visitor, hand off to a human instead.
       setFailed(true)
     } finally {
       setLoading(false)
@@ -142,7 +142,7 @@ export default function AIDiscoverClient() {
     setFailed(false)
   }
 
-  // AI unavailable — graceful handoff to a human, not a technical error
+  // AI unavailable: graceful handoff to a human, not a technical error
   if (failed) {
     return (
       <div className="max-w-xl mx-auto px-6 md:px-12 py-24 text-center">

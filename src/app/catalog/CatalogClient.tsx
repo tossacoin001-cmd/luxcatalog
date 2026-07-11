@@ -133,7 +133,7 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
       </div>
 
       <div className="flex gap-8">
-        {/* Sidebar filters — desktop always visible, mobile toggled */}
+        {/* Sidebar filters: desktop always visible, mobile toggled */}
         <aside
           className={`${showFilters ? 'block' : 'hidden'} md:block w-full md:w-52 flex-shrink-0`}
         >
