@@ -35,7 +35,7 @@ CLIENT PREFERENCES:
 - Preferred regions: ${(preferences.location ?? []).join(', ') || 'any'}
 - Lifestyle descriptors: ${(preferences.lifestyle ?? []).join(', ') || 'not specified'}
 
-OUR CURRENT CATALOG (only recommend assets from this list — do not invent assets):
+OUR CURRENT CATALOG (only recommend assets from this list, do not invent assets):
 ${listings.map((a, i) => `${i + 1}. ${a.title} | Category: ${a.category} | Price: ${a.priceDisplay} | Location: ${a.location}, ${a.country} | ${a.description}`).join('\n')}
 
 Return a JSON object with this exact structure:
@@ -58,7 +58,7 @@ Rules:
 - matchScore is an integer 60-99 (no two the same)
 - reason must be specific and refer to the client's actual preferences
 - Only use slugs, titles, categories, and priceDisplays that exist verbatim in the catalog above
-- Respond with ONLY the JSON — no markdown, no explanation`
+- Respond with ONLY the JSON, no markdown, no explanation`
 
     const message = await client.messages.create({
       model: 'claude-sonnet-4-6',

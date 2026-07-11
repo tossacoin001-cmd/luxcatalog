@@ -6,7 +6,7 @@ import AdminListingForm from '@/components/AdminListingForm'
 import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Edit Listing — Admin' }
+export const metadata: Metadata = { title: 'Edit Listing | Admin' }
 
 export default async function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { userId, sessionClaims } = await auth()

@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Catalog',
-  description: 'Browse the full Lux Catalog — prime real estate, supercars, yachts, decor, commercial properties and lifestyle assets.',
+  description: 'Browse the full Lux Catalog: prime real estate, supercars, yachts, decor, commercial properties and lifestyle assets.',
 }
 
 export const dynamic = 'force-dynamic'

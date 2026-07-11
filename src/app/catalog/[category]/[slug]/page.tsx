@@ -106,7 +106,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
-        {/* Left — description + specs + features */}
+        {/* Left: description, specs, features */}
         <div className="lg:col-span-2 space-y-10">
           {/* Description */}
           <div>
@@ -162,7 +162,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
           )}
         </div>
 
-        {/* Right — inquiry panel */}
+        {/* Right: inquiry panel */}
         <div className="lg:col-span-1">
           <div
             className="sticky top-24 p-7 space-y-6"

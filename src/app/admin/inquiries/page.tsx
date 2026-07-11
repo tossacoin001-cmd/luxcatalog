@@ -6,7 +6,7 @@ import AdminInquiriesTable from '@/components/AdminInquiriesTable'
 import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Enquiries — Admin' }
+export const metadata: Metadata = { title: 'Enquiries | Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function AdminInquiriesPage() {

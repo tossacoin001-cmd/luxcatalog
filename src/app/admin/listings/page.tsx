@@ -6,7 +6,7 @@ import AdminListingsTable from '@/components/AdminListingsTable'
 import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Manage Listings — Admin' }
+export const metadata: Metadata = { title: 'Manage Listings | Admin' }
 
 export default async function AdminListingsPage() {
   const { userId, sessionClaims } = await auth()

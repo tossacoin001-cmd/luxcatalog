@@ -55,19 +55,19 @@ export default async function DashboardPage() {
             <div>
               <p className="text-[10px] tracking-wider uppercase mb-1" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>Name</p>
               <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
-                {user?.fullName ?? '—'}
+                {user?.fullName ?? 'Not set'}
               </p>
             </div>
             <div>
               <p className="text-[10px] tracking-wider uppercase mb-1" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>Email</p>
               <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
-                {user?.emailAddresses[0]?.emailAddress ?? '—'}
+                {user?.emailAddresses[0]?.emailAddress ?? 'Not set'}
               </p>
             </div>
             <div>
               <p className="text-[10px] tracking-wider uppercase mb-1" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>Member Since</p>
               <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
-                {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : '—'}
+                {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : 'Not set'}
               </p>
             </div>
           </div>
