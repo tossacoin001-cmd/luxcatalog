@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Show, UserButton } from '@clerk/nextjs'
+import { Show, UserButton, useUser } from '@clerk/nextjs'
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -17,6 +17,46 @@ const navLinks = [
 
 // NEXT_PUBLIC_ vars are inlined at build time — false when keys aren't set
 const hasClerk = !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
+
+// useUser() requires a ClerkProvider — only ever mounted when hasClerk is
+// true (a stable build-time constant), so this never runs without one.
+function useIsAdmin() {
+  const { user } = useUser()
+  return (user?.publicMetadata as { role?: string } | undefined)?.role === 'admin'
+}
+
+function AdminDesktopLink() {
+  const pathname = usePathname()
+  const isAdmin = useIsAdmin()
+  if (!isAdmin) return null
+  return (
+    <Link
+      href="/admin"
+      className={cn(
+        'text-xs font-inter tracking-[0.2em] uppercase transition-colors duration-200',
+        pathname.startsWith('/admin') ? 'text-lux-gold' : 'text-lux-text-muted hover:text-lux-text'
+      )}
+      style={{ fontFamily: 'var(--font-inter)' }}
+    >
+      Admin
+    </Link>
+  )
+}
+
+function AdminMobileLink({ onNavigate }: { onNavigate: () => void }) {
+  const isAdmin = useIsAdmin()
+  if (!isAdmin) return null
+  return (
+    <Link
+      href="/admin"
+      className="text-sm tracking-[0.2em] uppercase text-lux-text-muted hover:text-lux-gold transition-colors"
+      style={{ fontFamily: 'var(--font-inter)' }}
+      onClick={onNavigate}
+    >
+      Admin
+    </Link>
+  )
+}
 
 function CurrencyToggle() {
   const { currency, setCurrency } = useCurrency()
@@ -111,6 +151,7 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          {hasClerk && <AdminDesktopLink />}
         </nav>
 
         {/* Right side */}
@@ -201,6 +242,7 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+            {hasClerk && <AdminMobileLink onNavigate={() => setOpen(false)} />}
             <MobileCurrencyToggle />
             {hasClerk ? (
               <Show when="signed-out">
