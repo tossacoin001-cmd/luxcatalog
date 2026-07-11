@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, ArrowLeft, Sparkles, RotateCcw } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Sparkles, RotateCcw, MessageCircle } from 'lucide-react'
 import { categoryHrefs } from '@/lib/utils'
+import { whatsappLink } from '@/lib/contact'
 
 const steps = [
   {
@@ -26,24 +27,25 @@ const steps = [
     sub: 'Approximate figures are fine.',
     type: 'single',
     options: [
-      { key: 'under_1m', label: 'Under $1M' },
-      { key: '1m_5m', label: '$1M – $5M' },
-      { key: '5m_20m', label: '$5M – $20M' },
-      { key: '20m_plus', label: '$20M+' },
+      { key: 'under_100m', label: 'Under ₦100M' },
+      { key: '100m_500m', label: '₦100M – ₦500M' },
+      { key: '500m_2b', label: '₦500M – ₦2B' },
+      { key: '2b_plus', label: '₦2B+' },
       { key: 'poa', label: 'Price On Application' },
     ],
   },
   {
     id: 'location',
-    question: 'Which regions are you focused on?',
+    question: 'Which locations are you focused on?',
     sub: 'Select all that interest you.',
     type: 'multi',
     options: [
-      { key: 'europe', label: 'Europe' },
-      { key: 'middle_east', label: 'Middle East' },
-      { key: 'americas', label: 'Americas' },
-      { key: 'asia_pacific', label: 'Asia Pacific' },
-      { key: 'global', label: 'Global — anywhere' },
+      { key: 'lagos_island', label: 'Lagos Island (VI, Ikoyi, Banana Island)' },
+      { key: 'lagos_lekki', label: 'Lekki & Ajah' },
+      { key: 'lagos_mainland', label: 'Lagos Mainland (Ikeja GRA & more)' },
+      { key: 'abuja', label: 'Abuja' },
+      { key: 'nationwide', label: 'Nationwide Nigeria' },
+      { key: 'global', label: 'Diaspora / Global' },
     ],
   },
   {
@@ -74,12 +76,26 @@ interface Results {
   summary: string
 }
 
+// Turns the questionnaire answers into a readable handoff message for a
+// human specialist, using each step's own labels rather than raw keys.
+function describeAnswers(answers: Record<string, string[]>): string {
+  const lines = steps
+    .map((s) => {
+      const selected = answers[s.id] ?? []
+      if (selected.length === 0) return null
+      const labels = selected.map((key) => s.options.find((o) => o.key === key)?.label ?? key)
+      return `${s.question} ${labels.join(', ')}`
+    })
+    .filter(Boolean)
+  return `Hello, I used AI Discovery on Lux Catalog and would like a specialist's help.\n\n${lines.join('\n')}`
+}
+
 export default function AIDiscoverClient() {
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string[]>>({})
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<Results | null>(null)
-  const [error, setError] = useState('')
+  const [failed, setFailed] = useState(false)
 
   const current = steps[step]
 
@@ -100,18 +116,20 @@ export default function AIDiscoverClient() {
 
   const handleSubmit = async () => {
     setLoading(true)
-    setError('')
+    setFailed(false)
     try {
       const res = await fetch('/api/ai/match', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ preferences: answers }),
       })
-      if (!res.ok) throw new Error()
       const data = await res.json()
+      if (!res.ok) throw new Error()
       setResults(data)
     } catch {
-      setError('AI matching failed. Please try again.')
+      // Never surface the technical reason (missing key, billing, network,
+      // etc.) to a visitor — hand off to a human instead.
+      setFailed(true)
     } finally {
       setLoading(false)
     }
@@ -121,7 +139,53 @@ export default function AIDiscoverClient() {
     setStep(0)
     setAnswers({})
     setResults(null)
-    setError('')
+    setFailed(false)
+  }
+
+  // AI unavailable — graceful handoff to a human, not a technical error
+  if (failed) {
+    return (
+      <div className="max-w-xl mx-auto px-6 md:px-12 py-24 text-center">
+        <div
+          className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-7"
+          style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)' }}
+        >
+          <Sparkles size={22} style={{ color: '#C9A84C' }} />
+        </div>
+        <h2 className="text-2xl md:text-3xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          Let&rsquo;s find it together
+        </h2>
+        <p className="text-sm leading-relaxed mb-10" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          Our AI concierge is taking a short break. A specialist can pick up right where you left off,
+          your answers are ready to send along.
+        </p>
+        <div className="flex items-center justify-center gap-4 flex-wrap">
+          <a
+            href={whatsappLink(describeAnswers(answers))}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-8 py-4 text-xs tracking-[0.2em] uppercase"
+            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          >
+            <MessageCircle size={14} /> Chat on WhatsApp
+          </a>
+          <Link
+            href="/contact"
+            className="inline-flex items-center px-8 py-4 text-xs tracking-[0.2em] uppercase"
+            style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+          >
+            Submit an Enquiry
+          </Link>
+        </div>
+        <button
+          onClick={reset}
+          className="mt-10 flex items-center gap-2 text-xs tracking-wider mx-auto"
+          style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+        >
+          <RotateCcw size={12} /> Try AI matching again
+        </button>
+      </div>
+    )
   }
 
   // Results view
@@ -265,12 +329,6 @@ export default function AIDiscoverClient() {
           )
         })}
       </div>
-
-      {error && (
-        <p className="text-sm mb-6" style={{ color: '#e85c4c', fontFamily: 'var(--font-inter)' }}>
-          {error}
-        </p>
-      )}
 
       {/* Navigation */}
       <div className="flex justify-between">

@@ -2,28 +2,36 @@ import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
+import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Admin' }
-
-const statCards = [
-  { label: 'Total Listings', value: '16', href: '/admin/listings' },
-  { label: 'Featured', value: '8', href: '/admin/listings?filter=featured' },
-  { label: 'Open Enquiries', value: '0', href: '/admin/inquiries' },
-  { label: 'Categories', value: '6', href: '/admin/listings' },
-]
-
-const quickActions = [
-  { label: 'Add New Listing', href: '/admin/listings/new', primary: true },
-  { label: 'View All Listings', href: '/admin/listings', primary: false },
-  { label: 'Manage Enquiries', href: '/admin/inquiries', primary: false },
-]
+export const dynamic = 'force-dynamic'
 
 export default async function AdminPage() {
   const { userId, sessionClaims } = await auth()
   if (!userId) redirect('/sign-in')
   const role = (sessionClaims?.metadata as { role?: string })?.role
   if (role !== 'admin') redirect('/')
+
+  const [totalListings, featuredCount, openEnquiries] = await Promise.all([
+    prisma.listing.count(),
+    prisma.listing.count({ where: { featured: true } }),
+    prisma.inquiry.count({ where: { status: 'new' } }),
+  ])
+
+  const statCards = [
+    { label: 'Total Listings', value: String(totalListings), href: '/admin/listings' },
+    { label: 'Featured', value: String(featuredCount), href: '/admin/listings' },
+    { label: 'Open Enquiries', value: String(openEnquiries), href: '/admin/inquiries' },
+    { label: 'Categories', value: '8', href: '/admin/listings' },
+  ]
+
+  const quickActions = [
+    { label: 'Add New Listing', href: '/admin/listings/new', primary: true },
+    { label: 'View All Listings', href: '/admin/listings', primary: false },
+    { label: 'Manage Enquiries', href: '/admin/inquiries', primary: false },
+  ]
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
