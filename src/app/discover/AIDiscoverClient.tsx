@@ -108,11 +108,11 @@ export default function AIDiscoverClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ preferences: answers }),
       })
-      if (!res.ok) throw new Error()
       const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'AI matching failed. Please try again.')
       setResults(data)
-    } catch {
-      setError('AI matching failed. Please try again.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'AI matching failed. Please try again.')
     } finally {
       setLoading(false)
     }
