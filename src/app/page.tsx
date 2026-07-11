@@ -5,96 +5,32 @@ import Footer from '@/components/Footer'
 import CategoryGrid from '@/components/CategoryGrid'
 import AssetCard from '@/components/AssetCard'
 import { categoryHrefs } from '@/lib/utils'
+import { prisma } from '@/lib/prisma'
 
-const featuredListings = [
-  {
-    id: '1',
-    title: 'Cap Ferrat Clifftop Villa',
-    slug: 'cap-ferrat-clifftop-villa',
-    category: 'real_estate',
-    location: 'Saint-Jean-Cap-Ferrat',
-    country: 'France',
-    priceDisplay: '$48,000,000',
-    price: 48000000,
-    images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80'],
-    status: 'available',
-    featured: true,
-  },
-  {
-    id: '2',
-    title: 'Bugatti Chiron Super Sport 300+',
-    slug: 'bugatti-chiron-super-sport-300',
-    category: 'supercar',
-    location: 'Geneva',
-    country: 'Switzerland',
-    priceDisplay: '$5,200,000',
-    price: 5200000,
-    images: ['https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80'],
-    status: 'available',
-    featured: true,
-  },
-  {
-    id: '3',
-    title: 'M/Y Aphrodite — 73m Superyacht',
-    slug: 'my-aphrodite-73m-superyacht',
-    category: 'yacht',
-    location: 'Monaco',
-    country: 'France',
-    priceDisplay: 'Price On Application',
-    price: null,
-    images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80'],
-    status: 'available',
-    featured: true,
-  },
-  {
-    id: '4',
-    title: 'Manhattan Sky Penthouse',
-    slug: 'manhattan-sky-penthouse',
-    category: 'real_estate',
-    location: 'New York City',
-    country: 'United States',
-    priceDisplay: '$35,000,000',
-    price: 35000000,
-    images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80'],
-    status: 'available',
-    featured: true,
-  },
-  {
-    id: '5',
-    title: 'Ferrari LaFerrari Aperta',
-    slug: 'ferrari-laferrari-aperta',
-    category: 'supercar',
-    location: 'Monaco',
-    country: 'Monaco',
-    priceDisplay: '$7,800,000',
-    price: 7800000,
-    images: ['https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=800&q=80'],
-    status: 'under_offer',
-    featured: true,
-  },
-  {
-    id: '6',
-    title: 'Airbus ACH130 Private Helicopter',
-    slug: 'airbus-ach130-private-helicopter',
-    category: 'lifestyle',
-    location: 'Nice',
-    country: 'France',
-    priceDisplay: '$4,200,000',
-    price: 4200000,
-    images: ['https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?w=800&q=80'],
-    status: 'available',
-    featured: true,
-  },
-]
+export const dynamic = 'force-dynamic'
 
-const stats = [
-  { value: 'AI', label: 'Powered Matching' },
-  { value: '6+', label: 'Asset Categories' },
-  { value: '40+', label: 'Curated Listings' },
-  { value: 'Global', label: 'Luxury Network' },
-]
+export default async function HomePage() {
+  const [featured, totalListings] = await Promise.all([
+    prisma.listing.findMany({
+      where: { featured: true },
+      orderBy: { createdAt: 'desc' },
+      take: 6,
+      select: {
+        id: true, title: true, slug: true, category: true, location: true, country: true,
+        priceDisplay: true, price: true, images: true, status: true, featured: true,
+      },
+    }),
+    prisma.listing.count(),
+  ])
+  const featuredListings = featured.map((l) => ({ ...l, price: l.price ? Number(l.price) : null }))
 
-export default function HomePage() {
+  const stats = [
+    { value: 'AI', label: 'Powered Matching' },
+    { value: '8', label: 'Asset Categories' },
+    { value: String(totalListings), label: totalListings === 1 ? 'Listing' : 'Curated Listings' },
+    { value: 'Global', label: 'Luxury Network' },
+  ]
+
   return (
     <div style={{ background: '#080c08' }}>
       <Navbar />
@@ -212,15 +148,21 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {featuredListings.map((asset) => (
-              <AssetCard
-                key={asset.id}
-                asset={asset}
-                href={`${categoryHrefs[asset.category] ?? '/catalog'}/${asset.slug}`}
-              />
-            ))}
-          </div>
+          {featuredListings.length === 0 ? (
+            <p className="text-sm" style={{ color: '#8a7f68', fontFamily: 'var(--font-inter)' }}>
+              New listings are being added, check back shortly or browse the full catalog above.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {featuredListings.map((asset) => (
+                <AssetCard
+                  key={asset.id}
+                  asset={asset}
+                  href={`${categoryHrefs[asset.category] ?? '/catalog'}/${asset.slug}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

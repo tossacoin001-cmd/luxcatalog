@@ -1,24 +1,31 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(req: Request) {
   try {
     const { userId } = await auth()
     const body = await req.json()
-    const { name, email, phone, message, listingId } = body
+    const { name, email, phone, message, listingId, checkIn, checkOut } = body
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // In production: save to Supabase via Prisma
-    // const inquiry = await prisma.inquiry.create({
-    //   data: { name, email, phone, message, listingId, userId }
-    // })
+    const inquiry = await prisma.inquiry.create({
+      data: {
+        name,
+        email,
+        phone: phone || null,
+        message,
+        listingId: listingId || null,
+        userId: userId || null,
+        checkIn: checkIn ? new Date(checkIn) : null,
+        checkOut: checkOut ? new Date(checkOut) : null,
+      },
+    })
 
-    console.log('Inquiry received:', { name, email, phone, message, listingId, userId })
-
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, id: inquiry.id })
   } catch (err) {
     console.error('Inquiry error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
@@ -32,8 +39,11 @@ export async function GET() {
     const role = (sessionClaims?.metadata as { role?: string })?.role
     if (role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-    // const inquiries = await prisma.inquiry.findMany({ orderBy: { createdAt: 'desc' }, include: { listing: true } })
-    return NextResponse.json({ inquiries: [] })
+    const inquiries = await prisma.inquiry.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { listing: { select: { title: true, category: true, slug: true } } },
+    })
+    return NextResponse.json({ inquiries })
   } catch (err) {
     console.error(err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

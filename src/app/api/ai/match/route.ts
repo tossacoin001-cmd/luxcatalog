@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 
-const client = new Anthropic()
-
 const catalog = [
   { title: 'Cap Ferrat Clifftop Villa',        slug: 'cap-ferrat-clifftop-villa',         category: 'real_estate', priceDisplay: '$48,000,000',          location: 'France',          description: 'Clifftop villa, 5 bedrooms, infinity pool, private beach, Côte d\'Azur' },
   { title: 'Manhattan Sky Penthouse',           slug: 'manhattan-sky-penthouse',           category: 'real_estate', priceDisplay: '$35,000,000',          location: 'New York, USA',   description: 'Duplex penthouse, 4 beds, 270° panorama, Central Park & Hudson River views' },
@@ -24,6 +22,11 @@ const catalog = [
 
 export async function POST(req: Request) {
   try {
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return NextResponse.json({ error: 'AI Discovery is not configured in this environment' }, { status: 503 })
+    }
+    const client = new Anthropic()
+
     const { preferences } = await req.json()
 
     const prompt = `You are a luxury asset advisor for Lux Catalog. Based on the client's preferences below, analyse our catalog and return the top 5 most suitable assets for this client.

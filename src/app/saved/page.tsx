@@ -2,17 +2,34 @@ import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import AssetCard from '@/components/AssetCard'
+import { categoryHrefs } from '@/lib/utils'
+import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Saved Assets' }
+export const dynamic = 'force-dynamic'
 
 export default async function SavedPage() {
   const { userId } = await auth()
   if (!userId) redirect('/sign-in')
 
-  // In production: const saved = await prisma.savedListing.findMany({ where: { userId }, include: { listing: true } })
-  const saved: never[] = []
+  const savedListings = await prisma.savedListing.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      listing: {
+        select: {
+          id: true, title: true, slug: true, category: true, location: true, country: true,
+          priceDisplay: true, price: true, images: true, status: true, featured: true,
+        },
+      },
+    },
+  })
+  const saved = savedListings
+    .filter((s) => s.listing)
+    .map((s) => ({ ...s.listing, price: s.listing!.price ? Number(s.listing!.price) : null }))
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
@@ -48,7 +65,14 @@ export default async function SavedPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {/* Saved asset cards would render here */}
+            {saved.map((asset) => (
+              <AssetCard
+                key={asset!.id}
+                asset={asset!}
+                href={`${categoryHrefs[asset!.category] ?? '/catalog'}/${asset!.slug}`}
+                saved
+              />
+            ))}
           </div>
         )}
       </div>

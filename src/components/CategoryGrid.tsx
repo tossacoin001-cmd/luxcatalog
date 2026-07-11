@@ -5,12 +5,14 @@ import Image from 'next/image'
 import { categoryImages, categoryHrefs } from '@/lib/utils'
 
 const categories = [
-  { key: 'real_estate',  label: 'Real Estate',     sub: 'Prime residences & villas' },
-  { key: 'supercar',     label: 'Supercars',        sub: 'Exotic & hyper cars' },
-  { key: 'yacht',        label: 'Yachts',           sub: 'Motor & sailing yachts' },
-  { key: 'decor',        label: 'Interior Decor',   sub: 'Bespoke furnishings' },
-  { key: 'commercial',   label: 'Commercial',       sub: 'Premium office & retail' },
-  { key: 'lifestyle',    label: 'Lifestyle',        sub: 'Private jets & more' },
+  { key: 'real_estate',        label: 'Real Estate',           sub: 'Ikoyi, Lekki, VI & beyond' },
+  { key: 'shortlet',           label: 'Shortlets',             sub: 'Book by the night' },
+  { key: 'supercar',           label: 'Supercars',             sub: 'Exotic & hyper cars' },
+  { key: 'yacht',              label: 'Yachts',                sub: 'Motor & sailing yachts' },
+  { key: 'executive_services', label: 'Chauffeur & Security',  sub: 'Drive, escort, protect' },
+  { key: 'decor',              label: 'Interior Decor',        sub: 'Bespoke furnishings' },
+  { key: 'commercial',         label: 'Commercial',            sub: 'Premium office & retail' },
+  { key: 'lifestyle',          label: 'Lifestyle',             sub: 'Private jets & more' },
 ]
 
 export default function CategoryGrid() {
@@ -31,7 +33,7 @@ export default function CategoryGrid() {
         </h2>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
         {categories.map((cat, i) => (
           <Link
             key={cat.key}

@@ -6,7 +6,8 @@ import { Heart, MapPin } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
-import { formatPrice, categoryLabels } from '@/lib/utils'
+import { categoryLabels } from '@/lib/utils'
+import PriceDisplay from '@/components/PriceDisplay'
 
 interface Asset {
   id: string
@@ -36,9 +37,26 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
   const handleSave = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setIsSaved(!isSaved)
-    toast(isSaved ? 'Removed from saved' : 'Saved to your collection')
-    onToggleSave?.(asset.id)
+    const nextSaved = !isSaved
+    setIsSaved(nextSaved)
+    try {
+      const res = await fetch('/api/saved', {
+        method: nextSaved ? 'POST' : 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listingId: asset.id }),
+      })
+      if (res.status === 401) {
+        setIsSaved(!nextSaved)
+        toast('Sign in to save assets to your collection')
+        return
+      }
+      if (!res.ok) throw new Error()
+      toast(nextSaved ? 'Saved to your collection' : 'Removed from saved')
+      onToggleSave?.(asset.id)
+    } catch {
+      setIsSaved(!nextSaved)
+      toast.error('Could not update your saved collection. Please try again.')
+    }
   }
 
   const statusVariant =
@@ -146,7 +164,7 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
             className="text-sm tracking-wide"
             style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: !asset.price ? 'italic' : 'normal' }}
           >
-            {formatPrice(asset.price ?? null, asset.priceDisplay)}
+            <PriceDisplay price={asset.price} priceDisplay={asset.priceDisplay} />
           </p>
         </div>
       </div>

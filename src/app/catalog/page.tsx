@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import CatalogClient from './CatalogClient'
+import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -9,7 +10,19 @@ export const metadata: Metadata = {
   description: 'Browse the full Lux Catalog — prime real estate, supercars, yachts, decor, commercial properties and lifestyle assets.',
 }
 
-export default function CatalogPage() {
+export const dynamic = 'force-dynamic'
+
+export default async function CatalogPage() {
+  const listings = await prisma.listing.findMany({
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true, title: true, slug: true, category: true, location: true, country: true,
+      priceDisplay: true, price: true, images: true, status: true, featured: true,
+    },
+  })
+
+  const plainListings = listings.map((l) => ({ ...l, price: l.price ? Number(l.price) : null }))
+
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
       <Navbar />
@@ -36,7 +49,7 @@ export default function CatalogPage() {
       </div>
 
       <Suspense fallback={<div className="p-12 text-center text-lux-text-muted">Loading catalog…</div>}>
-        <CatalogClient />
+        <CatalogClient listings={plainListings} />
       </Suspense>
 
       <Footer />

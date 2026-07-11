@@ -5,40 +5,30 @@ import { Search, SlidersHorizontal, X } from 'lucide-react'
 import AssetCard from '@/components/AssetCard'
 import { categoryHrefs, categoryLabels } from '@/lib/utils'
 
-// Static listings for now — replace with DB fetch via server action / API call
-const allListings = [
-  { id: '1',  title: 'Cap Ferrat Clifftop Villa',          slug: 'cap-ferrat-clifftop-villa',         category: 'real_estate', location: 'Saint-Jean-Cap-Ferrat', country: 'France',        priceDisplay: '$48,000,000',        price: 48000000, images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=700&q=80'],  status: 'available',    featured: true  },
-  { id: '2',  title: 'Manhattan Sky Penthouse',             slug: 'manhattan-sky-penthouse',           category: 'real_estate', location: 'New York City',          country: 'United States', priceDisplay: '$35,000,000',        price: 35000000, images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&q=80'],  status: 'available',    featured: true  },
-  { id: '3',  title: 'Maldives Overwater Estate',           slug: 'maldives-overwater-estate',         category: 'real_estate', location: 'North Malé Atoll',       country: 'Maldives',      priceDisplay: 'Price On Application', price: null,    images: ['https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=700&q=80'],  status: 'available',    featured: true  },
-  { id: '4',  title: 'Belgravia Garden Townhouse',          slug: 'belgravia-garden-townhouse',        category: 'real_estate', location: 'Belgravia, London',      country: 'United Kingdom',priceDisplay: '£22,500,000',        price: 28500000, images: ['https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=700&q=80'],  status: 'available',    featured: false },
-  { id: '5',  title: 'Bugatti Chiron Super Sport 300+',     slug: 'bugatti-chiron-super-sport-300',    category: 'supercar',    location: 'Geneva',                 country: 'Switzerland',   priceDisplay: '$5,200,000',         price: 5200000,  images: ['https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=700&q=80'],   status: 'available',    featured: true  },
-  { id: '6',  title: 'Ferrari LaFerrari Aperta',            slug: 'ferrari-laferrari-aperta',          category: 'supercar',    location: 'Monaco',                 country: 'Monaco',        priceDisplay: '$7,800,000',         price: 7800000,  images: ['https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=700&q=80'],  status: 'under_offer',  featured: true  },
-  { id: '7',  title: 'Koenigsegg Regera',                   slug: 'koenigsegg-regera',                 category: 'supercar',    location: 'London',                 country: 'United Kingdom',priceDisplay: '$6,400,000',         price: 6400000,  images: ['https://images.unsplash.com/photo-1514316703755-dca7d7d9d882?w=700&q=80'],  status: 'available',    featured: false },
-  { id: '8',  title: 'Rolls-Royce Phantom Bespoke',         slug: 'rolls-royce-phantom-bespoke',       category: 'supercar',    location: 'Dubai',                  country: 'UAE',           priceDisplay: '$850,000',           price: 850000,   images: ['https://images.unsplash.com/photo-1563720223185-11003d516935?w=700&q=80'],  status: 'available',    featured: false },
-  { id: '9',  title: 'M/Y Aphrodite — 73m Superyacht',      slug: 'my-aphrodite-73m-superyacht',       category: 'yacht',       location: 'Monaco',                 country: 'France',        priceDisplay: 'Price On Application', price: null,    images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=700&q=80'],  status: 'available',    featured: true  },
-  { id: '10', title: 'S/Y Altair — 55m Sailing Ketch',      slug: 'sy-altair-55m-sailing-ketch',       category: 'yacht',       location: 'Palma de Mallorca',      country: 'Spain',         priceDisplay: '$18,500,000',        price: 18500000, images: ['https://images.unsplash.com/photo-1605281317010-fe5ffe798166?w=700&q=80'],  status: 'available',    featured: false },
-  { id: '11', title: 'Baccarat Crystal Chandelier',          slug: 'baccarat-crystal-chandelier-grand-palais', category: 'decor', location: 'Paris',              country: 'France',        priceDisplay: '$380,000',           price: 380000,   images: ['https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=700&q=80'],  status: 'available',    featured: false },
-  { id: '12', title: 'Hermès Compagnie des Arts Armchair',   slug: 'hermes-armchair-compagnie-des-arts', category: 'decor',     location: 'New York',               country: 'United States', priceDisplay: '$95,000',            price: 95000,    images: ['https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=700&q=80'],   status: 'available',    featured: false },
-  { id: '13', title: 'Mayfair Mixed-Use Trophy Asset',       slug: 'mayfair-mixed-use-trophy',          category: 'commercial',  location: 'Mayfair, London',        country: 'United Kingdom',priceDisplay: 'Price On Application', price: null,    images: ['https://images.unsplash.com/photo-1486325212027-8081e485255e?w=700&q=80'],  status: 'available',    featured: true  },
-  { id: '14', title: 'Dubai DIFC Grade-A Office Tower',      slug: 'dubai-difc-office-tower',           category: 'commercial',  location: 'DIFC, Dubai',            country: 'UAE',           priceDisplay: 'Price On Application', price: null,    images: ['https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=700&q=80'],  status: 'available',    featured: false },
-  { id: '15', title: 'Airbus ACH130 Private Helicopter',     slug: 'airbus-ach130-private-helicopter',  category: 'lifestyle',   location: 'Nice',                   country: 'France',        priceDisplay: '$4,200,000',         price: 4200000,  images: ['https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?w=700&q=80'],  status: 'available',    featured: true  },
-  { id: '16', title: 'Private Members Club — St. Moritz',    slug: 'private-members-club-st-moritz',    category: 'lifestyle',   location: 'St. Moritz',             country: 'Switzerland',   priceDisplay: '$650,000',           price: 650000,   images: ['https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=700&q=80'],  status: 'available',    featured: false },
-]
+interface Listing {
+  id: string
+  title: string
+  slug: string
+  category: string
+  location: string
+  country: string
+  priceDisplay: string
+  price: number | null
+  images: string[]
+  status: string
+  featured: boolean
+}
 
 const categories = [
   { key: 'all', label: 'All Categories' },
-  { key: 'real_estate', label: 'Real Estate' },
-  { key: 'supercar', label: 'Supercars' },
-  { key: 'yacht', label: 'Yachts' },
-  { key: 'decor', label: 'Interior Decor' },
-  { key: 'commercial', label: 'Commercial' },
-  { key: 'lifestyle', label: 'Lifestyle' },
+  ...Object.entries(categoryLabels).map(([key, label]) => ({ key, label })),
 ]
 
 const statusFilters = [
   { key: 'all', label: 'Any Status' },
   { key: 'available', label: 'Available' },
   { key: 'under_offer', label: 'Under Offer' },
+  { key: 'sold', label: 'Sold' },
 ]
 
 const sortOptions = [
@@ -48,7 +38,7 @@ const sortOptions = [
   { key: 'newest', label: 'Newest' },
 ]
 
-export default function CatalogClient() {
+export default function CatalogClient({ listings: allListings }: { listings: Listing[] }) {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('all')
   const [status, setStatus] = useState('all')
@@ -77,7 +67,7 @@ export default function CatalogClient() {
     if (sort === 'price_desc') list = [...list].sort((a, b) => (b.price ?? 0) - (a.price ?? 0))
 
     return list
-  }, [search, category, status, sort])
+  }, [search, category, status, sort, allListings])
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-10">

@@ -2,12 +2,15 @@ import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-06-24.dahlia',
-})
-
 export async function POST(req: Request) {
   try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: 'Payments are not configured in this environment' }, { status: 503 })
+    }
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2026-06-24.dahlia',
+    })
+
     const { userId } = await auth()
     if (!userId) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
