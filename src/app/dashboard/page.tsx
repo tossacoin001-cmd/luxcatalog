@@ -3,15 +3,25 @@ import { redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
+import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Dashboard' }
+export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
   const { userId } = await auth()
   if (!userId) redirect('/sign-in')
 
-  const user = await currentUser()
+  const [user, recentInquiries] = await Promise.all([
+    currentUser(),
+    prisma.inquiry.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      include: { listing: { select: { title: true } } },
+    }),
+  ])
 
   const quickLinks = [
     { label: 'Browse Catalog', href: '/catalog', desc: 'Explore all luxury assets' },
@@ -85,14 +95,37 @@ export default async function DashboardPage() {
             ))}
           </div>
 
-          {/* Inquiry history placeholder */}
+          {/* Inquiry history */}
           <div className="mt-8 p-6" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
             <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
               Recent Enquiries
             </p>
-            <p className="text-sm" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-              No enquiries yet. Browse the catalog and enquire about an asset to get started.
-            </p>
+            {recentInquiries.length === 0 ? (
+              <p className="text-sm" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                No enquiries yet. Browse the catalog and enquire about an asset to get started.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {recentInquiries.map((inq) => (
+                  <div key={inq.id} className="flex items-center justify-between gap-3 py-2" style={{ borderBottom: '1px solid #1e2e1f' }}>
+                    <div className="min-w-0">
+                      <p className="text-sm truncate" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                        {inq.listing?.title ?? 'General enquiry'}
+                      </p>
+                      <p className="text-[10px]" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                        {new Date(inq.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </p>
+                    </div>
+                    <span
+                      className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0"
+                      style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}
+                    >
+                      {inq.status.replace('_', ' ')}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
