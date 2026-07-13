@@ -1,18 +1,16 @@
-import { auth } from '@clerk/nextjs/server'
-import { redirect, notFound } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
+import AdminNavbar from '@/components/AdminNavbar'
 import AdminListingForm from '@/components/AdminListingForm'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Edit Listing | Admin' }
+export const dynamic = 'force-dynamic'
 
 export default async function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) redirect('/sign-in')
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (role !== 'admin') redirect('/')
+  await requireAdmin()
 
   const { id } = await params
   const listing = await prisma.listing.findUnique({ where: { id } })
@@ -20,7 +18,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
-      <Navbar />
+      <AdminNavbar />
       <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
         <div className="max-w-4xl mx-auto">
           <Link href="/admin/listings" className="text-[10px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>

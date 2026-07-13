@@ -1,18 +1,10 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-
-async function requireAdmin() {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) return null
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (role !== 'admin') return null
-  return userId
-}
+import { requireAdminApi } from '@/lib/admin-auth'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const userId = await requireAdmin()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const admin = await requireAdminApi()
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
     const { id } = await params
@@ -52,8 +44,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const userId = await requireAdmin()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const admin = await requireAdminApi()
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
     const { id } = await params

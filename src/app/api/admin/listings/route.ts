@@ -1,19 +1,11 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { slugify } from '@/lib/utils'
-
-async function requireAdmin() {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) return null
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (role !== 'admin') return null
-  return userId
-}
+import { requireAdminApi } from '@/lib/admin-auth'
 
 export async function POST(req: Request) {
-  const userId = await requireAdmin()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const admin = await requireAdminApi()
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
     const body = await req.json()

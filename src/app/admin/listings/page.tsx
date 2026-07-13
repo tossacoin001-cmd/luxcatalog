@@ -1,18 +1,15 @@
-import { auth } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
+import AdminNavbar from '@/components/AdminNavbar'
 import AdminListingsTable from '@/components/AdminListingsTable'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Manage Listings | Admin' }
+export const dynamic = 'force-dynamic'
 
 export default async function AdminListingsPage() {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) redirect('/sign-in')
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (role !== 'admin') redirect('/')
+  await requireAdmin()
 
   const listings = await prisma.listing.findMany({
     orderBy: { createdAt: 'desc' },
@@ -21,7 +18,7 @@ export default async function AdminListingsPage() {
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
-      <Navbar />
+      <AdminNavbar />
 
       <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
         <div className="max-w-7xl mx-auto flex items-end justify-between">

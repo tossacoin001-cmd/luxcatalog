@@ -1,18 +1,14 @@
-import { auth } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
+import AdminNavbar from '@/components/AdminNavbar'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function AdminPage() {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) redirect('/sign-in')
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (role !== 'admin') redirect('/')
+  await requireAdmin()
 
   const [totalListings, featuredCount, openEnquiries] = await Promise.all([
     prisma.listing.count(),
@@ -31,11 +27,12 @@ export default async function AdminPage() {
     { label: 'Add New Listing', href: '/admin/listings/new', primary: true },
     { label: 'View All Listings', href: '/admin/listings', primary: false },
     { label: 'Manage Enquiries', href: '/admin/inquiries', primary: false },
+    { label: 'Manage Team', href: '/admin/team', primary: false },
   ]
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
-      <Navbar />
+      <AdminNavbar />
 
       <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
         <div className="max-w-7xl mx-auto flex items-end justify-between">

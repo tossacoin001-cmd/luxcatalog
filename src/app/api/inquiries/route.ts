@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdminApi } from '@/lib/admin-auth'
 
 export async function POST(req: Request) {
   try {
@@ -34,10 +35,8 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    const { userId, sessionClaims } = await auth()
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    const role = (sessionClaims?.metadata as { role?: string })?.role
-    if (role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    const admin = await requireAdminApi()
+    if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const inquiries = await prisma.inquiry.findMany({
       orderBy: { createdAt: 'desc' },
