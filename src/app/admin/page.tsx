@@ -10,23 +10,25 @@ export const dynamic = 'force-dynamic'
 export default async function AdminPage() {
   await requireAdmin()
 
-  const [totalListings, featuredCount, openEnquiries] = await Promise.all([
+  const [totalListings, featuredCount, openEnquiries, pendingOrders] = await Promise.all([
     prisma.listing.count(),
     prisma.listing.count({ where: { featured: true } }),
     prisma.inquiry.count({ where: { status: 'new' } }),
+    prisma.order.count({ where: { status: { in: ['pending', 'paid'] } } }),
   ])
 
   const statCards = [
     { label: 'Total Listings', value: String(totalListings), href: '/admin/listings' },
     { label: 'Featured', value: String(featuredCount), href: '/admin/listings' },
     { label: 'Open Enquiries', value: String(openEnquiries), href: '/admin/inquiries' },
-    { label: 'Categories', value: '8', href: '/admin/listings' },
+    { label: 'Orders to Fulfil', value: String(pendingOrders), href: '/admin/orders' },
   ]
 
   const quickActions = [
     { label: 'Add New Listing', href: '/admin/listings/new', primary: true },
     { label: 'View All Listings', href: '/admin/listings', primary: false },
     { label: 'Manage Enquiries', href: '/admin/inquiries', primary: false },
+    { label: 'Manage Orders', href: '/admin/orders', primary: false },
     { label: 'Manage Team', href: '/admin/team', primary: false },
   ]
 

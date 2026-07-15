@@ -4,15 +4,17 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Show, UserButton } from '@clerk/nextjs'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useCurrency } from '@/components/CurrencyProvider'
+import { useCart } from '@/components/CartProvider'
 
 const navLinks = [
   { label: 'Discover', href: '/discover' },
   { label: 'Catalog', href: '/catalog' },
   { label: 'Saved', href: '/saved' },
+  { label: 'Dashboard', href: '/dashboard' },
 ]
 
 // NEXT_PUBLIC_ vars are inlined at build time: false when keys aren't set
@@ -39,6 +41,23 @@ function CurrencyToggle() {
         </button>
       ))}
     </div>
+  )
+}
+
+function CartIcon() {
+  const { count } = useCart()
+  return (
+    <Link href="/cart" className="relative p-1" aria-label="Cart">
+      <ShoppingBag size={18} style={{ color: '#9a8f7a' }} />
+      {count > 0 && (
+        <span
+          className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 text-[9px] rounded-full"
+          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+        >
+          {count > 9 ? '9+' : count}
+        </span>
+      )}
+    </Link>
   )
 }
 
@@ -116,6 +135,7 @@ export default function Navbar() {
         {/* Right side */}
         <div className="flex items-center gap-4">
           <CurrencyToggle />
+          <CartIcon />
           {hasClerk ? (
             <>
               <Show when="signed-out">
