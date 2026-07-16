@@ -57,6 +57,15 @@ model Listing {
   status       ListingStatus @default(available)
   featured     Boolean       @default(false)
 
+  // Clerk userId of the partner who submitted this listing. Null means it was
+  // created directly by full admin (a "house" listing), not a partner.
+  ownerId String?
+
+  // Gates public catalog visibility. Admin-created listings default to live;
+  // partner submissions start unpublished and wait for admin approval after
+  // AI optimization runs, so nothing partner-submitted goes live unsupervised.
+  published Boolean @default(true)
+
   // Dual-purpose: a supercar (or any asset) can be for sale AND available for
   // chauffeur-driven hire (Lux Drive) without needing a separate listing/category.
   hireAvailable   Boolean  @default(false)

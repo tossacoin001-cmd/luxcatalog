@@ -3,60 +3,22 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Show, UserButton, useUser } from '@clerk/nextjs'
-import { Menu, X } from 'lucide-react'
+import { Show, UserButton } from '@clerk/nextjs'
+import { Menu, X, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useCurrency } from '@/components/CurrencyProvider'
+import { useCart } from '@/components/CartProvider'
 
 const navLinks = [
   { label: 'Discover', href: '/discover' },
   { label: 'Catalog', href: '/catalog' },
   { label: 'Saved', href: '/saved' },
+  { label: 'Dashboard', href: '/dashboard' },
 ]
 
 // NEXT_PUBLIC_ vars are inlined at build time: false when keys aren't set
 const hasClerk = !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
-
-// useUser() requires a ClerkProvider, only ever mounted when hasClerk is
-// true (a stable build-time constant), so this never runs without one.
-function useIsAdmin() {
-  const { user } = useUser()
-  return (user?.publicMetadata as { role?: string } | undefined)?.role === 'admin'
-}
-
-function AdminDesktopLink() {
-  const pathname = usePathname()
-  const isAdmin = useIsAdmin()
-  if (!isAdmin) return null
-  return (
-    <Link
-      href="/admin"
-      className={cn(
-        'text-xs font-inter tracking-[0.2em] uppercase transition-colors duration-200',
-        pathname.startsWith('/admin') ? 'text-lux-gold' : 'text-lux-text-muted hover:text-lux-text'
-      )}
-      style={{ fontFamily: 'var(--font-inter)' }}
-    >
-      Admin
-    </Link>
-  )
-}
-
-function AdminMobileLink({ onNavigate }: { onNavigate: () => void }) {
-  const isAdmin = useIsAdmin()
-  if (!isAdmin) return null
-  return (
-    <Link
-      href="/admin"
-      className="text-sm tracking-[0.2em] uppercase text-lux-text-muted hover:text-lux-gold transition-colors"
-      style={{ fontFamily: 'var(--font-inter)' }}
-      onClick={onNavigate}
-    >
-      Admin
-    </Link>
-  )
-}
 
 function CurrencyToggle() {
   const { currency, setCurrency } = useCurrency()
@@ -79,6 +41,23 @@ function CurrencyToggle() {
         </button>
       ))}
     </div>
+  )
+}
+
+function CartIcon() {
+  const { count } = useCart()
+  return (
+    <Link href="/cart" className="relative p-1" aria-label="Cart">
+      <ShoppingBag size={18} style={{ color: '#9a8f7a' }} />
+      {count > 0 && (
+        <span
+          className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 text-[9px] rounded-full"
+          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+        >
+          {count > 9 ? '9+' : count}
+        </span>
+      )}
+    </Link>
   )
 }
 
@@ -151,12 +130,12 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          {hasClerk && <AdminDesktopLink />}
         </nav>
 
         {/* Right side */}
         <div className="flex items-center gap-4">
           <CurrencyToggle />
+          <CartIcon />
           {hasClerk ? (
             <>
               <Show when="signed-out">
@@ -242,7 +221,6 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            {hasClerk && <AdminMobileLink onNavigate={() => setOpen(false)} />}
             <MobileCurrencyToggle />
             {hasClerk ? (
               <Show when="signed-out">

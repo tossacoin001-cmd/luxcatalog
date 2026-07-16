@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from 'next/font/google'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from 'sonner'
 import CurrencyProvider from '@/components/CurrencyProvider'
+import CartProvider from '@/components/CartProvider'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -52,7 +53,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <link rel="icon" href="/logo.svg" type="image/svg+xml" />
         </head>
         <body className="min-h-screen" style={{ fontFamily: 'var(--font-inter)' }}>
-          <CurrencyProvider>{children}</CurrencyProvider>
+          <CurrencyProvider>
+            <CartProvider>{children}</CartProvider>
+          </CurrencyProvider>
           <Toaster
             theme="dark"
             toastOptions={{

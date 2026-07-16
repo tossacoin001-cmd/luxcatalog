@@ -14,11 +14,13 @@ interface ListingRow {
   priceDisplay: string
   status: string
   featured: boolean
+  published: boolean
 }
 
-export default function AdminListingsTable({ listings }: { listings: ListingRow[] }) {
+export default function AdminListingsTable({ listings, canPublish }: { listings: ListingRow[]; canPublish: boolean }) {
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [publishingId, setPublishingId] = useState<string | null>(null)
 
   const handleDelete = async (id: string, title: string) => {
     if (!confirm(`Delete "${title}"? This can't be undone.`)) return
@@ -35,6 +37,24 @@ export default function AdminListingsTable({ listings }: { listings: ListingRow[
     }
   }
 
+  const handlePublish = async (id: string) => {
+    setPublishingId(id)
+    try {
+      const res = await fetch(`/api/admin/listings/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ published: true }),
+      })
+      if (!res.ok) throw new Error()
+      toast.success('Listing approved and live.')
+      router.refresh()
+    } catch {
+      toast.error('Failed to approve listing.')
+    } finally {
+      setPublishingId(null)
+    }
+  }
+
   if (listings.length === 0) {
     return (
       <p className="py-16 text-center text-sm" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
@@ -48,7 +68,7 @@ export default function AdminListingsTable({ listings }: { listings: ListingRow[
       <table className="w-full text-sm" style={{ borderCollapse: 'separate', borderSpacing: 0 }}>
         <thead>
           <tr style={{ borderBottom: '1px solid #1e2e1f' }}>
-            {['Title', 'Category', 'Price', 'Status', 'Featured', 'Actions'].map((h) => (
+            {['Title', 'Category', 'Price', 'Status', 'Review', 'Featured', 'Actions'].map((h) => (
               <th
                 key={h}
                 className="text-left pb-3 pr-6 text-[10px] tracking-[0.15em] uppercase"
@@ -85,12 +105,35 @@ export default function AdminListingsTable({ listings }: { listings: ListingRow[
                 </Badge>
               </td>
               <td className="py-4 pr-6">
+                <span
+                  className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1"
+                  style={
+                    listing.published
+                      ? { border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }
+                      : { border: '1px solid #3a3028', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+                  }
+                >
+                  {listing.published ? 'Live' : 'Pending Review'}
+                </span>
+              </td>
+              <td className="py-4 pr-6">
                 <span className="text-xs" style={{ color: listing.featured ? '#C9A84C' : '#3a3028', fontFamily: 'var(--font-inter)' }}>
                   {listing.featured ? '★ Yes' : 'No'}
                 </span>
               </td>
               <td className="py-4">
-                <div className="flex gap-4">
+                <div className="flex gap-4 items-center">
+                  {canPublish && !listing.published && (
+                    <button
+                      type="button"
+                      disabled={publishingId === listing.id}
+                      onClick={() => handlePublish(listing.id)}
+                      className="text-xs tracking-wider hover:text-lux-gold transition-colors disabled:opacity-60"
+                      style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                    >
+                      {publishingId === listing.id ? 'Approving…' : 'Approve'}
+                    </button>
+                  )}
                   <Link
                     href={`/admin/listings/${listing.id}/edit`}
                     className="text-xs tracking-wider hover:text-lux-gold transition-colors"

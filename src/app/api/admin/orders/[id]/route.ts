@@ -9,14 +9,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   try {
     const { id } = await params
     const { status } = await req.json()
-    if (!['new', 'in_progress', 'closed'].includes(status)) {
+    if (!['pending', 'paid', 'fulfilled', 'cancelled'].includes(status)) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
     }
 
-    const inquiry = await prisma.inquiry.update({ where: { id }, data: { status } })
-    return NextResponse.json({ success: true, inquiry })
+    const order = await prisma.order.update({ where: { id }, data: { status } })
+    return NextResponse.json({ success: true, order })
   } catch (err) {
-    console.error('Update inquiry error:', err)
+    console.error('Update order error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }

@@ -11,10 +11,36 @@ const hasClerkKeys = !!(
   process.env.CLERK_SECRET_KEY
 )
 
+// Admin lives in a genuinely separate Vercel project deployed from this same
+// repo, not just a role-gated route on the public site. That project sets
+// APP_TARGET=admin, which flips this middleware into "admin-only" mode: every
+// non-admin path redirects into /admin. The public project leaves APP_TARGET
+// unset, so /admin is unreachable there regardless of role, it redirects out
+// to the admin deployment instead. This works today on the .vercel.app URLs
+// and keeps working unchanged once a custom domain/subdomain is in place.
+const APP_TARGET = process.env.APP_TARGET
+const ADMIN_APP_URL = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'https://luxcatalog-admin.vercel.app'
+const ADMIN_ALLOWED_PREFIXES = ['/admin', '/sign-in', '/sign-up', '/api/admin', '/api/inquiries', '/api/fx-rate']
+
+function targetSeparation(req: NextRequest): NextResponse | undefined {
+  const path = req.nextUrl.pathname
+  const isAdminPath = ADMIN_ALLOWED_PREFIXES.some((p) => path.startsWith(p))
+
+  if (APP_TARGET === 'admin') {
+    if (!isAdminPath) return NextResponse.redirect(new URL('/admin', req.url))
+    return undefined
+  }
+
+  if (path.startsWith('/admin')) {
+    return NextResponse.redirect(new URL('/admin', ADMIN_APP_URL))
+  }
+  return undefined
+}
+
 export default hasClerkKeys
-  ? clerkMiddleware()
+  ? clerkMiddleware((_auth, req) => targetSeparation(req))
   : function handler(req: NextRequest) {
-      return NextResponse.next()
+      return targetSeparation(req) ?? NextResponse.next()
     }
 
 export const config = {

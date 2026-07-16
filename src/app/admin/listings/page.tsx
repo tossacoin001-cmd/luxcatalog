@@ -1,27 +1,26 @@
-import { auth } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
+import AdminNavbar from '@/components/AdminNavbar'
 import AdminListingsTable from '@/components/AdminListingsTable'
 import { prisma } from '@/lib/prisma'
+import { requireStaff } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Manage Listings | Admin' }
+export const dynamic = 'force-dynamic'
 
 export default async function AdminListingsPage() {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) redirect('/sign-in')
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (role !== 'admin') redirect('/')
+  const { userId, role } = await requireStaff()
+  const isVendor = role === 'org:vendor'
 
   const listings = await prisma.listing.findMany({
+    where: isVendor ? { ownerId: userId } : undefined,
     orderBy: { createdAt: 'desc' },
-    select: { id: true, title: true, category: true, priceDisplay: true, status: true, featured: true },
+    select: { id: true, title: true, category: true, priceDisplay: true, status: true, featured: true, published: true },
   })
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
-      <Navbar />
+      <AdminNavbar role={role} />
 
       <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
         <div className="max-w-7xl mx-auto flex items-end justify-between">
@@ -30,7 +29,7 @@ export default async function AdminListingsPage() {
               ← Admin
             </Link>
             <h1 className="text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-              All Listings
+              {isVendor ? 'My Listings' : 'All Listings'}
             </h1>
           </div>
           <Link
@@ -44,7 +43,7 @@ export default async function AdminListingsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-8">
-        <AdminListingsTable listings={listings} />
+        <AdminListingsTable listings={listings} canPublish={!isVendor} />
       </div>
     </div>
   )

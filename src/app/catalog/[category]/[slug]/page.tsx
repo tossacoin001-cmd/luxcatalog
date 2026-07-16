@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Badge } from '@/components/ui/badge'
 import InquiryModal from '@/components/InquiryModal'
+import AddToCartPanel from '@/components/AddToCartPanel'
 import PriceDisplay from '@/components/PriceDisplay'
 import { categoryLabels } from '@/lib/utils'
 import { prisma } from '@/lib/prisma'
@@ -25,7 +26,7 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string; slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const listing = await prisma.listing.findUnique({ where: { slug } })
+  const listing = await prisma.listing.findFirst({ where: { slug, published: true } })
   if (!listing) return { title: 'Not Found' }
   return {
     title: listing.title,
@@ -38,7 +39,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
   const categoryKey = categorySlugMap[categorySlug]
   if (!categoryKey) notFound()
 
-  const listing = await prisma.listing.findFirst({ where: { slug, category: categoryKey as never } })
+  const listing = await prisma.listing.findFirst({ where: { slug, category: categoryKey as never, published: true } })
   if (!listing) notFound()
 
   const price = listing.price ? Number(listing.price) : null
@@ -198,18 +199,29 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
             <div style={{ height: 1, background: '#1e2e1f' }} />
 
-            <InquiryModal
-              listingId={listing.id}
-              listingTitle={listing.title}
-              listingPrice={price}
-            />
+            {listing.category === 'decor' ? (
+              <AddToCartPanel
+                listingId={listing.id}
+                title={listing.title}
+                priceNgn={price}
+                image={listing.images[0] ?? null}
+              />
+            ) : (
+              <>
+                <InquiryModal
+                  listingId={listing.id}
+                  listingTitle={listing.title}
+                  listingPrice={price}
+                />
 
-            <p
-              className="text-[10px] leading-relaxed text-center"
-              style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}
-            >
-              Your enquiry is handled with complete discretion. A specialist will respond within 24 hours.
-            </p>
+                <p
+                  className="text-[10px] leading-relaxed text-center"
+                  style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}
+                >
+                  Your enquiry is handled with complete discretion. A specialist will respond within 24 hours.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>

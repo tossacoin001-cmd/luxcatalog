@@ -1,26 +1,27 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-
-async function requireAdmin() {
-  const { userId, sessionClaims } = await auth()
-  if (!userId) return null
-  const role = (sessionClaims?.metadata as { role?: string })?.role
-  if (role !== 'admin') return null
-  return userId
-}
+import { requireStaffApi } from '@/lib/admin-auth'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const userId = await requireAdmin()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const staff = await requireStaffApi()
+  if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const isVendor = staff.role === 'org:vendor'
 
   try {
     const { id } = await params
+
+    if (isVendor) {
+      const existing = await prisma.listing.findUnique({ where: { id }, select: { ownerId: true } })
+      if (!existing || existing.ownerId !== staff.userId) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+      }
+    }
+
     const body = await req.json()
     const {
       title, category, description, priceDisplay, price,
       location, country, images, features, status, featured,
-      hireAvailable, hireRatePerDay, hireRateDisplay, specs,
+      hireAvailable, hireRatePerDay, hireRateDisplay, specs, published,
     } = body
 
     const listing = await prisma.listing.update({
@@ -36,10 +37,18 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         images: Array.isArray(images) ? images : undefined,
         features: Array.isArray(features) ? features : undefined,
         status,
-        featured: !!featured,
-        hireAvailable: !!hireAvailable,
-        hireRatePerDay: hireRatePerDay ? Number(hireRatePerDay) : null,
-        hireRateDisplay: hireRateDisplay || null,
+        // A partner editing their own listing sends it back to review rather
+        // than silently staying live with unreviewed changes. Featured, hire
+        // terms, and publish state are admin-only levers.
+        ...(isVendor
+          ? { published: false }
+          : {
+              featured: !!featured,
+              hireAvailable: !!hireAvailable,
+              hireRatePerDay: hireRatePerDay ? Number(hireRatePerDay) : null,
+              hireRateDisplay: hireRateDisplay || null,
+              published: typeof published === 'boolean' ? published : undefined,
+            }),
         specs: specs && typeof specs === 'object' ? specs : undefined,
       },
     })
@@ -52,11 +61,20 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const userId = await requireAdmin()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const staff = await requireStaffApi()
+  if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const isVendor = staff.role === 'org:vendor'
 
   try {
     const { id } = await params
+
+    if (isVendor) {
+      const existing = await prisma.listing.findUnique({ where: { id }, select: { ownerId: true } })
+      if (!existing || existing.ownerId !== staff.userId) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+      }
+    }
+
     await prisma.listing.delete({ where: { id } })
     return NextResponse.json({ success: true })
   } catch (err) {
