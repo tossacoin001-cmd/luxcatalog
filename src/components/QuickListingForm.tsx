@@ -15,47 +15,25 @@ const inputStyle = {
   fontFamily: 'var(--font-inter)',
 }
 
-export interface AdminListingFormValues {
-  id?: string
-  title: string
-  category: string
-  description: string
-  priceDisplay: string
-  price: string
-  location: string
-  country: string
-  images: string[]
-  features: string
-  status: string
-  featured: boolean
-  hireAvailable: boolean
-  hireRateDisplay: string
-}
-
-const emptyForm: AdminListingFormValues = {
-  title: '',
-  category: 'real_estate',
-  description: '',
-  priceDisplay: '',
-  price: '',
-  location: '',
-  country: '',
-  images: [],
-  features: '',
-  status: 'available',
-  featured: false,
-  hireAvailable: false,
-  hireRateDisplay: '',
-}
-
-export default function AdminListingForm({ listing, restricted }: { listing?: AdminListingFormValues; restricted?: boolean }) {
+// The partner-facing "easiest way" to list a product: the essentials only,
+// no status, featured, or hire fields, those stay admin-only. Whatever gets
+// submitted here is polished by AI and held for admin review before it's
+// visible on the public catalog, so this form can stay deliberately loose.
+export default function QuickListingForm() {
   const router = useRouter()
-  const isEdit = !!listing?.id
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [form, setForm] = useState<AdminListingFormValues>(listing ?? emptyForm)
+  const [form, setForm] = useState({
+    title: '',
+    category: 'decor',
+    description: '',
+    price: '',
+    location: '',
+    country: 'Nigeria',
+    images: [] as string[],
+  })
 
-  const set = <K extends keyof AdminListingFormValues>(key: K, val: AdminListingFormValues[K]) =>
+  const set = <K extends keyof typeof form>(key: K, val: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [key]: val }))
 
   const handleFiles = async (files: FileList | null) => {
@@ -86,24 +64,17 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
     e.preventDefault()
     setLoading(true)
     try {
-      const payload = {
-        ...form,
-        features: form.features.split(',').map((f) => f.trim()).filter(Boolean),
-      }
-      const res = await fetch(
-        isEdit ? `/api/admin/listings/${listing!.id}` : '/api/admin/listings',
-        {
-          method: isEdit ? 'PATCH' : 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }
-      )
+      const res = await fetch('/api/admin/listings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
       if (!res.ok) throw new Error()
-      toast.success(isEdit ? 'Listing updated.' : 'Listing created successfully.')
+      toast.success('Listing submitted. It will go live once our team reviews it.')
       router.push('/admin/listings')
       router.refresh()
     } catch {
-      toast.error(isEdit ? 'Failed to update listing.' : 'Failed to create listing. Please try again.')
+      toast.error('Failed to submit listing. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -111,40 +82,30 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
 
   const fieldClass = 'w-full h-11 px-4 text-sm focus:outline-none transition-colors'
   const labelClass = 'block text-[10px] tracking-[0.15em] uppercase mb-2'
-  const focusHandlers = {
-    onFocus: (e: React.FocusEvent<HTMLElement>) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)'),
-    onBlur: (e: React.FocusEvent<HTMLElement>) => (e.currentTarget.style.borderColor = '#1e2e1f'),
-  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {restricted && isEdit && (
-        <div
-          className="p-4 text-xs leading-relaxed"
-          style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
-        >
-          Saving changes sends this listing back for review before it&rsquo;s live again.
-        </div>
-      )}
-      <div className="p-8" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-        <p className="text-[10px] tracking-[0.2em] uppercase mb-6" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
-          Basic Information
-        </p>
+      <div
+        className="p-4 text-xs leading-relaxed"
+        style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+      >
+        Write it however comes naturally, our team polishes the copy and reviews every submission before it appears on the storefront.
+      </div>
 
+      <div className="p-8" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="md:col-span-2">
             <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-              Title <span style={{ color: '#C9A84C' }}>*</span>
+              What are you listing? <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => set('title', e.target.value)}
-              placeholder="e.g. Aqua: Lekki Sailing Apartment"
+              placeholder="e.g. Handwoven Silk Rug, Persian Style"
               required
               className={fieldClass}
               style={inputStyle}
-              {...focusHandlers}
             />
           </div>
 
@@ -166,52 +127,19 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
 
           <div>
             <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-              Status
-            </label>
-            <select
-              value={form.status}
-              onChange={(e) => set('status', e.target.value)}
-              className={fieldClass}
-              style={{ ...inputStyle, appearance: 'none' as const }}
-            >
-              <option value="available">Available</option>
-              <option value="under_offer">Under Offer</option>
-              <option value="sold">Sold</option>
-            </select>
-          </div>
-
-          <div>
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
               Price (NGN)
             </label>
             <input
               type="number"
               value={form.price}
               onChange={(e) => set('price', e.target.value)}
-              placeholder="e.g. 450000000"
+              placeholder="e.g. 850000"
               className={fieldClass}
               style={inputStyle}
-              {...focusHandlers}
             />
             <p className="mt-1.5 text-[10px]" style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}>
-              Leave blank for &ldquo;Price On Application&rdquo; listings. Powers the NGN/USD toggle and sorting.
+              Leave blank if it&rsquo;s price on application.
             </p>
-          </div>
-
-          <div>
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-              Price Display <span style={{ color: '#C9A84C' }}>*</span>
-            </label>
-            <input
-              type="text"
-              value={form.priceDisplay}
-              onChange={(e) => set('priceDisplay', e.target.value)}
-              placeholder="e.g. Price On Application (shown when Price NGN is blank)"
-              required
-              className={fieldClass}
-              style={inputStyle}
-              {...focusHandlers}
-            />
           </div>
 
           <div>
@@ -222,11 +150,10 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
               type="text"
               value={form.location}
               onChange={(e) => set('location', e.target.value)}
-              placeholder="e.g. Banana Island, Ikoyi"
+              placeholder="e.g. Lekki, Lagos"
               required
               className={fieldClass}
               style={inputStyle}
-              {...focusHandlers}
             />
           </div>
 
@@ -238,27 +165,23 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
               type="text"
               value={form.country}
               onChange={(e) => set('country', e.target.value)}
-              placeholder="e.g. Nigeria"
-              required
               className={fieldClass}
               style={inputStyle}
-              {...focusHandlers}
             />
           </div>
 
           <div className="md:col-span-2">
             <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-              Description <span style={{ color: '#C9A84C' }}>*</span>
+              Tell us about it <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <textarea
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
-              placeholder="Compelling editorial description of the asset…"
+              placeholder="Write it in your own words, material, condition, what makes it special…"
               rows={5}
               required
               className="w-full px-4 py-3 text-sm focus:outline-none transition-colors resize-none"
               style={inputStyle}
-              {...focusHandlers}
             />
           </div>
 
@@ -300,76 +223,8 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
               </div>
             )}
           </div>
-
-          <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-              Features (comma-separated)
-            </label>
-            <input
-              type="text"
-              value={form.features}
-              onChange={(e) => set('features', e.target.value)}
-              placeholder="Infinity Pool, Private Beach Access, Home Cinema…"
-              className={fieldClass}
-              style={inputStyle}
-              {...focusHandlers}
-            />
-          </div>
-
-          {!restricted && (
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="featured"
-                checked={form.featured}
-                onChange={(e) => set('featured', e.target.checked)}
-                className="w-4 h-4 cursor-pointer"
-                style={{ accentColor: '#C9A84C' }}
-              />
-              <label htmlFor="featured" className="text-sm cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-                Feature this listing on the homepage
-              </label>
-            </div>
-          )}
         </div>
       </div>
-
-      {!restricted && form.category === 'supercar' && (
-        <div className="p-8" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-          <p className="text-[10px] tracking-[0.2em] uppercase mb-6" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
-            Chauffeur Hire (Lux Drive)
-          </p>
-          <div className="flex items-center gap-3 mb-5">
-            <input
-              type="checkbox"
-              id="hireAvailable"
-              checked={form.hireAvailable}
-              onChange={(e) => set('hireAvailable', e.target.checked)}
-              className="w-4 h-4 cursor-pointer"
-              style={{ accentColor: '#C9A84C' }}
-            />
-            <label htmlFor="hireAvailable" className="text-sm cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-              Also available for chauffeur-driven hire, independent of sale status
-            </label>
-          </div>
-          {form.hireAvailable && (
-            <div>
-              <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-                Hire Rate Display
-              </label>
-              <input
-                type="text"
-                value={form.hireRateDisplay}
-                onChange={(e) => set('hireRateDisplay', e.target.value)}
-                placeholder="e.g. From ₦350,000 / day"
-                className={fieldClass}
-                style={inputStyle}
-                {...focusHandlers}
-              />
-            </div>
-          )}
-        </div>
-      )}
 
       <div className="flex gap-4">
         <button
@@ -378,7 +233,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           className="px-10 py-4 text-xs tracking-[0.2em] uppercase transition-all disabled:opacity-60"
           style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
         >
-          {loading ? (isEdit ? 'Saving…' : 'Creating…') : (isEdit ? 'Save Changes' : 'Create Listing')}
+          {loading ? 'Submitting…' : 'Submit for Review'}
         </button>
         <button
           type="button"

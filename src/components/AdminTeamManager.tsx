@@ -28,6 +28,9 @@ const inputStyle = {
   fontFamily: 'var(--font-inter)',
 }
 
+const roleLabel = (role: string) =>
+  role === 'org:admin' ? 'Admin' : role === 'org:vendor' ? 'Partner' : 'Member'
+
 export default function AdminTeamManager({
   members,
   invitations,
@@ -39,7 +42,7 @@ export default function AdminTeamManager({
 }) {
   const router = useRouter()
   const [email, setEmail] = useState('')
-  const [role, setRole] = useState<'org:admin' | 'org:member'>('org:admin')
+  const [role, setRole] = useState<'org:admin' | 'org:vendor' | 'org:member'>('org:vendor')
   const [inviting, setInviting] = useState(false)
   const [removingId, setRemovingId] = useState<string | null>(null)
 
@@ -107,10 +110,11 @@ export default function AdminTeamManager({
           </label>
           <select
             value={role}
-            onChange={(e) => setRole(e.target.value as 'org:admin' | 'org:member')}
+            onChange={(e) => setRole(e.target.value as 'org:admin' | 'org:vendor' | 'org:member')}
             className="h-11 px-4 text-sm focus:outline-none"
             style={{ ...inputStyle, appearance: 'none' as const }}
           >
+            <option value="org:vendor">Partner (their own listings only)</option>
             <option value="org:admin">Admin (full access)</option>
             <option value="org:member">Member (read-only)</option>
           </select>
@@ -147,7 +151,7 @@ export default function AdminTeamManager({
                   className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1"
                   style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
                 >
-                  {m.role === 'org:admin' ? 'Admin' : 'Member'}
+                  {roleLabel(m.role)}
                 </span>
                 {m.userId !== currentUserId && (
                   <button
@@ -184,7 +188,7 @@ export default function AdminTeamManager({
                     className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1"
                     style={{ border: '1px solid #1e2e1f', color: '#5a5248', fontFamily: 'var(--font-inter)' }}
                   >
-                    {inv.role === 'org:admin' ? 'Admin' : 'Member'} &middot; Pending
+                    {roleLabel(inv.role)} &middot; Pending
                   </span>
                   <button
                     onClick={() => handleRemove('invitation', inv.id)}

@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
   try {
     const { email, role } = await req.json()
-    if (!email || !['org:admin', 'org:member'].includes(role)) {
+    if (!email || !['org:admin', 'org:vendor', 'org:member'].includes(role)) {
       return NextResponse.json({ error: 'Missing email or invalid role' }, { status: 400 })
     }
 

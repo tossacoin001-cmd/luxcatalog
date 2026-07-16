@@ -1,21 +1,28 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { slugify } from '@/lib/utils'
-import { requireAdminApi } from '@/lib/admin-auth'
+import { requireStaffApi } from '@/lib/admin-auth'
+import { optimizeListingDraft } from '@/lib/ai-optimize'
 
 export async function POST(req: Request) {
-  const admin = await requireAdminApi()
-  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const staff = await requireStaffApi()
+  if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const isVendor = staff.role === 'org:vendor'
 
   try {
     const body = await req.json()
     const {
-      title, category, description, priceDisplay, price,
+      title, category, description, price,
       location, country, images, features, status, featured,
       hireAvailable, hireRatePerDay, hireRateDisplay, specs,
     } = body
 
-    if (!title || !category || !description || !priceDisplay || !location || !country) {
+    // The Quick List form (partners) doesn't collect a display string, just a
+    // number, so derive one when it's missing rather than requiring it.
+    const priceDisplay: string =
+      body.priceDisplay || (price ? `₦${Number(price).toLocaleString('en-NG')}` : 'Price On Application')
+
+    if (!title || !category || !description || !location || !country) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
@@ -26,24 +33,40 @@ export async function POST(req: Request) {
       slug = `${baseSlug}-${++n}`
     }
 
+    // Partner submissions go through AI polish and always start unpublished,
+    // pending admin review, regardless of what the request body sends. Admin
+    // submissions publish immediately as before.
+    let finalDescription = description
+    let finalPriceDisplay = priceDisplay
+    let finalSpecs = specs && typeof specs === 'object' ? specs : {}
+
+    if (isVendor) {
+      const optimized = await optimizeListingDraft({ title, category, description, priceDisplay, location, country })
+      finalDescription = optimized.description
+      finalPriceDisplay = optimized.priceDisplay
+      finalSpecs = { ...finalSpecs, ...optimized.specs }
+    }
+
     const listing = await prisma.listing.create({
       data: {
         title,
         slug,
         category,
-        description,
-        priceDisplay,
+        description: finalDescription,
+        priceDisplay: finalPriceDisplay,
         price: price ? Number(price) : null,
         location,
         country,
         images: Array.isArray(images) ? images : [],
         features: Array.isArray(features) ? features : [],
-        status: status || 'available',
-        featured: !!featured,
-        hireAvailable: !!hireAvailable,
-        hireRatePerDay: hireRatePerDay ? Number(hireRatePerDay) : null,
-        hireRateDisplay: hireRateDisplay || null,
-        specs: specs && typeof specs === 'object' ? specs : {},
+        status: isVendor ? 'available' : (status || 'available'),
+        featured: isVendor ? false : !!featured,
+        hireAvailable: isVendor ? false : !!hireAvailable,
+        hireRatePerDay: isVendor ? null : (hireRatePerDay ? Number(hireRatePerDay) : null),
+        hireRateDisplay: isVendor ? null : (hireRateDisplay || null),
+        specs: finalSpecs,
+        ownerId: isVendor ? staff.userId : null,
+        published: !isVendor,
       },
     })
 

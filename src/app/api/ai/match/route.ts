@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const { preferences } = await req.json()
 
     const listings = await prisma.listing.findMany({
-      where: { status: { not: 'sold' } },
+      where: { status: { not: 'sold' }, published: true },
       select: {
         title: true, slug: true, category: true, priceDisplay: true, location: true, country: true, description: true,
       },

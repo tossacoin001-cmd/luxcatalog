@@ -26,7 +26,7 @@ export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string; slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const listing = await prisma.listing.findUnique({ where: { slug } })
+  const listing = await prisma.listing.findFirst({ where: { slug, published: true } })
   if (!listing) return { title: 'Not Found' }
   return {
     title: listing.title,
@@ -39,7 +39,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
   const categoryKey = categorySlugMap[categorySlug]
   if (!categoryKey) notFound()
 
-  const listing = await prisma.listing.findFirst({ where: { slug, category: categoryKey as never } })
+  const listing = await prisma.listing.findFirst({ where: { slug, category: categoryKey as never, published: true } })
   if (!listing) notFound()
 
   const price = listing.price ? Number(listing.price) : null

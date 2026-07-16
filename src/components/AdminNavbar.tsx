@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { UserButton } from '@clerk/nextjs'
 import { cn } from '@/lib/utils'
 
-const links = [
+const adminLinks = [
   { label: 'Dashboard', href: '/admin' },
   { label: 'Listings', href: '/admin/listings' },
   { label: 'Enquiries', href: '/admin/inquiries' },
@@ -13,8 +13,18 @@ const links = [
   { label: 'Team', href: '/admin/team' },
 ]
 
-export default function AdminNavbar() {
+const vendorLinks = [
+  { label: 'Dashboard', href: '/admin' },
+  { label: 'My Listings', href: '/admin/listings' },
+]
+
+// Admin now runs as a separate deployment, so "/" isn't the public site here,
+// it's just this app's own root, which middleware bounces back to /admin.
+const PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://luxcatalog.vercel.app'
+
+export default function AdminNavbar({ role }: { role?: 'org:admin' | 'org:vendor' | 'org:member' | null }) {
   const pathname = usePathname()
+  const links = role === 'org:vendor' ? vendorLinks : adminLinks
 
   return (
     <header
@@ -33,7 +43,7 @@ export default function AdminNavbar() {
             className="text-[10px] tracking-[0.2em] uppercase px-2 py-0.5"
             style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
           >
-            Admin
+            {role === 'org:vendor' ? 'Partner' : 'Admin'}
           </span>
         </Link>
 
@@ -55,13 +65,13 @@ export default function AdminNavbar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <Link
-          href="/"
+        <a
+          href={PUBLIC_SITE_URL}
           className="hidden md:inline-flex text-xs tracking-[0.15em] uppercase text-lux-text-muted hover:text-lux-text transition-colors"
           style={{ fontFamily: 'var(--font-inter)' }}
         >
           View Public Site
-        </Link>
+        </a>
         <UserButton appearance={{ elements: { avatarBox: 'w-8 h-8 ring-1 ring-lux-gold-muted' } }} />
       </div>
     </header>

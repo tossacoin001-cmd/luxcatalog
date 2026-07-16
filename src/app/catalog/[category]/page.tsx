@@ -32,7 +32,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   if (!categoryKey) notFound()
 
   const listings = await prisma.listing.findMany({
-    where: { category: categoryKey as never },
+    where: { category: categoryKey as never, published: true },
     orderBy: { createdAt: 'desc' },
     select: {
       id: true, title: true, slug: true, category: true, location: true, country: true,

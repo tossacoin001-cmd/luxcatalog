@@ -33,7 +33,7 @@ export default async function AdminTeamPage() {
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
-      <AdminNavbar />
+      <AdminNavbar role="org:admin" />
 
       <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
         <div className="max-w-3xl mx-auto">

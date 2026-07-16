@@ -14,6 +14,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function CatalogPage() {
   const listings = await prisma.listing.findMany({
+    where: { published: true },
     orderBy: { createdAt: 'desc' },
     select: {
       id: true, title: true, slug: true, category: true, location: true, country: true,
