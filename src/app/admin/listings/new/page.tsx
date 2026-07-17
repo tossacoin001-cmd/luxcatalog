@@ -1,7 +1,9 @@
+import { redirect } from 'next/navigation'
 import AdminNavbar from '@/components/AdminNavbar'
 import Link from 'next/link'
 import AdminListingForm from '@/components/AdminListingForm'
 import QuickListingForm from '@/components/QuickListingForm'
+import { prisma } from '@/lib/prisma'
 import { requireStaff } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
 
@@ -9,8 +11,13 @@ export const metadata: Metadata = { title: 'Add Listing | Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function NewListingPage() {
-  const { role } = await requireStaff()
+  const { userId, role } = await requireStaff()
   const isVendor = role === 'org:vendor'
+
+  if (isVendor) {
+    const profile = await prisma.partnerProfile.findUnique({ where: { userId } })
+    if (!profile) redirect('/admin/profile')
+  }
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>

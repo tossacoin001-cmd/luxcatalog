@@ -12,12 +12,14 @@ const adminLinks = [
   { label: 'Listings', href: '/admin/listings' },
   { label: 'Enquiries', href: '/admin/inquiries' },
   { label: 'Orders', href: '/admin/orders' },
+  { label: 'Partners', href: '/admin/partners' },
   { label: 'Team', href: '/admin/team' },
 ]
 
 const vendorLinks = [
   { label: 'Dashboard', href: '/admin' },
   { label: 'My Listings', href: '/admin/listings' },
+  { label: 'My Profile', href: '/admin/profile' },
 ]
 
 // Admin now runs as a separate deployment, so "/" isn't the public site here,

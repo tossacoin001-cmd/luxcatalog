@@ -12,16 +12,20 @@ export default async function AdminPage() {
   const isVendor = role === 'org:vendor'
 
   if (isVendor) {
-    const [myListings, live, pendingReview] = await Promise.all([
+    const [myListings, live, pendingReview, itemsSold, enquiries] = await Promise.all([
       prisma.listing.count({ where: { ownerId: userId } }),
       prisma.listing.count({ where: { ownerId: userId, published: true } }),
       prisma.listing.count({ where: { ownerId: userId, published: false } }),
+      prisma.orderItem.count({ where: { listing: { ownerId: userId }, order: { status: { in: ['paid', 'fulfilled'] } } } }),
+      prisma.inquiry.count({ where: { listing: { ownerId: userId } } }),
     ])
 
     const statCards = [
       { label: 'My Listings', value: String(myListings), href: '/admin/listings' },
       { label: 'Live', value: String(live), href: '/admin/listings' },
       { label: 'Pending Review', value: String(pendingReview), href: '/admin/listings' },
+      { label: 'Items Sold', value: String(itemsSold), href: '/admin/listings' },
+      { label: 'Enquiries Received', value: String(enquiries), href: '/admin/listings' },
     ]
 
     return (
@@ -49,7 +53,7 @@ export default async function AdminPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 space-y-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
             {statCards.map((s) => (
               <Link key={s.label} href={s.href} className="p-6 lux-card block group">
                 <p className="text-3xl mb-1 group-hover:text-lux-gold transition-colors" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C' }}>
@@ -64,6 +68,8 @@ export default async function AdminPage() {
 
           <p className="text-sm leading-relaxed max-w-2xl" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
             Submit a listing in your own words, our team reviews and polishes it before it goes live on the public store.
+            Items sold and enquiries received are counted against your listings, if something&rsquo;s no longer available,
+            edit it and update the status yourself.
           </p>
         </div>
       </div>

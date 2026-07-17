@@ -42,6 +42,10 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
   const listing = await prisma.listing.findFirst({ where: { slug, category: categoryKey as never, published: true } })
   if (!listing) notFound()
 
+  const partner = listing.ownerId
+    ? await prisma.partnerProfile.findUnique({ where: { userId: listing.ownerId }, select: { brandName: true, logo: true } })
+    : null
+
   const price = listing.price ? Number(listing.price) : null
   const specs = (listing.specs ?? {}) as Record<string, string>
   const statusVariant =
@@ -195,6 +199,18 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
                   {listing.status === 'under_offer' ? 'Under Offer' : listing.status}
                 </Badge>
               </div>
+              {partner && (
+                <div className="flex justify-between items-center text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <span style={{ color: '#5a5248' }}>Listed By</span>
+                  <span className="flex items-center gap-2" style={{ color: '#9a8f7a' }}>
+                    {partner.logo && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={partner.logo} alt="" className="w-5 h-5 object-cover" style={{ background: '#162318' }} />
+                    )}
+                    {partner.brandName}
+                  </span>
+                </div>
+              )}
             </div>
 
             <div style={{ height: 1, background: '#1e2e1f' }} />

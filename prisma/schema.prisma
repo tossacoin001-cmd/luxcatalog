@@ -72,12 +72,36 @@ model Listing {
   hireRatePerDay  Decimal?
   hireRateDisplay String?
 
+  // Partner pricing agreement. When true, the partner is asking the platform
+  // to add its margin before this goes live, price/priceDisplay stay editable
+  // by admin until approval. partnerRequestedPrice keeps the partner's original
+  // ask on record even after admin sets the final price, so nothing silently
+  // changes without a trail either side can point back to.
+  marginRequested       Boolean  @default(false)
+  partnerRequestedPrice Decimal?
+
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   savedBy           SavedListing[]
   inquiries         Inquiry[]
   unavailableDates  UnavailableDate[]
   orderItems        OrderItem[]
+}
+
+// A partner's public identity. Created by the partner themselves the first
+// time they access the admin app, required before they can submit a listing
+// so every approved listing can carry real attribution instead of going out
+// anonymously. featured controls whether they appear in the public "Trusted
+// Partners" strip.
+model PartnerProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  brandName String
+  logo      String?
+  bio       String?
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Manually blocked date ranges for shortlet listings (e.g. Aqua). Booking

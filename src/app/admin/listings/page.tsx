@@ -15,8 +15,37 @@ export default async function AdminListingsPage() {
   const listings = await prisma.listing.findMany({
     where: isVendor ? { ownerId: userId } : undefined,
     orderBy: { createdAt: 'desc' },
-    select: { id: true, title: true, category: true, priceDisplay: true, status: true, featured: true, published: true },
+    select: {
+      id: true, title: true, category: true, priceDisplay: true, status: true, featured: true,
+      published: true, ownerId: true, marginRequested: true,
+      _count: {
+        select: {
+          inquiries: true,
+          orderItems: { where: { order: { status: { in: ['paid', 'fulfilled'] } } } },
+        },
+      },
+    },
   })
+
+  const ownerIds = [...new Set(listings.map((l) => l.ownerId).filter((id): id is string => !!id))]
+  const profiles = ownerIds.length
+    ? await prisma.partnerProfile.findMany({ where: { userId: { in: ownerIds } }, select: { userId: true, brandName: true } })
+    : []
+  const brandByOwner = Object.fromEntries(profiles.map((p) => [p.userId, p.brandName]))
+
+  const rows = listings.map((l) => ({
+    id: l.id,
+    title: l.title,
+    category: l.category,
+    priceDisplay: l.priceDisplay,
+    status: l.status,
+    featured: l.featured,
+    published: l.published,
+    marginRequested: l.marginRequested,
+    submittedBy: l.ownerId ? (brandByOwner[l.ownerId] ?? 'Partner') : 'House',
+    inquiryCount: l._count.inquiries,
+    soldCount: l._count.orderItems,
+  }))
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
@@ -43,7 +72,7 @@ export default async function AdminListingsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-8">
-        <AdminListingsTable listings={listings} canPublish={!isVendor} />
+        <AdminListingsTable listings={rows} canPublish={!isVendor} showSubmittedBy={!isVendor} />
       </div>
     </div>
   )

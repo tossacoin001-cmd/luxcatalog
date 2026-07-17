@@ -15,9 +15,21 @@ interface ListingRow {
   status: string
   featured: boolean
   published: boolean
+  marginRequested?: boolean
+  submittedBy?: string
+  inquiryCount?: number
+  soldCount?: number
 }
 
-export default function AdminListingsTable({ listings, canPublish }: { listings: ListingRow[]; canPublish: boolean }) {
+export default function AdminListingsTable({
+  listings,
+  canPublish,
+  showSubmittedBy = false,
+}: {
+  listings: ListingRow[]
+  canPublish: boolean
+  showSubmittedBy?: boolean
+}) {
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [publishingId, setPublishingId] = useState<string | null>(null)
@@ -63,12 +75,24 @@ export default function AdminListingsTable({ listings, canPublish }: { listings:
     )
   }
 
+  const headers = [
+    'Title',
+    'Category',
+    ...(showSubmittedBy ? ['Submitted By'] : []),
+    'Price',
+    'Status',
+    'Review',
+    'Activity',
+    'Featured',
+    'Actions',
+  ]
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm" style={{ borderCollapse: 'separate', borderSpacing: 0 }}>
         <thead>
           <tr style={{ borderBottom: '1px solid #1e2e1f' }}>
-            {['Title', 'Category', 'Price', 'Status', 'Review', 'Featured', 'Actions'].map((h) => (
+            {headers.map((h) => (
               <th
                 key={h}
                 className="text-left pb-3 pr-6 text-[10px] tracking-[0.15em] uppercase"
@@ -94,10 +118,22 @@ export default function AdminListingsTable({ listings, canPublish }: { listings:
                   {categoryLabels[listing.category] ?? listing.category}
                 </span>
               </td>
+              {showSubmittedBy && (
+                <td className="py-4 pr-6">
+                  <span className="text-xs" style={{ color: listing.submittedBy === 'House' ? '#5a5248' : '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                    {listing.submittedBy}
+                  </span>
+                </td>
+              )}
               <td className="py-4 pr-6">
                 <span className="text-xs" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                   {listing.priceDisplay}
                 </span>
+                {listing.marginRequested && (
+                  <p className="text-[9px] tracking-wider uppercase mt-1" style={{ color: '#9a8f7a' }}>
+                    Margin requested
+                  </p>
+                )}
               </td>
               <td className="py-4 pr-6">
                 <Badge variant={listing.status as 'available' | 'under_offer' | 'sold'}>
@@ -114,6 +150,11 @@ export default function AdminListingsTable({ listings, canPublish }: { listings:
                   }
                 >
                   {listing.published ? 'Live' : 'Pending Review'}
+                </span>
+              </td>
+              <td className="py-4 pr-6">
+                <span className="text-xs" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                  {listing.soldCount ? `${listing.soldCount} sold` : `${listing.inquiryCount ?? 0} enquiries`}
                 </span>
               </td>
               <td className="py-4 pr-6">

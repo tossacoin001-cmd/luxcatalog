@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { X, Loader2 } from 'lucide-react'
+import { X, Loader2, Plus } from 'lucide-react'
 import { categoryLabels } from '@/lib/utils'
 
 const categories = Object.entries(categoryLabels).map(([key, label]) => ({ key, label }))
@@ -15,10 +15,19 @@ const inputStyle = {
   fontFamily: 'var(--font-inter)',
 }
 
+interface SpecRow {
+  key: string
+  value: string
+}
+
 // The partner-facing "easiest way" to list a product: the essentials only,
-// no status, featured, or hire fields, those stay admin-only. Whatever gets
+// no status or featured fields, those stay admin-only. Whatever gets
 // submitted here is polished by AI and held for admin review before it's
 // visible on the public catalog, so this form can stay deliberately loose.
+// "Additional Details" is a free-form key/value list rather than fixed
+// per-category fields, we don't yet know the exact fields every partner type
+// (security, chauffeur, shortlet, decor…) actually needs, so this stays
+// flexible until real usage tells us what to hard-code.
 export default function QuickListingForm() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -31,10 +40,20 @@ export default function QuickListingForm() {
     location: '',
     country: 'Nigeria',
     images: [] as string[],
+    marginRequested: false,
+    hireAvailable: false,
+    hireRateDisplay: '',
   })
+  const [specRows, setSpecRows] = useState<SpecRow[]>([{ key: '', value: '' }])
 
   const set = <K extends keyof typeof form>(key: K, val: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [key]: val }))
+
+  const setSpecRow = (i: number, field: keyof SpecRow, val: string) =>
+    setSpecRows((rows) => rows.map((r, idx) => (idx === i ? { ...r, [field]: val } : r)))
+
+  const addSpecRow = () => setSpecRows((rows) => [...rows, { key: '', value: '' }])
+  const removeSpecRow = (i: number) => setSpecRows((rows) => rows.filter((_, idx) => idx !== i))
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return
@@ -68,10 +87,13 @@ export default function QuickListingForm() {
     }
     setLoading(true)
     try {
+      const specs = Object.fromEntries(
+        specRows.filter((r) => r.key.trim() && r.value.trim()).map((r) => [r.key.trim(), r.value.trim()])
+      )
       const res = await fetch('/api/admin/listings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, specs }),
       })
       if (!res.ok) throw new Error()
       toast.success('Listing submitted. It will go live once our team reviews it.')
@@ -174,6 +196,48 @@ export default function QuickListingForm() {
             />
           </div>
 
+          <div className="md:col-span-2 flex items-start gap-3 p-4" style={{ background: '#162318' }}>
+            <input
+              type="checkbox"
+              id="marginRequested"
+              checked={form.marginRequested}
+              onChange={(e) => set('marginRequested', e.target.checked)}
+              className="w-4 h-4 cursor-pointer mt-0.5"
+              style={{ accentColor: '#C9A84C' }}
+            />
+            <label htmlFor="marginRequested" className="text-xs leading-relaxed cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+              Add Lux Catalog&rsquo;s margin to this price before it goes live. Leave unchecked if the price above already reflects our agreement.
+            </label>
+          </div>
+
+          {form.category === 'supercar' && (
+            <div className="md:col-span-2 p-5" style={{ background: '#162318' }}>
+              <div className="flex items-center gap-3 mb-4">
+                <input
+                  type="checkbox"
+                  id="hireAvailable"
+                  checked={form.hireAvailable}
+                  onChange={(e) => set('hireAvailable', e.target.checked)}
+                  className="w-4 h-4 cursor-pointer"
+                  style={{ accentColor: '#C9A84C' }}
+                />
+                <label htmlFor="hireAvailable" className="text-sm cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                  Also available for chauffeur-driven hire
+                </label>
+              </div>
+              {form.hireAvailable && (
+                <input
+                  type="text"
+                  value={form.hireRateDisplay}
+                  onChange={(e) => set('hireRateDisplay', e.target.value)}
+                  placeholder="e.g. From ₦350,000 / day"
+                  className={fieldClass}
+                  style={inputStyle}
+                />
+              )}
+            </div>
+          )}
+
           <div className="md:col-span-2">
             <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
               Tell us about it <span style={{ color: '#C9A84C' }}>*</span>
@@ -187,6 +251,51 @@ export default function QuickListingForm() {
               className="w-full px-4 py-3 text-sm focus:outline-none transition-colors resize-none"
               style={inputStyle}
             />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              Additional Details
+            </label>
+            <div className="space-y-2">
+              {specRows.map((row, i) => (
+                <div key={i} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={row.key}
+                    onChange={(e) => setSpecRow(i, 'key', e.target.value)}
+                    placeholder="e.g. Material, Bedrooms, Service Type"
+                    className={fieldClass}
+                    style={inputStyle}
+                  />
+                  <input
+                    type="text"
+                    value={row.value}
+                    onChange={(e) => setSpecRow(i, 'value', e.target.value)}
+                    placeholder="e.g. Solid Oak, 4, Armed Escort"
+                    className={fieldClass}
+                    style={inputStyle}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeSpecRow(i)}
+                    className="px-3 flex-shrink-0"
+                    style={{ color: '#5a5248' }}
+                    aria-label="Remove detail"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={addSpecRow}
+              className="mt-2 flex items-center gap-1.5 text-xs tracking-wider"
+              style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+            >
+              <Plus size={12} /> Add Detail
+            </button>
           </div>
 
           <div className="md:col-span-2">

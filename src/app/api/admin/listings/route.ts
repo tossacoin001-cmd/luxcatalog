@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const {
       title, category, description, price,
       location, country, images, features, status, featured,
-      hireAvailable, hireRatePerDay, hireRateDisplay, specs,
+      hireAvailable, hireRatePerDay, hireRateDisplay, specs, marginRequested,
     } = body
 
     // The Quick List form (partners) doesn't collect a display string, just a
@@ -64,12 +64,14 @@ export async function POST(req: Request) {
         features: Array.isArray(features) ? features : [],
         status: isVendor ? 'available' : (status || 'available'),
         featured: isVendor ? false : !!featured,
-        hireAvailable: isVendor ? false : !!hireAvailable,
-        hireRatePerDay: isVendor ? null : (hireRatePerDay ? Number(hireRatePerDay) : null),
-        hireRateDisplay: isVendor ? null : (hireRateDisplay || null),
+        hireAvailable: !!hireAvailable,
+        hireRatePerDay: hireRatePerDay ? Number(hireRatePerDay) : null,
+        hireRateDisplay: hireRateDisplay || null,
         specs: finalSpecs,
         ownerId: isVendor ? staff.userId : null,
         published: !isVendor,
+        marginRequested: isVendor ? !!marginRequested : false,
+        partnerRequestedPrice: isVendor && price ? Number(price) : null,
       },
     })
 

@@ -10,7 +10,7 @@ import { prisma } from '@/lib/prisma'
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
-  const [featured, totalListings] = await Promise.all([
+  const [featured, totalListings, trustedPartners] = await Promise.all([
     prisma.listing.findMany({
       where: { featured: true, published: true },
       orderBy: { createdAt: 'desc' },
@@ -21,6 +21,10 @@ export default async function HomePage() {
       },
     }),
     prisma.listing.count(),
+    prisma.partnerProfile.findMany({
+      where: { featured: true, logo: { not: null } },
+      select: { userId: true, brandName: true, logo: true },
+    }),
   ])
   const featuredListings = featured.map((l) => ({ ...l, price: l.price ? Number(l.price) : null }))
 
@@ -123,6 +127,29 @@ export default async function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* TRUSTED PARTNERS */}
+      {trustedPartners.length > 0 && (
+        <div style={{ borderBottom: '1px solid rgba(201,168,76,0.12)', background: '#0f1a10' }}>
+          <div className="max-w-7xl mx-auto px-6 md:px-12 py-10">
+            <p className="text-[10px] tracking-[0.3em] uppercase text-center mb-8" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              Trusted Partners
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+              {trustedPartners.map((p) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={p.userId}
+                  src={p.logo!}
+                  alt={p.brandName}
+                  className="h-8 md:h-10 object-contain opacity-70 hover:opacity-100 transition-opacity"
+                  style={{ filter: 'grayscale(1)' }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* CATEGORIES */}
       <CategoryGrid />
