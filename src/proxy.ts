@@ -20,7 +20,23 @@ const hasClerkKeys = !!(
 // and keeps working unchanged once a custom domain/subdomain is in place.
 const APP_TARGET = process.env.APP_TARGET
 const ADMIN_APP_URL = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'https://luxcatalog-admin.vercel.app'
+const PUBLIC_APP_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://luxcatalog.vercel.app'
 const ADMIN_ALLOWED_PREFIXES = ['/admin', '/sign-in', '/sign-up', '/api/admin', '/api/inquiries', '/api/fx-rate']
+const isAdminDeployment = APP_TARGET === 'admin'
+
+// The admin deployment and the public site share one Clerk instance/keys but
+// are two different domains, so Clerk needs to be told explicitly about that
+// relationship (Clerk's "satellite domain" feature) or it can't safely
+// redirect back after sign-in, it falls back to a dead-end "connect Clerk to
+// your application" page instead. The public site is the primary; admin is
+// the satellite.
+const clerkMiddlewareOptions = isAdminDeployment
+  ? {
+      isSatellite: true,
+      domain: new URL(ADMIN_APP_URL).hostname,
+      signInUrl: `${PUBLIC_APP_URL}/sign-in`,
+    }
+  : {}
 
 function targetSeparation(req: NextRequest): NextResponse | undefined {
   const path = req.nextUrl.pathname
@@ -38,7 +54,7 @@ function targetSeparation(req: NextRequest): NextResponse | undefined {
 }
 
 export default hasClerkKeys
-  ? clerkMiddleware((_auth, req) => targetSeparation(req))
+  ? clerkMiddleware((_auth, req) => targetSeparation(req), clerkMiddlewareOptions)
   : function handler(req: NextRequest) {
       return targetSeparation(req) ?? NextResponse.next()
     }

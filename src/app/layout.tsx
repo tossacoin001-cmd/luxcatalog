@@ -38,8 +38,27 @@ const hasClerkKeys = !!(
   process.env.CLERK_SECRET_KEY
 )
 
+// Admin and the public site are two domains sharing one Clerk instance.
+// Without telling Clerk about that relationship (satellite domain), it can't
+// safely redirect back after sign-in and dead-ends on its own fallback page
+// instead. Keep this in sync with the matching config in proxy.ts.
+const isAdminDeployment = process.env.APP_TARGET === 'admin'
+const adminAppUrl = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'https://luxcatalog-admin.vercel.app'
+const publicAppUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://luxcatalog.vercel.app'
+
 function Providers({ children }: { children: React.ReactNode }) {
   if (hasClerkKeys) {
+    if (isAdminDeployment) {
+      return (
+        <ClerkProvider
+          isSatellite
+          domain={new URL(adminAppUrl).hostname}
+          signInUrl={`${publicAppUrl}/sign-in`}
+        >
+          {children}
+        </ClerkProvider>
+      )
+    }
     return <ClerkProvider>{children}</ClerkProvider>
   }
   return <>{children}</>
