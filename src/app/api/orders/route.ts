@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/prisma'
 import { getNgnToUsdRate } from '@/lib/fx'
+import { getAppUrl } from '@/lib/utils'
 
 interface CartItemInput {
   listingId: string
@@ -80,7 +81,7 @@ export async function POST(req: Request) {
       },
     })
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const appUrl = getAppUrl('http://localhost:3000')
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

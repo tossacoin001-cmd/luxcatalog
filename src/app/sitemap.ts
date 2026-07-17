@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
-import { categoryHrefs } from '@/lib/utils'
+import { categoryHrefs, getAppUrl } from '@/lib/utils'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://luxcatalog.vercel.app'
+const APP_URL = getAppUrl()
 
 const staticPages = ['/', '/about', '/catalog', '/discover', '/contact', '/privacy', '/terms']
 

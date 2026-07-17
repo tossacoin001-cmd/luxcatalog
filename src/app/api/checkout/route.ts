@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import Stripe from 'stripe'
+import { getAppUrl } from '@/lib/utils'
 
 export async function POST(req: Request) {
   try {
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
     const depositAmount = Math.min(Math.max(rawDeposit, 1000), 50000)
     const depositCents = depositAmount * 100
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const appUrl = getAppUrl('http://localhost:3000')
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

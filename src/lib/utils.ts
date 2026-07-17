@@ -5,6 +5,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+// The stored NEXT_PUBLIC_APP_URL value has a stray leading byte-order-mark
+// (likely pasted from a Windows editor), which was silently corrupting every
+// URL built from it, including Stripe checkout redirect URLs. Stripping it
+// here guards every call site without needing to touch the env var itself.
+const BOM = String.fromCharCode(0xfeff)
+
+export function getAppUrl(fallback = 'https://luxcatalog.vercel.app'): string {
+  const raw = process.env.NEXT_PUBLIC_APP_URL || fallback
+  return (raw.startsWith(BOM) ? raw.slice(1) : raw).trim()
+}
+
 // Listing prices are stored in NGN (the source of truth). This formats for
 // display in whichever currency the visitor has toggled to, converting via
 // the cached FxRate when USD is selected. Falls back to priceDisplay (e.g.
