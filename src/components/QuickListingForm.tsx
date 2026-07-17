@@ -62,6 +62,10 @@ export default function QuickListingForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (form.images.length === 0) {
+      toast.error('Add at least one photo before submitting.')
+      return
+    }
     setLoading(true)
     try {
       const res = await fetch('/api/admin/listings', {
@@ -187,7 +191,7 @@ export default function QuickListingForm() {
 
           <div className="md:col-span-2">
             <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-              Photos
+              Photos <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input
               type="file"

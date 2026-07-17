@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     // Never trust client-submitted prices, re-fetch authoritative current
     // price/title for every item from the database.
     const listings = await prisma.listing.findMany({
-      where: { id: { in: items.map((i) => i.listingId) }, category: 'decor' },
+      where: { id: { in: items.map((i) => i.listingId) }, category: 'decor', published: true },
     })
     if (listings.length !== items.length) {
       return NextResponse.json({ error: 'One or more items are no longer available' }, { status: 400 })

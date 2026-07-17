@@ -25,6 +25,9 @@ export async function POST(req: Request) {
     if (!title || !category || !description || !location || !country) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
+    if (isVendor && (!Array.isArray(images) || images.length === 0)) {
+      return NextResponse.json({ error: 'At least one photo is required' }, { status: 400 })
+    }
 
     const baseSlug = slugify(title)
     let slug = baseSlug
