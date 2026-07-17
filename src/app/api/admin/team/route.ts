@@ -40,12 +40,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing email or invalid role' }, { status: 400 })
     }
 
+    // Without an explicit redirectUrl, Clerk falls back to the instance's
+    // default sign-up URL, which predates the admin/public split and points
+    // at the public site. That strands invitees on the wrong domain after
+    // they set a password (their account and org membership are fine, they
+    // just land on an empty sign-up page instead of the admin app).
+    const adminAppUrl = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'https://luxcatalog-admin.vercel.app'
+
     const clerk = await clerkClient()
     const invitation = await clerk.organizations.createOrganizationInvitation({
       organizationId: LUX_CATALOG_ORG_ID,
       emailAddress: email,
       role,
       inviterUserId: admin.userId,
+      redirectUrl: `${adminAppUrl}/sign-up`,
     })
 
     return NextResponse.json({ success: true, invitation: { id: invitation.id, email: invitation.emailAddress } })
