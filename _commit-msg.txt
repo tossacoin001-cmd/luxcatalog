@@ -1,0 +1,17 @@
+Drop paid Clerk features: custom roles and satellite domains cost $110+/mo in production
+
+Checked Clerk's actual pricing: going to production is free, but the two
+features this session added, custom org roles and satellite domains, both
+require Clerk's B2B add-on ($100/mo, plus $10/mo per satellite). Reworked
+around the free tier instead of migrating off Clerk entirely.
+
+Partner status ("org:vendor") is no longer a real Clerk role. It's now
+Clerk's free org:member role plus a publicMetadata.partnerType flag set at
+invite time, resolved back into the same 'org:vendor' value everywhere else
+in the app via a single resolveRole() helper, so none of the downstream
+admin/vendor logic needed to change.
+
+Admin is back to being a role-gated section of the main site instead of a
+separate satellite-domain deployment, removes the cross-domain session
+complexity (and its cost) entirely. proxy.ts and the ClerkProvider are back
+to plain single-domain config.

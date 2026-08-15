@@ -42,7 +42,7 @@ export default function AdminTeamManager({
 }) {
   const router = useRouter()
   const [email, setEmail] = useState('')
-  const [role, setRole] = useState<'org:admin' | 'org:vendor' | 'org:member'>('org:vendor')
+  const [role, setRole] = useState<'org:admin' | 'org:vendor'>('org:vendor')
   const [inviting, setInviting] = useState(false)
   const [removingId, setRemovingId] = useState<string | null>(null)
 
@@ -110,13 +110,12 @@ export default function AdminTeamManager({
           </label>
           <select
             value={role}
-            onChange={(e) => setRole(e.target.value as 'org:admin' | 'org:vendor' | 'org:member')}
+            onChange={(e) => setRole(e.target.value as 'org:admin' | 'org:vendor')}
             className="h-11 px-4 text-sm focus:outline-none"
             style={{ ...inputStyle, appearance: 'none' as const }}
           >
             <option value="org:vendor">Partner (their own listings only)</option>
             <option value="org:admin">Admin (full access)</option>
-            <option value="org:member">Member (read-only)</option>
           </select>
         </div>
         <button

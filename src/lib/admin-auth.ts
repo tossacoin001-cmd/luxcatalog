@@ -2,20 +2,28 @@ import { auth, clerkClient } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 
 // The one organization that represents Lux Catalog's internal team. Anyone
-// invited into it gets admin panel access, scoped by their org role:
-// org:admin (full access) or org:vendor (their own listings only). This
-// replaces the old single-account public_metadata.role flag so access can
-// be shared with team members and partners through a real invite flow
-// instead of one hardcoded account.
+// invited into it gets admin panel access, scoped by role: org:admin (full
+// access) or org:vendor (their own listings only). org:vendor isn't a real
+// Clerk role, custom roles require Clerk's paid B2B add-on. Instead it's
+// derived from the free org:member role plus a publicMetadata flag set at
+// invite time, so "vendor" behaves identically everywhere else in the app
+// without needing a paid plan to reach production.
 export const LUX_CATALOG_ORG_ID = 'org_3GQXQNb9ygojG37baLMMn6JWlD9'
 
 export type OrgRole = 'org:admin' | 'org:vendor' | 'org:member' | null
+
+export function resolveRole(membership: { role: string; publicMetadata?: Record<string, unknown> } | undefined): OrgRole {
+  if (!membership) return null
+  if (membership.role === 'org:admin') return 'org:admin'
+  if (membership.role === 'org:member' && membership.publicMetadata?.partnerType === 'vendor') return 'org:vendor'
+  return 'org:member'
+}
 
 export async function getOrgRole(userId: string): Promise<OrgRole> {
   const clerk = await clerkClient()
   const { data } = await clerk.users.getOrganizationMembershipList({ userId })
   const membership = data.find((m) => m.organization.id === LUX_CATALOG_ORG_ID)
-  return (membership?.role as OrgRole) ?? null
+  return resolveRole(membership)
 }
 
 export async function isOrgAdmin(userId: string): Promise<boolean> {

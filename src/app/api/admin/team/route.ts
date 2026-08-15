@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { clerkClient } from '@clerk/nextjs/server'
-import { requireAdminApi, LUX_CATALOG_ORG_ID } from '@/lib/admin-auth'
+import { requireAdminApi, resolveRole, LUX_CATALOG_ORG_ID } from '@/lib/admin-auth'
+import { getAppUrl } from '@/lib/utils'
 
 export async function GET() {
   const admin = await requireAdminApi()
@@ -18,13 +19,13 @@ export async function GET() {
       userId: m.publicUserData?.userId,
       name: [m.publicUserData?.firstName, m.publicUserData?.lastName].filter(Boolean).join(' ') || null,
       email: m.publicUserData?.identifier,
-      role: m.role,
+      role: resolveRole(m),
       imageUrl: m.publicUserData?.imageUrl,
     })),
     invitations: invitations.data.map((i) => ({
       id: i.id,
       email: i.emailAddress,
-      role: i.role,
+      role: resolveRole(i),
       status: i.status,
     })),
   })
@@ -36,24 +37,25 @@ export async function POST(req: Request) {
 
   try {
     const { email, role } = await req.json()
-    if (!email || !['org:admin', 'org:vendor', 'org:member'].includes(role)) {
+    if (!email || !['org:admin', 'org:vendor'].includes(role)) {
       return NextResponse.json({ error: 'Missing email or invalid role' }, { status: 400 })
     }
 
-    // Without an explicit redirectUrl, Clerk falls back to the instance's
-    // default sign-up URL, which predates the admin/public split and points
-    // at the public site. That strands invitees on the wrong domain after
-    // they set a password (their account and org membership are fine, they
-    // just land on an empty sign-up page instead of the admin app).
-    const adminAppUrl = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'https://luxcatalog-admin.vercel.app'
+    // org:vendor is a virtual app-level role, not a real Clerk role, custom
+    // roles require Clerk's paid B2B add-on. Partners get Clerk's free
+    // org:member role plus a publicMetadata flag, resolveRole() turns that
+    // back into 'org:vendor' everywhere else in the app.
+    const clerkRole = role === 'org:vendor' ? 'org:member' : role
+    const publicMetadata = role === 'org:vendor' ? { partnerType: 'vendor' } : undefined
 
     const clerk = await clerkClient()
     const invitation = await clerk.organizations.createOrganizationInvitation({
       organizationId: LUX_CATALOG_ORG_ID,
       emailAddress: email,
-      role,
+      role: clerkRole,
+      publicMetadata,
       inviterUserId: admin.userId,
-      redirectUrl: `${adminAppUrl}/sign-up`,
+      redirectUrl: `${getAppUrl()}/sign-up`,
     })
 
     return NextResponse.json({ success: true, invitation: { id: invitation.id, email: invitation.emailAddress } })

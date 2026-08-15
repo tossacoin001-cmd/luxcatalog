@@ -11,52 +11,16 @@ const hasClerkKeys = !!(
   process.env.CLERK_SECRET_KEY
 )
 
-// Admin lives in a genuinely separate Vercel project deployed from this same
-// repo, not just a role-gated route on the public site. That project sets
-// APP_TARGET=admin, which flips this middleware into "admin-only" mode: every
-// non-admin path redirects into /admin. The public project leaves APP_TARGET
-// unset, so /admin is unreachable there regardless of role, it redirects out
-// to the admin deployment instead. This works today on the .vercel.app URLs
-// and keeps working unchanged once a custom domain/subdomain is in place.
-const APP_TARGET = process.env.APP_TARGET
-const ADMIN_APP_URL = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'https://luxcatalog-admin.vercel.app'
-const PUBLIC_APP_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://luxcatalog.vercel.app'
-const ADMIN_ALLOWED_PREFIXES = ['/admin', '/sign-in', '/sign-up', '/api/admin', '/api/inquiries', '/api/fx-rate']
-const isAdminDeployment = APP_TARGET === 'admin'
-
-// The admin deployment and the public site share one Clerk instance/keys but
-// are two different domains, so Clerk needs to be told explicitly about that
-// relationship (Clerk's "satellite domain" feature) or it can't safely
-// redirect back after sign-in, it falls back to a dead-end "connect Clerk to
-// your application" page instead. The public site is the primary; admin is
-// the satellite.
-const clerkMiddlewareOptions = isAdminDeployment
-  ? {
-      isSatellite: true,
-      domain: new URL(ADMIN_APP_URL).hostname,
-      signInUrl: `${PUBLIC_APP_URL}/sign-in`,
-    }
-  : {}
-
-function targetSeparation(req: NextRequest): NextResponse | undefined {
-  const path = req.nextUrl.pathname
-  const isAdminPath = ADMIN_ALLOWED_PREFIXES.some((p) => path.startsWith(p))
-
-  if (APP_TARGET === 'admin') {
-    if (!isAdminPath) return NextResponse.redirect(new URL('/admin', req.url))
-    return undefined
-  }
-
-  if (path.startsWith('/admin')) {
-    return NextResponse.redirect(new URL('/admin', ADMIN_APP_URL))
-  }
-  return undefined
-}
-
+// Admin previously ran as a separate Vercel deployment using Clerk's
+// satellite-domain feature to share a session across two origins. Satellite
+// domains (and the custom org:vendor role that went with them) require
+// Clerk's paid B2B add-on, so admin is back to being a role-gated section of
+// this same site (requireAdmin/requireStaff in each page), same origin,
+// no paid Clerk feature required to reach production.
 export default hasClerkKeys
-  ? clerkMiddleware((_auth, req) => targetSeparation(req), clerkMiddlewareOptions)
-  : function handler(req: NextRequest) {
-      return targetSeparation(req) ?? NextResponse.next()
+  ? clerkMiddleware()
+  : function handler(_req: NextRequest) {
+      return NextResponse.next()
     }
 
 export const config = {

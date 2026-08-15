@@ -22,10 +22,6 @@ const vendorLinks = [
   { label: 'My Profile', href: '/admin/profile' },
 ]
 
-// Admin now runs as a separate deployment, so "/" isn't the public site here,
-// it's just this app's own root, which middleware bounces back to /admin.
-const PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://luxcatalog.vercel.app'
-
 export default function AdminNavbar({ role }: { role?: 'org:admin' | 'org:vendor' | 'org:member' | null }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
@@ -71,13 +67,13 @@ export default function AdminNavbar({ role }: { role?: 'org:admin' | 'org:vendor
         </div>
 
         <div className="flex items-center gap-4">
-          <a
-            href={PUBLIC_SITE_URL}
+          <Link
+            href="/"
             className="hidden md:inline-flex text-xs tracking-[0.15em] uppercase text-lux-text-muted hover:text-lux-text transition-colors"
             style={{ fontFamily: 'var(--font-inter)' }}
           >
             View Public Site
-          </a>
+          </Link>
           <UserButton appearance={{ elements: { avatarBox: 'w-8 h-8 ring-1 ring-lux-gold-muted' } }} />
           <button
             className="md:hidden text-lux-text-muted hover:text-lux-gold transition-colors"
@@ -108,13 +104,14 @@ export default function AdminNavbar({ role }: { role?: 'org:admin' | 'org:vendor
                 {link.label}
               </Link>
             ))}
-            <a
-              href={PUBLIC_SITE_URL}
+            <Link
+              href="/"
               className="text-sm tracking-[0.2em] uppercase text-lux-text-muted hover:text-lux-gold transition-colors"
               style={{ fontFamily: 'var(--font-inter)' }}
+              onClick={() => setOpen(false)}
             >
               View Public Site
-            </a>
+            </Link>
           </nav>
         </div>
       )}
