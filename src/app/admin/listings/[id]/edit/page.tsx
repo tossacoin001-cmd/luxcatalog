@@ -49,6 +49,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
             featured: listing.featured,
             hireAvailable: listing.hireAvailable,
             hireRateDisplay: listing.hireRateDisplay ?? '',
+            specs: (listing.specs ?? {}) as Record<string, string>,
           }}
         />
       </div>

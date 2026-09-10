@@ -2,7 +2,7 @@ import Link from 'next/link'
 import AdminNavbar from '@/components/AdminNavbar'
 import AdminTeamManager from '@/components/AdminTeamManager'
 import { clerkClient } from '@clerk/nextjs/server'
-import { requireAdmin, LUX_CATALOG_ORG_ID } from '@/lib/admin-auth'
+import { requireAdmin, resolveRole, LUX_CATALOG_ORG_ID } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Team | Admin' }
@@ -22,12 +22,12 @@ export default async function AdminTeamPage() {
     userId: m.publicUserData?.userId,
     name: [m.publicUserData?.firstName, m.publicUserData?.lastName].filter(Boolean).join(' ') || null,
     email: m.publicUserData?.identifier,
-    role: m.role,
+    role: resolveRole(m) ?? m.role,
   }))
   const plainInvitations = invitations.data.map((i) => ({
     id: i.id,
     email: i.emailAddress,
-    role: i.role,
+    role: resolveRole(i) ?? i.role,
     status: i.status ?? 'pending',
   }))
 

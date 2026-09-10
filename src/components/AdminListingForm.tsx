@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { X, Loader2 } from 'lucide-react'
+import { X, Loader2, Plus } from 'lucide-react'
 import { categoryLabels } from '@/lib/utils'
 
 const categories = Object.entries(categoryLabels).map(([key, label]) => ({ key, label }))
@@ -30,6 +30,12 @@ export interface AdminListingFormValues {
   featured: boolean
   hireAvailable: boolean
   hireRateDisplay: string
+  specs?: Record<string, string>
+}
+
+interface SpecRow {
+  key: string
+  value: string
 }
 
 const emptyForm: AdminListingFormValues = {
@@ -54,9 +60,19 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [form, setForm] = useState<AdminListingFormValues>(listing ?? emptyForm)
+  const [specRows, setSpecRows] = useState<SpecRow[]>(() => {
+    const entries = Object.entries(listing?.specs ?? {})
+    return entries.length > 0 ? entries.map(([key, value]) => ({ key, value })) : [{ key: '', value: '' }]
+  })
 
   const set = <K extends keyof AdminListingFormValues>(key: K, val: AdminListingFormValues[K]) =>
     setForm((f) => ({ ...f, [key]: val }))
+
+  const setSpecRow = (i: number, field: keyof SpecRow, val: string) =>
+    setSpecRows((rows) => rows.map((r, idx) => (idx === i ? { ...r, [field]: val } : r)))
+
+  const addSpecRow = () => setSpecRows((rows) => [...rows, { key: '', value: '' }])
+  const removeSpecRow = (i: number) => setSpecRows((rows) => rows.filter((_, idx) => idx !== i))
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return
@@ -86,9 +102,13 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
     e.preventDefault()
     setLoading(true)
     try {
+      const specs = Object.fromEntries(
+        specRows.filter((r) => r.key.trim() && r.value.trim()).map((r) => [r.key.trim(), r.value.trim()])
+      )
       const payload = {
         ...form,
         features: form.features.split(',').map((f) => f.trim()).filter(Boolean),
+        specs,
       }
       const res = await fetch(
         isEdit ? `/api/admin/listings/${listing!.id}` : '/api/admin/listings',
@@ -314,6 +334,51 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
               style={inputStyle}
               {...focusHandlers}
             />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              Additional Details
+            </label>
+            <div className="space-y-2">
+              {specRows.map((row, i) => (
+                <div key={i} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={row.key}
+                    onChange={(e) => setSpecRow(i, 'key', e.target.value)}
+                    placeholder="e.g. Material, Bedrooms, Service Type"
+                    className={fieldClass}
+                    style={inputStyle}
+                  />
+                  <input
+                    type="text"
+                    value={row.value}
+                    onChange={(e) => setSpecRow(i, 'value', e.target.value)}
+                    placeholder="e.g. Solid Oak, 4, Armed Escort"
+                    className={fieldClass}
+                    style={inputStyle}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeSpecRow(i)}
+                    className="px-3 flex-shrink-0"
+                    style={{ color: '#5a5248' }}
+                    aria-label="Remove detail"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={addSpecRow}
+              className="mt-2 flex items-center gap-1.5 text-xs tracking-wider"
+              style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+            >
+              <Plus size={12} /> Add Detail
+            </button>
           </div>
 
           {!restricted && (
