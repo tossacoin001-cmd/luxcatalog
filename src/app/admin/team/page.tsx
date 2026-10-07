@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import AdminNavbar from '@/components/AdminNavbar'
 import AdminTeamManager from '@/components/AdminTeamManager'
-import { clerkClient } from '@clerk/nextjs/server'
-import { requireAdmin, resolveRole, LUX_CATALOG_ORG_ID } from '@/lib/admin-auth'
+import { requireAdmin } from '@/lib/admin-auth'
+import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Team | Admin' }
@@ -11,29 +11,25 @@ export const dynamic = 'force-dynamic'
 export default async function AdminTeamPage() {
   const userId = await requireAdmin()
 
-  const clerk = await clerkClient()
   const [members, invitations] = await Promise.all([
-    clerk.organizations.getOrganizationMembershipList({ organizationId: LUX_CATALOG_ORG_ID }),
-    clerk.organizations.getOrganizationInvitationList({ organizationId: LUX_CATALOG_ORG_ID, status: ['pending'] }),
+    prisma.user.findMany({
+      where: { role: { in: ['admin', 'partner'] } },
+      select: { id: true, name: true, email: true, role: true },
+      orderBy: { createdAt: 'asc' },
+    }),
+    prisma.staffInvitation.findMany({
+      where: { acceptedAt: null, revokedAt: null, expiresAt: { gt: new Date() } },
+      select: { id: true, email: true, role: true },
+      orderBy: { createdAt: 'desc' },
+    }),
   ])
 
-  const plainMembers = members.data.map((m) => ({
-    id: m.id,
-    userId: m.publicUserData?.userId,
-    name: [m.publicUserData?.firstName, m.publicUserData?.lastName].filter(Boolean).join(' ') || null,
-    email: m.publicUserData?.identifier,
-    role: resolveRole(m) ?? m.role,
-  }))
-  const plainInvitations = invitations.data.map((i) => ({
-    id: i.id,
-    email: i.emailAddress,
-    role: resolveRole(i) ?? i.role,
-    status: i.status ?? 'pending',
-  }))
+  const plainMembers = members.map((m) => ({ id: m.id, userId: m.id, name: m.name, email: m.email, role: m.role }))
+  const plainInvitations = invitations.map((i) => ({ ...i, status: 'pending' }))
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
-      <AdminNavbar role="org:admin" />
+      <AdminNavbar role="admin" />
 
       <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
         <div className="max-w-3xl mx-auto">

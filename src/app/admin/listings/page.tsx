@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function AdminListingsPage() {
   const { userId, role } = await requireStaff()
-  const isVendor = role === 'org:vendor'
+  const isVendor = role === 'partner'
 
   const listings = await prisma.listing.findMany({
     where: isVendor ? { ownerId: userId } : undefined,

@@ -1,4 +1,4 @@
-import { auth, currentUser } from '@clerk/nextjs/server'
+import { getUserId } from '@/lib/admin-auth'
 import { redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -20,11 +20,11 @@ const formatDate = (d: Date) => new Date(d).toLocaleDateString('en-GB', { day: '
 const RESERVATION_CATEGORIES = ['real_estate', 'supercar', 'yacht', 'commercial', 'lifestyle']
 
 export default async function DashboardPage() {
-  const { userId } = await auth()
-  if (!userId) redirect('/sign-in')
+  const userId = await getUserId()
+  if (!userId) redirect('/sign-in?redirect_url=/dashboard')
 
   const [user, orders, inquiries] = await Promise.all([
-    currentUser(),
+    prisma.user.findUnique({ where: { id: userId }, select: { name: true, email: true, createdAt: true } }),
     prisma.order.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
             Member Dashboard
           </p>
           <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-            Welcome, {user?.firstName ?? 'Member'}
+            Welcome, {user?.name.split(' ')[0] || 'Member'}
           </h1>
         </div>
       </div>
@@ -72,13 +72,13 @@ export default async function DashboardPage() {
             <div>
               <p className="text-[10px] tracking-wider uppercase mb-1" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>Name</p>
               <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
-                {user?.fullName ?? 'Not set'}
+                {user?.name || 'Not set'}
               </p>
             </div>
             <div>
               <p className="text-[10px] tracking-wider uppercase mb-1" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>Email</p>
               <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
-                {user?.emailAddresses[0]?.emailAddress ?? 'Not set'}
+                {user?.email ?? 'Not set'}
               </p>
             </div>
             <div>

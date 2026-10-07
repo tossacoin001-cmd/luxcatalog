@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { userId, role } = await requireStaff()
-  const isVendor = role === 'org:vendor'
+  const isVendor = role === 'partner'
 
   const { id } = await params
   const listing = await prisma.listing.findUnique({ where: { id } })

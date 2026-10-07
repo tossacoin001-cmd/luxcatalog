@@ -5,7 +5,7 @@ import { requireStaffApi } from '@/lib/admin-auth'
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const staff = await requireStaffApi()
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const isVendor = staff.role === 'org:vendor'
+  const isVendor = staff.role === 'partner'
 
   try {
     const { id } = await params
@@ -63,7 +63,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const staff = await requireStaffApi()
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const isVendor = staff.role === 'org:vendor'
+  const isVendor = staff.role === 'partner'
 
   try {
     const { id } = await params

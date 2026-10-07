@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useUser } from '@clerk/nextjs'
+import { useSession } from '@/lib/auth-client'
 import { usePathname, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { X, ShieldCheck, Lock, CheckCircle, ArrowRight, MessageCircle } from 'lucide-react'
@@ -14,7 +14,10 @@ interface InquiryModalProps {
 }
 
 export default function InquiryModal({ listingId, listingTitle, listingPrice }: InquiryModalProps) {
-  const { isSignedIn, user, isLoaded } = useUser()
+  const { data: session, isPending } = useSession()
+  const isLoaded = !isPending
+  const isSignedIn = !!session
+  const user = session?.user
   const pathname = usePathname()
   const router = useRouter()
 
@@ -26,12 +29,10 @@ export default function InquiryModal({ listingId, listingTitle, listingPrice }: 
 
   const prefill = () => {
     if (user) {
-      const name = [user.firstName, user.lastName].filter(Boolean).join(' ')
-      const email = user.emailAddresses?.[0]?.emailAddress || ''
       setForm(prev => ({
-        name: prev.name || name,
-        email: prev.email || email,
-        phone: prev.phone || '',
+        name: prev.name || user.name,
+        email: prev.email || user.email,
+        phone: prev.phone || user.phone || '',
         message: prev.message,
       }))
     }

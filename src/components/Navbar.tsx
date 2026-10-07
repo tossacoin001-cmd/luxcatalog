@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Show, UserButton } from '@clerk/nextjs'
+import UserMenu from '@/components/UserMenu'
+import { useSession } from '@/lib/auth-client'
 import { Menu, X, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
@@ -16,9 +17,6 @@ const navLinks = [
   { label: 'Saved', href: '/saved' },
   { label: 'Dashboard', href: '/dashboard' },
 ]
-
-// NEXT_PUBLIC_ vars are inlined at build time: false when keys aren't set
-const hasClerk = !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
 
 function CurrencyToggle() {
   const { currency, setCurrency } = useCurrency()
@@ -91,6 +89,7 @@ function MobileCurrencyToggle() {
 export default function Navbar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const { data: session } = useSession()
 
   return (
     <>
@@ -136,34 +135,7 @@ export default function Navbar() {
         <div className="flex items-center gap-4">
           <CurrencyToggle />
           <CartIcon />
-          {hasClerk ? (
-            <>
-              <Show when="signed-out">
-                <Link
-                  href="/sign-in"
-                  className="hidden md:inline-flex text-xs tracking-[0.18em] uppercase text-lux-text-muted hover:text-lux-text transition-colors"
-                  style={{ fontFamily: 'var(--font-inter)' }}
-                >
-                  Sign In
-                </Link>
-              </Show>
-              <Show when="signed-in">
-                <UserButton
-                  appearance={{
-                    elements: { avatarBox: 'w-8 h-8 ring-1 ring-lux-gold-muted' },
-                  }}
-                />
-              </Show>
-            </>
-          ) : (
-            <Link
-              href="/sign-in"
-              className="hidden md:inline-flex text-xs tracking-[0.18em] uppercase transition-colors"
-              style={{ fontFamily: 'var(--font-inter)', color: '#9a8f7a' }}
-            >
-              Sign In
-            </Link>
-          )}
+          <UserMenu />
 
           {/* Book a call CTA */}
           <Link
@@ -222,18 +194,7 @@ export default function Navbar() {
               </Link>
             ))}
             <MobileCurrencyToggle />
-            {hasClerk ? (
-              <Show when="signed-out">
-                <Link
-                  href="/sign-in"
-                  className="text-sm tracking-[0.2em] uppercase text-lux-text-muted hover:text-lux-gold transition-colors"
-                  style={{ fontFamily: 'var(--font-inter)' }}
-                  onClick={() => setOpen(false)}
-                >
-                  Sign In
-                </Link>
-              </Show>
-            ) : (
+            {!session && (
               <Link
                 href="/sign-in"
                 className="text-sm tracking-[0.2em] uppercase text-lux-text-muted hover:text-lux-gold transition-colors"

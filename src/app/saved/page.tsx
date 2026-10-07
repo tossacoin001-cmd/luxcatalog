@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { getUserId } from '@/lib/admin-auth'
 import { redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -12,8 +12,8 @@ export const metadata: Metadata = { title: 'Saved Assets' }
 export const dynamic = 'force-dynamic'
 
 export default async function SavedPage() {
-  const { userId } = await auth()
-  if (!userId) redirect('/sign-in')
+  const userId = await getUserId()
+  if (!userId) redirect('/sign-in?redirect_url=/saved')
 
   const savedListings = await prisma.savedListing.findMany({
     where: { userId },

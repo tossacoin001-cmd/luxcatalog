@@ -1,66 +1,85 @@
-import { auth, clerkClient } from '@clerk/nextjs/server'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
-// The one organization that represents Lux Catalog's internal team. Anyone
-// invited into it gets admin panel access, scoped by role: org:admin (full
-// access) or org:vendor (their own listings only). org:vendor isn't a real
-// Clerk role, custom roles require Clerk's paid B2B add-on. Instead it's
-// derived from the free org:member role plus a publicMetadata flag set at
-// invite time, so "vendor" behaves identically everywhere else in the app
-// without needing a paid plan to reach production.
-export const LUX_CATALOG_ORG_ID = 'org_3GQXQNb9ygojG37baLMMn6JWlD9'
+// Roles live on our own User row. 'partner' manages only their own listings,
+// 'admin' sees everything. Staff access always requires 2FA, a stolen
+// password alone never reaches the admin panel.
+export type Role = 'customer' | 'partner' | 'admin'
+export type StaffRole = Exclude<Role, 'customer'>
 
-export type OrgRole = 'org:admin' | 'org:vendor' | 'org:member' | null
-
-export function resolveRole(membership: { role: string; publicMetadata?: Record<string, unknown> } | undefined): OrgRole {
-  if (!membership) return null
-  if (membership.role === 'org:admin') return 'org:admin'
-  if (membership.role === 'org:member' && membership.publicMetadata?.partnerType === 'vendor') return 'org:vendor'
-  return 'org:member'
+export async function getSession() {
+  return auth.api.getSession({ headers: await headers() })
 }
 
-export async function getOrgRole(userId: string): Promise<OrgRole> {
-  const clerk = await clerkClient()
-  const { data } = await clerk.users.getOrganizationMembershipList({ userId })
-  const membership = data.find((m) => m.organization.id === LUX_CATALOG_ORG_ID)
-  return resolveRole(membership)
+export async function getUserId(): Promise<string | null> {
+  return (await getSession())?.user.id ?? null
 }
 
-export async function isOrgAdmin(userId: string): Promise<boolean> {
-  return (await getOrgRole(userId)) === 'org:admin'
+// Role is read from the database on every check rather than trusted from the
+// session payload, so demoting someone takes effect on their next request.
+async function loadStaff(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true, twoFactorEnabled: true },
+  })
+  if (!user || user.role === 'customer') return null
+  return { role: user.role as StaffRole, twoFactorEnabled: !!user.twoFactorEnabled }
+}
+
+export async function getRole(userId: string): Promise<Role> {
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } })
+  return (user?.role as Role) ?? 'customer'
+}
+
+export async function isAdmin(userId: string): Promise<boolean> {
+  return (await getRole(userId)) === 'admin'
 }
 
 // Server Components (pages): redirects rather than returning a status.
-export async function requireAdmin(): Promise<string> {
-  const { userId } = await auth()
-  if (!userId) redirect('/sign-in')
-  if (!(await isOrgAdmin(userId))) redirect('/')
-  return userId
+async function requirePage(allowed: StaffRole[]): Promise<{ userId: string; role: StaffRole }> {
+  const userId = await getUserId()
+  if (!userId) redirect('/sign-in?redirect_url=/admin')
+  const staff = await loadStaff(userId)
+  if (!staff || !allowed.includes(staff.role)) redirect('/')
+  if (!staff.twoFactorEnabled) redirect('/account?setup=2fa')
+  return { userId, role: staff.role }
 }
 
 // API routes: returns null so the caller can respond 401/403 appropriately.
+async function requireApi(allowed: StaffRole[]): Promise<{ userId: string; role: StaffRole } | null> {
+  const userId = await getUserId()
+  if (!userId) return null
+  const staff = await loadStaff(userId)
+  if (!staff || !allowed.includes(staff.role) || !staff.twoFactorEnabled) return null
+  return { userId, role: staff.role }
+}
+
+export async function requireAdmin(): Promise<string> {
+  return (await requirePage(['admin'])).userId
+}
+
 export async function requireAdminApi(): Promise<{ userId: string } | null> {
-  const { userId } = await auth()
-  if (!userId) return null
-  if (!(await isOrgAdmin(userId))) return null
-  return { userId }
+  const staff = await requireApi(['admin'])
+  return staff ? { userId: staff.userId } : null
 }
 
-// Admin panel access for both full admin and vendor partners. Pages/routes
-// using this must scope any data they touch to the caller's own listings
-// when role is org:vendor, admin sees everything.
-export async function requireStaff(): Promise<{ userId: string; role: OrgRole }> {
-  const { userId } = await auth()
-  if (!userId) redirect('/sign-in')
-  const role = await getOrgRole(userId)
-  if (role !== 'org:admin' && role !== 'org:vendor') redirect('/')
-  return { userId, role }
+// Admin panel access for both full admin and partners. Pages/routes using
+// this must scope any data they touch to the caller's own listings when
+// role is 'partner', admin sees everything.
+export async function requireStaff(): Promise<{ userId: string; role: StaffRole }> {
+  return requirePage(['admin', 'partner'])
 }
 
-export async function requireStaffApi(): Promise<{ userId: string; role: OrgRole } | null> {
-  const { userId } = await auth()
-  if (!userId) return null
-  const role = await getOrgRole(userId)
-  if (role !== 'org:admin' && role !== 'org:vendor') return null
-  return { userId, role }
+export async function requireStaffApi(): Promise<{ userId: string; role: StaffRole } | null> {
+  return requireApi(['admin', 'partner'])
+}
+
+export async function audit(actorId: string | null, action: string, target?: string, detail?: Record<string, unknown>) {
+  const h = await headers()
+  const ipAddress = h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null
+  await prisma.auditLog.create({
+    data: { actorId, action, target, detail: detail as never, ipAddress },
+  })
 }

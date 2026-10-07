@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function NewListingPage() {
   const { userId, role } = await requireStaff()
-  const isVendor = role === 'org:vendor'
+  const isVendor = role === 'partner'
 
   if (isVendor) {
     const profile = await prisma.partnerProfile.findUnique({ where: { userId } })

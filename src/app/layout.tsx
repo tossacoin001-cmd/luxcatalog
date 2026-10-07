@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
-import { ClerkProvider } from '@clerk/nextjs'
 import { Toaster } from 'sonner'
 import CurrencyProvider from '@/components/CurrencyProvider'
 import CartProvider from '@/components/CartProvider'
@@ -33,41 +32,27 @@ export const metadata: Metadata = {
   },
 }
 
-const hasClerkKeys = !!(
-  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
-  process.env.CLERK_SECRET_KEY
-)
-
-function Providers({ children }: { children: React.ReactNode }) {
-  if (hasClerkKeys) {
-    return <ClerkProvider>{children}</ClerkProvider>
-  }
-  return <>{children}</>
-}
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Providers>
-      <html lang="en" className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
-        <head>
-          <link rel="icon" href="/logo.svg" type="image/svg+xml" />
-        </head>
-        <body className="min-h-screen" style={{ fontFamily: 'var(--font-inter)' }}>
-          <CurrencyProvider>
-            <CartProvider>{children}</CartProvider>
-          </CurrencyProvider>
-          <Toaster
-            theme="dark"
-            toastOptions={{
-              style: {
-                background: '#0f1a10',
-                border: '1px solid #1e2e1f',
-                color: '#f5f0e8',
-              },
-            }}
-          />
-        </body>
-      </html>
-    </Providers>
+    <html lang="en" className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+      </head>
+      <body className="min-h-screen" style={{ fontFamily: 'var(--font-inter)' }}>
+        <CurrencyProvider>
+          <CartProvider>{children}</CartProvider>
+        </CurrencyProvider>
+        <Toaster
+          theme="dark"
+          toastOptions={{
+            style: {
+              background: '#0f1a10',
+              border: '1px solid #1e2e1f',
+              color: '#f5f0e8',
+            },
+          }}
+        />
+      </body>
+    </html>
   )
 }

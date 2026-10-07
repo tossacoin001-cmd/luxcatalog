@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: 'Privacy Policy' }
 const sections = [
   {
     heading: '1. Information We Collect',
-    body: `When you create an account, submit an enquiry, or contact us, we collect information such as your name, email address, phone number, and the content of your message. If you sign in, our authentication provider (Clerk) also processes your account information.`,
+    body: `When you create an account, submit an enquiry, or contact us, we collect information such as your name, email address, phone number, and the content of your message. If you create an account, your name, email, optional phone number and a one-way hash of your password are stored in our own database. We never store your password itself.`,
   },
   {
     heading: '2. How We Use Your Information',
@@ -16,7 +16,7 @@ const sections = [
   },
   {
     heading: '3. Third-Party Services',
-    body: `We rely on trusted third parties to operate the Platform: Clerk (authentication), Vercel (hosting), Neon (database), Stripe (payment processing), and WhatsApp (for direct client communication). Each processes data under its own privacy terms.`,
+    body: `We rely on trusted third parties to operate the Platform: Vercel (hosting), Neon (database), Stripe (payment processing), and WhatsApp (for direct client communication). Each processes data under its own privacy terms.`,
   },
   {
     heading: '4. Data Retention',

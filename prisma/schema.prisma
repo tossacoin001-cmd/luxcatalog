@@ -192,3 +192,137 @@ model OrderItem {
   priceSnapshot Decimal
   quantity      Int     @default(1)
 }
+
+// ---------------------------------------------------------------------------
+// Authentication (Better Auth). Users, sessions and credentials live in this
+// database, owned by Lux Catalog, no third-party identity provider. Table
+// shapes follow Better Auth's core schema + twoFactor plugin; ids for users
+// imported from Clerk keep their original "user_..." id so every existing
+// ownerId / userId reference (listings, partner profiles, saved items,
+// enquiries, orders) stays linked.
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  customer
+  partner
+  admin
+}
+
+model User {
+  id               String    @id
+  name             String
+  email            String    @unique
+  emailVerified    Boolean   @default(false)
+  image            String?
+  phone            String?
+  // Never accepted from sign-up input (input: false in auth config), only
+  // changed by an admin or by redeeming a staff invitation.
+  role             UserRole  @default(customer)
+  twoFactorEnabled Boolean?  @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  sessions         Session[]
+  accounts         Account[]
+  twoFactors       TwoFactor[]
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  // Password hash (scrypt), never the password itself.
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+model TwoFactor {
+  id                      String    @id
+  secret                  String
+  backupCodes             String
+  userId                  String
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // false until the user proves the authenticator works (first code).
+  verified                Boolean?  @default(true)
+  // Locks code entry after repeated wrong guesses.
+  failedVerificationCount Int?      @default(0)
+  lockedUntil             DateTime?
+
+  @@index([userId])
+  @@index([secret])
+}
+
+// Stored in the database (not memory) because serverless instances don't
+// share memory, an in-memory limiter would reset on every cold start.
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+}
+
+// Staff invitations (admin / partner), replacing Clerk organization invites.
+// Only a SHA-256 hash of the token is stored, the raw token exists only in
+// the link handed to the invitee.
+model StaffInvitation {
+  id          String    @id @default(uuid())
+  email       String
+  role        UserRole
+  tokenHash   String    @unique
+  invitedById String
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([email])
+}
+
+// Append-only record of security-relevant admin actions (role changes,
+// invites, removals) so access changes always have a trail.
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String?
+  action    String
+  target    String?
+  detail    Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
