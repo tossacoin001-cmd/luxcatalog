@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
+import ListingGallery from '@/components/ListingGallery'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Badge } from '@/components/ui/badge'
@@ -56,21 +56,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
       <Navbar />
 
       {/* Hero gallery */}
-      <div className="relative pt-20 h-[55vh] md:h-[70vh] overflow-hidden">
-        {listing.images[0] && (
-          <Image
-            src={listing.images[0]}
-            alt={listing.title}
-            fill
-            className="object-cover"
-            priority
-          />
-        )}
-        <div
-          className="absolute inset-0"
-          style={{ background: 'linear-gradient(180deg, rgba(8,12,8,0.2) 0%, rgba(8,12,8,0.85) 100%)' }}
-        />
-
+      <ListingGallery images={listing.images} title={listing.title}>
         {/* Title overlay */}
         <div className="absolute bottom-0 left-0 right-0 max-w-7xl mx-auto px-6 md:px-12 pb-10">
           <div className="flex items-end justify-between gap-4">
@@ -93,21 +79,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
             </Badge>
           </div>
         </div>
-      </div>
-
-      {/* Thumbnail strip */}
-      {listing.images.length > 1 && (
-        <div
-          className="flex gap-3 max-w-7xl mx-auto px-6 md:px-12 py-4 overflow-x-auto"
-          style={{ borderBottom: '1px solid #1e2e1f' }}
-        >
-          {listing.images.map((img, i) => (
-            <div key={i} className="relative w-24 h-16 flex-shrink-0 overflow-hidden" style={{ border: i === 0 ? '1px solid #C9A84C' : '1px solid #1e2e1f' }}>
-              <Image src={img} alt={`${listing.title} photo ${i + 1}`} fill className="object-cover" />
-            </div>
-          ))}
-        </div>
-      )}
+      </ListingGallery>
 
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
