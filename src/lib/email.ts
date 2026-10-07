@@ -36,7 +36,7 @@ export function actionEmail({ heading, body, actionLabel, actionUrl }: { heading
     <h1 style="color:#f5f0e8;font-family:Georgia,serif;font-weight:normal;font-size:24px;margin:0 0 16px">${heading}</h1>
     <p style="color:#9a8f7a;font-size:14px;line-height:1.6;margin:0 0 24px">${body}</p>
     <a href="${actionUrl}" style="display:inline-block;background:#C9A84C;color:#080c08;text-decoration:none;font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:12px 24px">${actionLabel}</a>
-    <p style="color:#5a5248;font-size:12px;line-height:1.6;margin:24px 0 0">If you didn't request this, you can ignore this email.</p>
+    <p style="color:#908673;font-size:12px;line-height:1.6;margin:24px 0 0">If you didn't request this, you can ignore this email.</p>
   </div>
 </div>`
   return { text, html }

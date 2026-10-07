@@ -47,7 +47,7 @@ export default function SignInForm({ redirectUrl }: { redirectUrl: string | null
       footer={
         <>
           New to Lux Catalog?{' '}
-          <Link href={signUpHref} className="text-lux-gold hover:text-lux-gold-light">
+          <Link href={signUpHref} className="inline-flex items-center min-h-11 text-lux-gold hover:text-lux-gold-light">
             Create an account
           </Link>
         </>
@@ -65,7 +65,7 @@ export default function SignInForm({ redirectUrl }: { redirectUrl: string | null
           onChange={(e) => setPassword(e.target.value)}
         />
         <div className="text-right -mt-2">
-          <Link href="/forgot-password" className="text-xs text-lux-gold hover:text-lux-gold-light" style={{ fontFamily: 'var(--font-inter)' }}>
+          <Link href="/forgot-password" className="inline-flex items-center min-h-11 text-xs text-lux-gold hover:text-lux-gold-light" style={{ fontFamily: 'var(--font-inter)' }}>
             Forgot password?
           </Link>
         </div>

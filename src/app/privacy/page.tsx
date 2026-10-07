@@ -49,7 +49,7 @@ export default function PrivacyPage() {
           <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
             Privacy Policy
           </h1>
-          <p className="mt-3 text-xs" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+          <p className="mt-3 text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
             Last updated 11 July 2026
           </p>
         </div>

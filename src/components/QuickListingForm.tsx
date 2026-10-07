@@ -107,7 +107,7 @@ export default function QuickListingForm() {
   }
 
   const fieldClass = 'w-full h-11 px-4 text-sm focus:outline-none transition-colors'
-  const labelClass = 'block text-[10px] tracking-[0.15em] uppercase mb-2'
+  const labelClass = 'block text-[11px] tracking-[0.15em] uppercase mb-2'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -121,7 +121,7 @@ export default function QuickListingForm() {
       <div className="p-8" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               What are you listing? <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input
@@ -136,7 +136,7 @@ export default function QuickListingForm() {
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Category <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <select
@@ -152,7 +152,7 @@ export default function QuickListingForm() {
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Price (NGN)
             </label>
             <input
@@ -163,13 +163,13 @@ export default function QuickListingForm() {
               className={fieldClass}
               style={inputStyle}
             />
-            <p className="mt-1.5 text-[10px]" style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}>
+            <p className="mt-1.5 text-[11px]" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Leave blank if it&rsquo;s price on application.
             </p>
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Location <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input
@@ -184,7 +184,7 @@ export default function QuickListingForm() {
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Country <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input
@@ -239,7 +239,7 @@ export default function QuickListingForm() {
           )}
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Tell us about it <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <textarea
@@ -254,7 +254,7 @@ export default function QuickListingForm() {
           </div>
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Additional Details
             </label>
             <div className="space-y-2">
@@ -280,7 +280,7 @@ export default function QuickListingForm() {
                     type="button"
                     onClick={() => removeSpecRow(i)}
                     className="px-3 flex-shrink-0"
-                    style={{ color: '#5a5248' }}
+                    style={{ color: '#908673' }}
                     aria-label="Remove detail"
                   >
                     <X size={14} />
@@ -299,7 +299,7 @@ export default function QuickListingForm() {
           </div>
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Photos <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input

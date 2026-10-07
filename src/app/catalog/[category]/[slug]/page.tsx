@@ -1,12 +1,13 @@
 import { notFound } from 'next/navigation'
 import ListingGallery from '@/components/ListingGallery'
+import ListingActionBar from '@/components/ListingActionBar'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Badge } from '@/components/ui/badge'
 import InquiryModal from '@/components/InquiryModal'
 import AddToCartPanel from '@/components/AddToCartPanel'
 import PriceDisplay from '@/components/PriceDisplay'
-import { categoryLabels } from '@/lib/utils'
+import { categoryLabels, specLabel } from '@/lib/utils'
 import { prisma } from '@/lib/prisma'
 import { MapPin, Check } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -107,8 +108,8 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {Object.entries(specs).map(([key, val]) => (
                   <div key={key} className="p-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-                    <p className="text-[10px] tracking-[0.15em] uppercase mb-1" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-                      {key}
+                    <p className="text-[11px] tracking-[0.15em] uppercase mb-1" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                      {specLabel(key)}
                     </p>
                     <p className="text-sm font-medium" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                       {val}
@@ -140,13 +141,13 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
         </div>
 
         {/* Right: inquiry panel */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1" id="enquire" style={{ scrollMarginTop: '6rem' }}>
           <div
             className="sticky top-24 p-7 space-y-6"
             style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}
           >
             <div>
-              <p className="text-[10px] tracking-[0.2em] uppercase mb-2" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 Asking Price
               </p>
               <p className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: !price ? 'italic' : 'normal' }}>
@@ -158,22 +159,22 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
             <div className="space-y-3">
               <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#5a5248' }}>Category</span>
+                <span style={{ color: '#908673' }}>Category</span>
                 <span style={{ color: '#9a8f7a' }}>{categoryLabels[listing.category]}</span>
               </div>
               <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#5a5248' }}>Location</span>
+                <span style={{ color: '#908673' }}>Location</span>
                 <span style={{ color: '#9a8f7a' }}>{listing.location}</span>
               </div>
               <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#5a5248' }}>Status</span>
+                <span style={{ color: '#908673' }}>Status</span>
                 <Badge variant={statusVariant}>
                   {listing.status === 'under_offer' ? 'Under Offer' : listing.status}
                 </Badge>
               </div>
               {partner && (
                 <div className="flex justify-between items-center text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                  <span style={{ color: '#5a5248' }}>Listed By</span>
+                  <span style={{ color: '#908673' }}>Listed By</span>
                   <span className="flex items-center gap-2" style={{ color: '#9a8f7a' }}>
                     {partner.logo && (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -203,8 +204,8 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
                 />
 
                 <p
-                  className="text-[10px] leading-relaxed text-center"
-                  style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}
+                  className="text-[11px] leading-relaxed text-center"
+                  style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
                 >
                   Your enquiry is handled with complete discretion. A specialist will respond within 24 hours.
                 </p>
@@ -215,6 +216,12 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
       </div>
 
       <Footer />
+      <ListingActionBar
+        title={listing.title}
+        price={price}
+        priceDisplay={listing.priceDisplay}
+        primaryLabel={listing.category === 'decor' ? 'Buy' : 'Reserve'}
+      />
     </div>
   )
 }

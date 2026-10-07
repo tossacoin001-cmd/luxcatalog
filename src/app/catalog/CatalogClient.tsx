@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Search, SlidersHorizontal, X } from 'lucide-react'
 import AssetCard from '@/components/AssetCard'
+import { EASE_OUT_EXPO } from '@/components/motion/Reveal'
 import { categoryHrefs, categoryLabels } from '@/lib/utils'
 
 interface Listing {
@@ -70,18 +72,19 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
   }, [search, category, status, sort, allListings])
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10">
+    <div className="max-w-7xl mx-auto px-5 md:px-12 py-10">
       {/* Search + filter bar */}
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         {/* Search */}
         <div className="relative flex-1">
-          <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#5a5248' }} />
+          <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#908673' }} />
           <input
             type="text"
-            placeholder="Search by asset name, location, country…"
+            placeholder="Search by name, city or country…"
+            aria-label="Search the catalog"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full h-11 pl-10 pr-4 text-sm focus:outline-none transition-colors"
+            className="w-full h-12 pl-10 pr-11 text-base md:text-sm focus:outline-none transition-colors"
             style={{
               background: '#0f1a10',
               border: '1px solid #1e2e1f',
@@ -92,44 +95,67 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
             onBlur={(e) => (e.currentTarget.style.borderColor = '#1e2e1f')}
           />
           {search && (
-            <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2">
-              <X size={14} style={{ color: '#5a5248' }} />
+            <button onClick={() => setSearch('')} className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center justify-center w-11 h-11" aria-label="Clear search">
+              <X size={14} style={{ color: '#908673' }} />
             </button>
           )}
         </div>
 
-        {/* Sort */}
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          className="h-11 px-4 pr-8 text-xs tracking-wider focus:outline-none appearance-none cursor-pointer"
-          style={{
-            background: '#0f1a10',
-            border: '1px solid #1e2e1f',
-            color: '#9a8f7a',
-            fontFamily: 'var(--font-inter)',
-            minWidth: 180,
-          }}
-        >
-          {sortOptions.map((o) => (
-            <option key={o.key} value={o.key}>{o.label}</option>
-          ))}
-        </select>
+        <div className="flex gap-3">
+          {/* Sort */}
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            aria-label="Sort listings"
+            className="flex-1 md:flex-none md:min-w-[180px] h-12 px-4 pr-8 text-xs tracking-wider focus:outline-none appearance-none cursor-pointer"
+            style={{
+              background: '#0f1a10',
+              border: '1px solid #1e2e1f',
+              color: '#9a8f7a',
+              fontFamily: 'var(--font-inter)',
+            }}
+          >
+            {sortOptions.map((o) => (
+              <option key={o.key} value={o.key}>{o.label}</option>
+            ))}
+          </select>
 
-        {/* Filter toggle (mobile) */}
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="md:hidden flex items-center gap-2 h-11 px-4 text-xs tracking-wider transition-colors"
-          style={{
-            background: showFilters ? '#C9A84C' : '#0f1a10',
-            border: '1px solid #1e2e1f',
-            color: showFilters ? '#080c08' : '#9a8f7a',
-            fontFamily: 'var(--font-inter)',
-          }}
-        >
-          <SlidersHorizontal size={13} />
-          Filters
-        </button>
+          {/* Filter toggle (mobile) */}
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="md:hidden flex items-center justify-center gap-2 h-12 px-4 text-xs tracking-wider transition-colors"
+            aria-expanded={showFilters}
+            style={{
+              background: showFilters ? '#C9A84C' : '#0f1a10',
+              border: '1px solid #1e2e1f',
+              color: showFilters ? '#080c08' : '#9a8f7a',
+              fontFamily: 'var(--font-inter)',
+            }}
+          >
+            <SlidersHorizontal size={13} />
+            {status !== 'all' ? 'Filters (1)' : 'Filters'}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile: categories as a swipeable chip rail, always visible. */}
+      <div className="md:hidden -mx-5 px-5 mb-6 flex gap-2 overflow-x-auto no-scrollbar snap-x" role="group" aria-label="Category">
+        {categories.map((c) => (
+          <button
+            key={c.key}
+            onClick={() => setCategory(c.key)}
+            aria-pressed={category === c.key}
+            className="snap-start shrink-0 min-h-11 px-4 text-xs tracking-[0.12em] uppercase transition-colors duration-300"
+            style={{
+              fontFamily: 'var(--font-inter)',
+              background: category === c.key ? '#C9A84C' : 'transparent',
+              border: `1px solid ${category === c.key ? '#C9A84C' : '#1e2e1f'}`,
+              color: category === c.key ? '#080c08' : '#9a8f7a',
+            }}
+          >
+            {c.label}
+          </button>
+        ))}
       </div>
 
       <div className="flex gap-8">
@@ -137,10 +163,10 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
         <aside
           className={`${showFilters ? 'block' : 'hidden'} md:block w-full md:w-52 flex-shrink-0`}
         >
-          {/* Category filter */}
-          <div className="mb-8">
+          {/* Category filter (desktop; mobile uses the chip rail) */}
+          <div className="mb-8 hidden md:block">
             <p
-              className="text-[10px] tracking-[0.2em] uppercase mb-4"
+              className="text-[11px] tracking-[0.2em] uppercase mb-4"
               style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
             >
               Category
@@ -150,7 +176,7 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
                 <button
                   key={c.key}
                   onClick={() => setCategory(c.key)}
-                  className="text-left text-xs py-2 px-3 transition-all"
+                  className="text-left text-xs min-h-10 px-3 transition-all"
                   style={{
                     fontFamily: 'var(--font-inter)',
                     background: category === c.key ? 'rgba(201,168,76,0.08)' : 'transparent',
@@ -167,7 +193,7 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
           {/* Status filter */}
           <div className="mb-8">
             <p
-              className="text-[10px] tracking-[0.2em] uppercase mb-4"
+              className="text-[11px] tracking-[0.2em] uppercase mb-4"
               style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
             >
               Status
@@ -177,7 +203,7 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
                 <button
                   key={s.key}
                   onClick={() => setStatus(s.key)}
-                  className="text-left text-xs py-2 px-3 transition-all"
+                  className="text-left text-xs min-h-10 px-3 transition-all"
                   style={{
                     fontFamily: 'var(--font-inter)',
                     background: status === s.key ? 'rgba(201,168,76,0.08)' : 'transparent',
@@ -195,8 +221,8 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
           {(category !== 'all' || status !== 'all' || search) && (
             <button
               onClick={() => { setCategory('all'); setStatus('all'); setSearch('') }}
-              className="text-xs tracking-wider underline"
-              style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+              className="min-h-11 text-xs tracking-wider underline"
+              style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
             >
               Clear all filters
             </button>
@@ -207,8 +233,9 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
         <div className="flex-1 min-w-0">
           {/* Result count */}
           <p
+            aria-live="polite"
             className="text-xs tracking-wider mb-6"
-            style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+            style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
           >
             {filtered.length} asset{filtered.length !== 1 ? 's' : ''} found
           </p>
@@ -218,20 +245,26 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
               <p className="text-lg mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
                 No assets match your criteria
               </p>
-              <p className="text-sm" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 Try broadening your search or clearing filters.
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-              {filtered.map((asset) => (
-                <AssetCard
-                  key={asset.id}
-                  asset={asset}
-                  href={`${categoryHrefs[asset.category] ?? '/catalog'}/${asset.slug}`}
-                />
-              ))}
-            </div>
+            <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              <AnimatePresence mode="popLayout" initial={false}>
+                {filtered.map((asset, i) => (
+                  <motion.div
+                    key={asset.id}
+                    layout
+                    initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: EASE_OUT_EXPO, delay: Math.min(i, 8) * 0.04 } }}
+                    exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.2 } }}
+                  >
+                    <AssetCard asset={asset} href={`${categoryHrefs[asset.category] ?? '/catalog'}/${asset.slug}`} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           )}
         </div>
       </div>

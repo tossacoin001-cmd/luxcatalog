@@ -65,7 +65,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             <p className="text-lg mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
               No {categoryLabels[categoryKey]?.toLowerCase()} listed yet
             </p>
-            <p className="text-sm" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Check back soon, or get in touch for early access.
             </p>
           </div>

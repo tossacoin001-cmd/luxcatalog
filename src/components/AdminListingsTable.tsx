@@ -69,7 +69,7 @@ export default function AdminListingsTable({
 
   if (listings.length === 0) {
     return (
-      <p className="py-16 text-center text-sm" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+      <p className="py-16 text-center text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
         No listings yet. Click &ldquo;+ Add Listing&rdquo; to create the first one.
       </p>
     )
@@ -95,8 +95,8 @@ export default function AdminListingsTable({
             {headers.map((h) => (
               <th
                 key={h}
-                className="text-left pb-3 pr-6 text-[10px] tracking-[0.15em] uppercase"
-                style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+                className="text-left pb-3 pr-6 text-[11px] tracking-[0.15em] uppercase"
+                style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
               >
                 {h}
               </th>
@@ -114,13 +114,13 @@ export default function AdminListingsTable({
                 <span style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>{listing.title}</span>
               </td>
               <td className="py-4 pr-6">
-                <span className="text-[10px] tracking-wider uppercase" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                <span className="text-[11px] tracking-wider uppercase" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
                   {categoryLabels[listing.category] ?? listing.category}
                 </span>
               </td>
               {showSubmittedBy && (
                 <td className="py-4 pr-6">
-                  <span className="text-xs" style={{ color: listing.submittedBy === 'House' ? '#5a5248' : '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                  <span className="text-xs" style={{ color: listing.submittedBy === 'House' ? '#908673' : '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
                     {listing.submittedBy}
                   </span>
                 </td>
@@ -130,7 +130,7 @@ export default function AdminListingsTable({
                   {listing.priceDisplay}
                 </span>
                 {listing.marginRequested && (
-                  <p className="text-[9px] tracking-wider uppercase mt-1" style={{ color: '#9a8f7a' }}>
+                  <p className="text-[11px] tracking-wider uppercase mt-1" style={{ color: '#9a8f7a' }}>
                     Margin requested
                   </p>
                 )}
@@ -142,11 +142,11 @@ export default function AdminListingsTable({
               </td>
               <td className="py-4 pr-6">
                 <span
-                  className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1"
+                  className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1"
                   style={
                     listing.published
                       ? { border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }
-                      : { border: '1px solid #3a3028', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+                      : { border: '1px solid #908673', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
                   }
                 >
                   {listing.published ? 'Live' : 'Pending Review'}
@@ -158,7 +158,7 @@ export default function AdminListingsTable({
                 </span>
               </td>
               <td className="py-4 pr-6">
-                <span className="text-xs" style={{ color: listing.featured ? '#C9A84C' : '#3a3028', fontFamily: 'var(--font-inter)' }}>
+                <span className="text-xs" style={{ color: listing.featured ? '#C9A84C' : '#908673', fontFamily: 'var(--font-inter)' }}>
                   {listing.featured ? '★ Yes' : 'No'}
                 </span>
               </td>
@@ -187,7 +187,7 @@ export default function AdminListingsTable({
                     disabled={deletingId === listing.id}
                     onClick={() => handleDelete(listing.id, listing.title)}
                     className="text-xs tracking-wider transition-colors hover:text-lux-sold disabled:opacity-60"
-                    style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+                    style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
                   >
                     {deletingId === listing.id ? 'Deleting…' : 'Delete'}
                   </button>

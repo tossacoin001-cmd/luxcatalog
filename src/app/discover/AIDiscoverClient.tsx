@@ -180,7 +180,7 @@ export default function AIDiscoverClient() {
         <button
           onClick={reset}
           className="mt-10 flex items-center gap-2 text-xs tracking-wider mx-auto"
-          style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+          style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
         >
           <RotateCcw size={12} /> Try AI matching again
         </button>
@@ -226,7 +226,7 @@ export default function AIDiscoverClient() {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] tracking-[0.2em] uppercase mb-1" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] tracking-[0.2em] uppercase mb-1" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                   {match.category.replace('_', ' ')} · {match.priceDisplay}
                 </p>
                 <h3 className="text-lg mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
@@ -246,7 +246,7 @@ export default function AIDiscoverClient() {
                   >
                     {match.matchScore}%
                   </div>
-                  <div className="text-[9px] tracking-[0.15em] uppercase" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                  <div className="text-[11px] tracking-[0.15em] uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                     Match
                   </div>
                 </div>
@@ -265,7 +265,7 @@ export default function AIDiscoverClient() {
         <button
           onClick={reset}
           className="mt-10 flex items-center gap-2 text-xs tracking-wider"
-          style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+          style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
         >
           <RotateCcw size={12} /> Start Again
         </button>
@@ -288,7 +288,7 @@ export default function AIDiscoverClient() {
       </div>
 
       {/* Step counter */}
-      <p className="text-[10px] tracking-[0.2em] uppercase mb-3" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+      <p className="text-[11px] tracking-[0.2em] uppercase mb-3" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
         Step {step + 1} of {steps.length}
       </p>
 

@@ -42,7 +42,7 @@ export default function AdminNavbar({ role }: { role?: 'admin' | 'partner' | nul
               Lux Catalog
             </span>
             <span
-              className="text-[10px] tracking-[0.2em] uppercase px-2 py-0.5"
+              className="text-[11px] tracking-[0.2em] uppercase px-2 py-0.5"
               style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
             >
               {role === 'partner' ? 'Partner' : 'Admin'}

@@ -42,21 +42,21 @@ export default function AccountClient({ user, requireTwoFactor }: { user: Accoun
       <Section title="Profile">
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" style={text}>
           <div>
-            <dt className="text-[10px] tracking-[0.15em] uppercase mb-1">Name</dt>
+            <dt className="text-[11px] tracking-[0.15em] uppercase mb-1">Name</dt>
             <dd style={{ color: '#f5f0e8' }}>{user.name}</dd>
           </div>
           <div>
-            <dt className="text-[10px] tracking-[0.15em] uppercase mb-1">Email</dt>
+            <dt className="text-[11px] tracking-[0.15em] uppercase mb-1">Email</dt>
             <dd style={{ color: '#f5f0e8' }}>
               {user.email}{' '}
-              <span className="text-[10px] uppercase ml-1" style={{ color: user.emailVerified ? '#6fbf73' : '#C9A84C' }}>
+              <span className="text-[11px] uppercase ml-1" style={{ color: user.emailVerified ? '#6fbf73' : '#C9A84C' }}>
                 {user.emailVerified ? 'Verified' : 'Unverified'}
               </span>
             </dd>
           </div>
           {user.phone && (
             <div>
-              <dt className="text-[10px] tracking-[0.15em] uppercase mb-1">Phone</dt>
+              <dt className="text-[11px] tracking-[0.15em] uppercase mb-1">Phone</dt>
               <dd style={{ color: '#f5f0e8' }}>{user.phone}</dd>
             </div>
           )}

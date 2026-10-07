@@ -37,7 +37,7 @@ export default function PartnerAdminTable({ partners }: { partners: PartnerRow[]
 
   if (partners.length === 0) {
     return (
-      <p className="py-16 text-center text-sm" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+      <p className="py-16 text-center text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
         No partner profiles yet. They&rsquo;ll appear here once an invited partner sets one up.
       </p>
     )
@@ -56,7 +56,7 @@ export default function PartnerAdminTable({ partners }: { partners: PartnerRow[]
             )}
             <div className="min-w-0">
               <p className="text-sm truncate" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>{p.brandName}</p>
-              <p className="text-xs truncate" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-xs truncate" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 {p.listingCount} listing{p.listingCount === 1 ? '' : 's'}{p.bio ? ` · ${p.bio}` : ''}
               </p>
             </div>

@@ -62,7 +62,7 @@ export function AuthField({
   return (
     <label className="block">
       <span
-        className="block text-[10px] tracking-[0.15em] uppercase mb-2"
+        className="block text-[11px] tracking-[0.15em] uppercase mb-2"
         style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
       >
         {label}

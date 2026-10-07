@@ -93,7 +93,7 @@ export default function AdminTeamManager({
       {/* Invite form */}
       <form onSubmit={handleInvite} className="p-6 flex flex-col md:flex-row gap-4 md:items-end" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
         <div className="flex-1">
-          <label className="block text-[10px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+          <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
             Invite by Email
           </label>
           <input
@@ -107,7 +107,7 @@ export default function AdminTeamManager({
           />
         </div>
         <div>
-          <label className="block text-[10px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+          <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
             Role
           </label>
           <select
@@ -155,7 +155,7 @@ export default function AdminTeamManager({
 
       {/* Current members */}
       <div>
-        <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+        <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
           Team Members
         </p>
         <div className="space-y-3">
@@ -165,14 +165,14 @@ export default function AdminTeamManager({
                 <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                   {m.name || m.email}
                   {m.userId === currentUserId && (
-                    <span className="ml-2 text-[10px] uppercase" style={{ color: '#5a5248' }}>(You)</span>
+                    <span className="ml-2 text-[11px] uppercase" style={{ color: '#908673' }}>(You)</span>
                   )}
                 </p>
-                <p className="text-xs" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>{m.email}</p>
+                <p className="text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>{m.email}</p>
               </div>
               <div className="flex items-center gap-4">
                 <span
-                  className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1"
+                  className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1"
                   style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
                 >
                   {roleLabel(m.role)}
@@ -182,7 +182,7 @@ export default function AdminTeamManager({
                     onClick={() => handleRemove('member', m.userId!)}
                     disabled={removingId === m.userId}
                     className="p-1.5 transition-colors hover:text-lux-sold disabled:opacity-60"
-                    style={{ color: '#5a5248' }}
+                    style={{ color: '#908673' }}
                     aria-label="Remove member"
                   >
                     <X size={14} />
@@ -197,20 +197,20 @@ export default function AdminTeamManager({
       {/* Pending invitations */}
       {invitations.length > 0 && (
         <div>
-          <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
             Pending Invitations
           </p>
           <div className="space-y-3">
             {invitations.map((inv) => (
               <div key={inv.id} className="flex items-center justify-between p-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
                 <div className="flex items-center gap-3">
-                  <Mail size={14} style={{ color: '#5a5248' }} />
+                  <Mail size={14} style={{ color: '#908673' }} />
                   <p className="text-sm" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>{inv.email}</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <span
-                    className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1"
-                    style={{ border: '1px solid #1e2e1f', color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+                    className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1"
+                    style={{ border: '1px solid #1e2e1f', color: '#908673', fontFamily: 'var(--font-inter)' }}
                   >
                     {roleLabel(inv.role)} &middot; Pending
                   </span>
@@ -218,7 +218,7 @@ export default function AdminTeamManager({
                     onClick={() => handleRemove('invitation', inv.id)}
                     disabled={removingId === inv.id}
                     className="p-1.5 transition-colors hover:text-lux-sold disabled:opacity-60"
-                    style={{ color: '#5a5248' }}
+                    style={{ color: '#908673' }}
                     aria-label="Revoke invitation"
                   >
                     <X size={14} />

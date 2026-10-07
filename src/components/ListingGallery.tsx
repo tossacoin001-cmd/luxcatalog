@@ -66,7 +66,7 @@ export default function ListingGallery({ images, title, children }: ListingGalle
           <button
             type="button"
             onClick={() => setLightboxOpen(true)}
-            className="absolute top-24 right-6 md:right-12 z-10 flex items-center gap-2 px-3 py-2 text-xs tracking-[0.15em] uppercase transition-colors hover:bg-black/70"
+            className="absolute top-24 right-5 md:right-12 z-10 flex items-center gap-2 min-h-11 px-4 text-xs tracking-[0.15em] uppercase transition-colors hover:bg-black/70"
             style={{ background: 'rgba(8,12,8,0.55)', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}
             aria-label="View photos fullscreen"
           >

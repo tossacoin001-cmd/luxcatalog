@@ -64,7 +64,7 @@ export default function SignUpForm({
       footer={
         <>
           Already have an account?{' '}
-          <Link href={signInHref} className="text-lux-gold hover:text-lux-gold-light">
+          <Link href={signInHref} className="inline-flex items-center min-h-11 text-lux-gold hover:text-lux-gold-light">
             Sign in
           </Link>
         </>
