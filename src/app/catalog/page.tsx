@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import Navbar from '@/components/Navbar'
+import Breadcrumbs from '@/components/Breadcrumbs'
 import Footer from '@/components/Footer'
 import CatalogClient from './CatalogClient'
 import { prisma } from '@/lib/prisma'
@@ -30,10 +31,13 @@ export default async function CatalogPage() {
 
       {/* Page header */}
       <div
-        className="pt-32 pb-12 px-6 md:px-12"
+        className="pt-28 md:pt-32 pb-12 px-5 md:px-12"
         style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}
       >
         <div className="max-w-7xl mx-auto">
+          <div className="mb-6">
+            <Breadcrumbs trail={[{ label: 'Home', href: '/' }, { label: 'Catalog' }]} />
+          </div>
           <p
             className="text-xs tracking-[0.3em] uppercase mb-4"
             style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}

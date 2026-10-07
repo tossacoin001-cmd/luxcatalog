@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import ListingGallery from '@/components/ListingGallery'
 import ListingActionBar from '@/components/ListingActionBar'
+import Breadcrumbs from '@/components/Breadcrumbs'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Badge } from '@/components/ui/badge'
@@ -58,6 +59,20 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
       {/* Hero gallery */}
       <ListingGallery images={listing.images} title={listing.title}>
+        {/* Way back, top-left over the photo (the fullscreen button sits top-right). */}
+        <div className="absolute inset-x-0 top-24 z-10">
+          <div className="max-w-7xl mx-auto pl-5 pr-32 md:pl-12 md:pr-44">
+            <Breadcrumbs
+              overlay
+              trail={[
+                { label: 'Home', href: '/' },
+                { label: 'Catalog', href: '/catalog' },
+                { label: categoryLabels[listing.category], href: `/catalog/${categorySlug}` },
+                { label: listing.title },
+              ]}
+            />
+          </div>
+        </div>
         {/* Title overlay */}
         <div className="absolute bottom-0 left-0 right-0 max-w-7xl mx-auto px-6 md:px-12 pb-10">
           <div className="flex items-end justify-between gap-4">
