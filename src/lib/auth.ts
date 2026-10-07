@@ -10,9 +10,17 @@ import { getAppUrl } from '@/lib/utils'
 // sessions and 2FA secrets all live in our Postgres, the only outside
 // services involved are SMTP (to deliver links) and, when configured,
 // Cloudflare Turnstile (bot check on sign-in/up/reset).
+// Vercel sets VERCEL_URL (this deployment) and VERCEL_BRANCH_URL (the branch
+// alias) on every deploy, so preview builds work without a per-preview
+// BETTER_AUTH_URL. Production pins BETTER_AUTH_URL explicitly.
+const vercelOrigins = [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL]
+  .filter((h): h is string => !!h)
+  .map((h) => `https://${h}`)
+
 export const auth = betterAuth({
   appName: 'Lux Catalog',
-  baseURL: process.env.BETTER_AUTH_URL ?? getAppUrl('http://localhost:3000'),
+  baseURL: process.env.BETTER_AUTH_URL ?? vercelOrigins[0] ?? getAppUrl('http://localhost:3000'),
+  trustedOrigins: vercelOrigins,
   secret: process.env.BETTER_AUTH_SECRET,
   database: prismaAdapter(prisma, { provider: 'postgresql' }),
 
