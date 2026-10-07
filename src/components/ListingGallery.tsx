@@ -255,7 +255,7 @@ function Lightbox({ images, title, index, onIndexChange, onClose }: LightboxProp
       aria-modal="true"
       aria-label={`${title} photos`}
       className="fixed inset-0 z-[100] flex flex-col"
-      style={{ background: 'rgba(4,6,4,0.97)' }}
+      style={{ background: '#040604' }}
     >
       <div className="flex items-center justify-between px-4 md:px-8 py-4" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
         <span className="text-xs tracking-[0.2em] uppercase" style={{ color: '#9a8f7a' }}>
