@@ -19,7 +19,7 @@
   /* Text */
   --color-lux-text:        #f5f0e8;
   --color-lux-text-muted:  #9a8f7a;
-  --color-lux-text-subtle: #5a5248;
+  --color-lux-text-subtle: #908673;
 
   /* Light / cream sections */
   --color-lux-cream:  #f8f4ee;
@@ -170,4 +170,116 @@ body {
 
 .cream-section .text-lux-text {
   color: #1a1208;
+}
+
+/* =====================================================================
+   MOTION SYSTEM
+   One rhythm for the whole site: things settle (expo-out), never bounce.
+   Every effect below is switched off under prefers-reduced-motion.
+   ===================================================================== */
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 700ms;
+}
+
+::selection {
+  background: rgba(201, 168, 76, 0.35);
+  color: #f5f0e8;
+}
+
+/* Visible, on-brand keyboard focus everywhere (mouse clicks stay clean). */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid #C9A84C;
+  outline-offset: 3px;
+}
+
+/* Remove the 300ms tap delay and grey tap flash on touch devices. */
+a, button, [role='button'], label, summary {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Slow cinematic drift for hero imagery (Ken Burns). */
+@keyframes kenburns {
+  from { transform: scale(1.12) translate3d(0, 0, 0); }
+  to   { transform: scale(1) translate3d(0, -1.5%, 0); }
+}
+.animate-kenburns {
+  animation: kenburns 9s var(--ease-out-expo) both;
+  will-change: transform;
+}
+
+/* Gold light sweeping across a surface (used once, on primary CTAs). */
+@keyframes sheen {
+  0%   { transform: translateX(-120%) skewX(-20deg); }
+  60%, 100% { transform: translateX(220%) skewX(-20deg); }
+}
+.sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 245, 220, 0.45), transparent);
+  animation: sheen 4.5s var(--ease-in-out-soft) 1.2s infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Endless slow ticker for the seasonal concierge strip. */
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+/* Scroll cue: a gold drop travelling down a hairline. */
+@keyframes scrollcue {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  30%  { opacity: 1; }
+  100% { transform: translateY(200%); opacity: 0; }
+}
+.animate-scrollcue {
+  animation: scrollcue 2.2s var(--ease-in-out-soft) infinite;
+}
+
+/* Images fade in once decoded instead of popping. */
+.img-fade {
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out-expo), transform 1.2s var(--ease-out-expo);
+}
+.img-fade[data-loaded='true'] {
+  opacity: 1;
+}
+
+/* Hide native scrollbars on horizontal snap rails, keep them scrollable. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .sheen::after,
+  .animate-scrollcue {
+    display: none;
+  }
 }

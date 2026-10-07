@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function AdminPage() {
   const { userId, role } = await requireStaff()
-  const isVendor = role === 'org:vendor'
+  const isVendor = role === 'partner'
 
   if (isVendor) {
     const [myListings, live, pendingReview, itemsSold, enquiries] = await Promise.all([
@@ -59,7 +59,7 @@ export default async function AdminPage() {
                 <p className="text-3xl mb-1 group-hover:text-lux-gold transition-colors" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C' }}>
                   {s.value}
                 </p>
-                <p className="text-[10px] tracking-[0.15em] uppercase" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] tracking-[0.15em] uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                   {s.label}
                 </p>
               </Link>
@@ -136,7 +136,7 @@ export default async function AdminPage() {
               <p className="text-3xl mb-1 group-hover:text-lux-gold transition-colors" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C' }}>
                 {s.value}
               </p>
-              <p className="text-[10px] tracking-[0.15em] uppercase" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.15em] uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 {s.label}
               </p>
             </Link>
@@ -145,7 +145,7 @@ export default async function AdminPage() {
 
         {/* Quick actions */}
         <div>
-          <p className="text-[10px] tracking-[0.2em] uppercase mb-5" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-5" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
             Quick Actions
           </p>
           <div className="flex flex-wrap gap-4">

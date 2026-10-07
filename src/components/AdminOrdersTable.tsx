@@ -50,7 +50,7 @@ export default function AdminOrdersTable({ orders }: { orders: OrderRow[] }) {
 
   if (orders.length === 0) {
     return (
-      <p className="py-16 text-center text-sm" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+      <p className="py-16 text-center text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
         No orders yet.
       </p>
     )
@@ -69,7 +69,7 @@ export default function AdminOrdersTable({ orders }: { orders: OrderRow[] }) {
                     {order.shippingName}
                   </h3>
                   <span
-                    className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1"
+                    className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1"
                     style={{ background: s.bg, color: s.color, border: `1px solid ${s.border}`, fontFamily: 'var(--font-inter)' }}
                   >
                     {order.status}
@@ -78,7 +78,7 @@ export default function AdminOrdersTable({ orders }: { orders: OrderRow[] }) {
                 <p className="text-xs mb-1" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
                   {order.email} {order.phone && `· ${order.phone}`}
                 </p>
-                <p className="text-xs mb-3" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-xs mb-3" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                   {order.shippingAddress}, {order.shippingCity}, {order.shippingState}
                 </p>
                 <div className="space-y-1 mb-2">
@@ -91,7 +91,7 @@ export default function AdminOrdersTable({ orders }: { orders: OrderRow[] }) {
                 <p className="text-sm" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                   {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(order.total)}
                 </p>
-                <p className="text-[10px] mt-3" style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] mt-3" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                   {new Date(order.createdAt).toLocaleString('en-NG', { dateStyle: 'medium', timeStyle: 'short' })}
                 </p>
               </div>

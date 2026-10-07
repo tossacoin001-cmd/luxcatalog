@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function AdminListingsPage() {
   const { userId, role } = await requireStaff()
-  const isVendor = role === 'org:vendor'
+  const isVendor = role === 'partner'
 
   const listings = await prisma.listing.findMany({
     where: isVendor ? { ownerId: userId } : undefined,
@@ -54,7 +54,7 @@ export default async function AdminListingsPage() {
       <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
         <div className="max-w-7xl mx-auto flex items-end justify-between">
           <div>
-            <Link href="/admin" className="text-[10px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <Link href="/admin" className="text-[11px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               ← Admin
             </Link>
             <h1 className="text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>

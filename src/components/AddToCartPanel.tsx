@@ -49,7 +49,7 @@ export default function AddToCartPanel({ listingId, title, priceNgn, image }: Ad
         </button>
       )}
 
-      <p className="text-[10px] leading-relaxed text-center" style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}>
+      <p className="text-[11px] leading-relaxed text-center" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
         Delivery within 24 hours in Lagos, 24 to 72 hours outside Lagos.
       </p>
     </div>

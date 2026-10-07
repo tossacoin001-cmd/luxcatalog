@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { UserButton } from '@clerk/nextjs'
+import UserMenu from '@/components/UserMenu'
 import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -22,10 +22,10 @@ const vendorLinks = [
   { label: 'My Profile', href: '/admin/profile' },
 ]
 
-export default function AdminNavbar({ role }: { role?: 'org:admin' | 'org:vendor' | 'org:member' | null }) {
+export default function AdminNavbar({ role }: { role?: 'admin' | 'partner' | null }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
-  const links = role === 'org:vendor' ? vendorLinks : adminLinks
+  const links = role === 'partner' ? vendorLinks : adminLinks
 
   return (
     <>
@@ -42,10 +42,10 @@ export default function AdminNavbar({ role }: { role?: 'org:admin' | 'org:vendor
               Lux Catalog
             </span>
             <span
-              className="text-[10px] tracking-[0.2em] uppercase px-2 py-0.5"
+              className="text-[11px] tracking-[0.2em] uppercase px-2 py-0.5"
               style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
             >
-              {role === 'org:vendor' ? 'Partner' : 'Admin'}
+              {role === 'partner' ? 'Partner' : 'Admin'}
             </span>
           </Link>
 
@@ -74,7 +74,7 @@ export default function AdminNavbar({ role }: { role?: 'org:admin' | 'org:vendor
           >
             View Public Site
           </Link>
-          <UserButton appearance={{ elements: { avatarBox: 'w-8 h-8 ring-1 ring-lux-gold-muted' } }} />
+          <UserMenu showStaffLink={false} />
           <button
             className="md:hidden text-lux-text-muted hover:text-lux-gold transition-colors"
             onClick={() => setOpen(!open)}

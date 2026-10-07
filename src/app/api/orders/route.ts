@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { getUserId } from '@/lib/admin-auth'
 import Stripe from 'stripe'
 import { prisma } from '@/lib/prisma'
 import { getNgnToUsdRate } from '@/lib/fx'
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     }
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-06-24.dahlia' })
 
-    const { userId } = await auth()
+    const userId = await getUserId()
     const { items, shipping }: { items: CartItemInput[]; shipping: ShippingInput } = await req.json()
 
     if (!items?.length) return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })

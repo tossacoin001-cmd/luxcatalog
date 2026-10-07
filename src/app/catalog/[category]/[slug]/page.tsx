@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
+import ListingGallery from '@/components/ListingGallery'
+import ListingActionBar from '@/components/ListingActionBar'
+import Breadcrumbs from '@/components/Breadcrumbs'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Badge } from '@/components/ui/badge'
 import InquiryModal from '@/components/InquiryModal'
 import AddToCartPanel from '@/components/AddToCartPanel'
 import PriceDisplay from '@/components/PriceDisplay'
-import { categoryLabels } from '@/lib/utils'
+import { categoryLabels, specLabel } from '@/lib/utils'
 import { prisma } from '@/lib/prisma'
 import { MapPin, Check } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -56,21 +58,21 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
       <Navbar />
 
       {/* Hero gallery */}
-      <div className="relative pt-20 h-[55vh] md:h-[70vh] overflow-hidden">
-        {listing.images[0] && (
-          <Image
-            src={listing.images[0]}
-            alt={listing.title}
-            fill
-            className="object-cover"
-            priority
-          />
-        )}
-        <div
-          className="absolute inset-0"
-          style={{ background: 'linear-gradient(180deg, rgba(8,12,8,0.2) 0%, rgba(8,12,8,0.85) 100%)' }}
-        />
-
+      <ListingGallery images={listing.images} title={listing.title}>
+        {/* Way back, top-left over the photo (the fullscreen button sits top-right). */}
+        <div className="absolute inset-x-0 top-24 z-10">
+          <div className="max-w-7xl mx-auto pl-5 pr-32 md:pl-12 md:pr-44">
+            <Breadcrumbs
+              overlay
+              trail={[
+                { label: 'Home', href: '/' },
+                { label: 'Catalog', href: '/catalog' },
+                { label: categoryLabels[listing.category], href: `/catalog/${categorySlug}` },
+                { label: listing.title },
+              ]}
+            />
+          </div>
+        </div>
         {/* Title overlay */}
         <div className="absolute bottom-0 left-0 right-0 max-w-7xl mx-auto px-6 md:px-12 pb-10">
           <div className="flex items-end justify-between gap-4">
@@ -93,21 +95,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
             </Badge>
           </div>
         </div>
-      </div>
-
-      {/* Thumbnail strip */}
-      {listing.images.length > 1 && (
-        <div
-          className="flex gap-3 max-w-7xl mx-auto px-6 md:px-12 py-4 overflow-x-auto"
-          style={{ borderBottom: '1px solid #1e2e1f' }}
-        >
-          {listing.images.map((img, i) => (
-            <div key={i} className="relative w-24 h-16 flex-shrink-0 overflow-hidden" style={{ border: i === 0 ? '1px solid #C9A84C' : '1px solid #1e2e1f' }}>
-              <Image src={img} alt={`${listing.title} photo ${i + 1}`} fill className="object-cover" />
-            </div>
-          ))}
-        </div>
-      )}
+      </ListingGallery>
 
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -135,8 +123,8 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {Object.entries(specs).map(([key, val]) => (
                   <div key={key} className="p-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-                    <p className="text-[10px] tracking-[0.15em] uppercase mb-1" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-                      {key}
+                    <p className="text-[11px] tracking-[0.15em] uppercase mb-1" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                      {specLabel(key)}
                     </p>
                     <p className="text-sm font-medium" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                       {val}
@@ -168,13 +156,13 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
         </div>
 
         {/* Right: inquiry panel */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1" id="enquire" style={{ scrollMarginTop: '6rem' }}>
           <div
             className="sticky top-24 p-7 space-y-6"
             style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}
           >
             <div>
-              <p className="text-[10px] tracking-[0.2em] uppercase mb-2" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 Asking Price
               </p>
               <p className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: !price ? 'italic' : 'normal' }}>
@@ -186,22 +174,22 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
             <div className="space-y-3">
               <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#5a5248' }}>Category</span>
+                <span style={{ color: '#908673' }}>Category</span>
                 <span style={{ color: '#9a8f7a' }}>{categoryLabels[listing.category]}</span>
               </div>
               <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#5a5248' }}>Location</span>
+                <span style={{ color: '#908673' }}>Location</span>
                 <span style={{ color: '#9a8f7a' }}>{listing.location}</span>
               </div>
               <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#5a5248' }}>Status</span>
+                <span style={{ color: '#908673' }}>Status</span>
                 <Badge variant={statusVariant}>
                   {listing.status === 'under_offer' ? 'Under Offer' : listing.status}
                 </Badge>
               </div>
               {partner && (
                 <div className="flex justify-between items-center text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                  <span style={{ color: '#5a5248' }}>Listed By</span>
+                  <span style={{ color: '#908673' }}>Listed By</span>
                   <span className="flex items-center gap-2" style={{ color: '#9a8f7a' }}>
                     {partner.logo && (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -231,8 +219,8 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
                 />
 
                 <p
-                  className="text-[10px] leading-relaxed text-center"
-                  style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}
+                  className="text-[11px] leading-relaxed text-center"
+                  style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
                 >
                   Your enquiry is handled with complete discretion. A specialist will respond within 24 hours.
                 </p>
@@ -243,6 +231,12 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
       </div>
 
       <Footer />
+      <ListingActionBar
+        title={listing.title}
+        price={price}
+        priceDisplay={listing.priceDisplay}
+        primaryLabel={listing.category === 'decor' ? 'Buy' : 'Reserve'}
+      />
     </div>
   )
 }

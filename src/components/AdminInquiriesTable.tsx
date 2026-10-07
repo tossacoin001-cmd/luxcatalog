@@ -49,7 +49,7 @@ export default function AdminInquiriesTable({ inquiries }: { inquiries: InquiryR
 
   if (inquiries.length === 0) {
     return (
-      <p className="py-16 text-center text-sm" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+      <p className="py-16 text-center text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
         No enquiries yet. They&rsquo;ll show up here as soon as someone contacts you via the site.
       </p>
     )
@@ -68,13 +68,13 @@ export default function AdminInquiriesTable({ inquiries }: { inquiries: InquiryR
                     {inq.name}
                   </h3>
                   <span
-                    className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1"
+                    className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1"
                     style={{ background: s.bg, color: s.color, border: `1px solid ${s.border}`, fontFamily: 'var(--font-inter)' }}
                   >
                     {inq.status.replace('_', ' ')}
                   </span>
                   {inq.listing && (
-                    <span className="text-[10px] tracking-wider uppercase" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                    <span className="text-[11px] tracking-wider uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                       re: {inq.listing.title}
                     </span>
                   )}
@@ -90,7 +90,7 @@ export default function AdminInquiriesTable({ inquiries }: { inquiries: InquiryR
                 <p className="text-sm leading-relaxed mt-2" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                   {inq.message}
                 </p>
-                <p className="text-[10px] mt-3" style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] mt-3" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                   {new Date(inq.createdAt).toLocaleString('en-NG', { dateStyle: 'medium', timeStyle: 'short' })}
                 </p>
               </div>

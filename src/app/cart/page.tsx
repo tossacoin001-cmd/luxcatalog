@@ -32,11 +32,11 @@ export default function CartPage() {
       <div className="max-w-4xl mx-auto px-6 md:px-12 py-16">
         {items.length === 0 ? (
           <div className="text-center py-16">
-            <ShoppingBag size={32} style={{ color: '#3a3028', margin: '0 auto 1.5rem' }} />
+            <ShoppingBag size={32} style={{ color: '#908673', margin: '0 auto 1.5rem' }} />
             <p className="text-lg mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
               Your cart is empty
             </p>
-            <p className="text-sm mb-8" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-sm mb-8" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Browse our interior decor collection to get started.
             </p>
             <Link
@@ -90,7 +90,7 @@ export default function CartPage() {
                       <button
                         onClick={() => removeItem(item.listingId)}
                         className="text-xs tracking-wider flex items-center gap-1"
-                        style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+                        style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
                       >
                         <X size={12} /> Remove
                       </button>
@@ -102,14 +102,14 @@ export default function CartPage() {
 
             <div>
               <div className="sticky top-24 p-7 space-y-5" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-                <p className="text-[10px] tracking-[0.2em] uppercase" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                   Order Summary
                 </p>
                 <div className="flex justify-between text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
                   <span style={{ color: '#9a8f7a' }}>Subtotal</span>
                   <span style={{ color: '#f5f0e8' }}>{formatListingPrice(subtotalNgn, null, currency, rate)}</span>
                 </div>
-                <p className="text-xs leading-relaxed" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-xs leading-relaxed" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                   Delivery within 24 hours in Lagos, 24 to 72 hours outside Lagos. Delivery fee confirmed at checkout.
                 </p>
                 <button

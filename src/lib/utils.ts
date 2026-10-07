@@ -77,3 +77,18 @@ export const categoryImages: Record<string, string> = {
   shortlet:            'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80',
   executive_services:  'https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&q=80',
 }
+
+// Spec keys are stored as typed by admins or seeds ("topSpeed", "year_built",
+// "km"). Shoppers should read "Top Speed", "Year Built", "Mileage".
+const SPEC_LABELS: Record<string, string> = { km: 'Mileage', hp: 'Horsepower', bhp: 'Horsepower', sqm: 'Floor Area', loa: 'Length Overall' }
+
+export function specLabel(key: string): string {
+  const known = SPEC_LABELS[key.toLowerCase()]
+  if (known) return known
+  return key
+    .replace(/[_-]+/g, ' ')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+}

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
+import { getUserId } from '@/lib/admin-auth'
 import Stripe from 'stripe'
 import { getAppUrl } from '@/lib/utils'
 
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       apiVersion: '2026-06-24.dahlia',
     })
 
-    const { userId } = await auth()
+    const userId = await getUserId()
     if (!userId) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 })
     }

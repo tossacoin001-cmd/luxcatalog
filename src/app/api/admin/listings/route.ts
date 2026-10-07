@@ -7,7 +7,7 @@ import { optimizeListingDraft } from '@/lib/ai-optimize'
 export async function POST(req: Request) {
   const staff = await requireStaffApi()
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  const isVendor = staff.role === 'org:vendor'
+  const isVendor = staff.role === 'partner'
 
   try {
     const body = await req.json()

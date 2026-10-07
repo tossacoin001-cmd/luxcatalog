@@ -69,14 +69,14 @@ export default function PartnerProfileForm({ profile, redirectAfterSave }: { pro
   }
 
   const fieldClass = 'w-full h-11 px-4 text-sm focus:outline-none transition-colors'
-  const labelClass = 'block text-[10px] tracking-[0.15em] uppercase mb-2'
+  const labelClass = 'block text-[11px] tracking-[0.15em] uppercase mb-2'
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       <div className="p-8" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
         <div className="space-y-5">
           <div>
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Brand Name <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input
@@ -91,7 +91,7 @@ export default function PartnerProfileForm({ profile, redirectAfterSave }: { pro
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Logo
             </label>
             {logo ? (
@@ -102,7 +102,7 @@ export default function PartnerProfileForm({ profile, redirectAfterSave }: { pro
                   type="button"
                   onClick={() => setLogo(null)}
                   className="text-xs tracking-wider flex items-center gap-1"
-                  style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+                  style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
                 >
                   <X size={12} /> Remove
                 </button>
@@ -125,7 +125,7 @@ export default function PartnerProfileForm({ profile, redirectAfterSave }: { pro
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Short Bio
             </label>
             <textarea

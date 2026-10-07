@@ -67,13 +67,13 @@ export default function ContactPage() {
       <div className="max-w-2xl mx-auto px-6 md:px-12 py-16">
         <div className="p-8 md:p-10" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { key: 'name', label: 'Full Name', type: 'text', placeholder: 'Your name', required: true },
-                { key: 'phone', label: 'Phone', type: 'tel', placeholder: '+1 555 000 0000', required: false },
+                { key: 'phone', label: 'Phone', type: 'tel', placeholder: '+234 800 000 0000', required: false },
               ].map((f) => (
                 <div key={f.key}>
-                  <label className="block text-[10px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                  <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                     {f.label} {f.required && <span style={{ color: '#C9A84C' }}>*</span>}
                   </label>
                   <input
@@ -92,7 +92,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-[10px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 Email <span style={{ color: '#C9A84C' }}>*</span>
               </label>
               <input
@@ -109,7 +109,7 @@ export default function ContactPage() {
             </div>
 
             <div>
-              <label className="block text-[10px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+              <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 How Can We Help? <span style={{ color: '#C9A84C' }}>*</span>
               </label>
               <textarea
@@ -136,7 +136,7 @@ export default function ContactPage() {
           </form>
         </div>
 
-        <p className="mt-8 text-center text-xs" style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}>
+        <p className="mt-8 text-center text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
           All communications are handled with complete discretion. Our specialists respond within 24 hours.
         </p>
       </div>

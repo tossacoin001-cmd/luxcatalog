@@ -1,16 +1,20 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import CategoryGrid from '@/components/CategoryGrid'
 import AssetCard from '@/components/AssetCard'
+import HeroCinematic from '@/components/home/HeroCinematic'
+import Pillars from '@/components/home/Pillars'
+import SeasonStrip from '@/components/home/SeasonStrip'
+import HowItWorks from '@/components/home/HowItWorks'
+import Reveal, { RevealGroup, RevealItem } from '@/components/motion/Reveal'
 import { categoryHrefs } from '@/lib/utils'
 import { prisma } from '@/lib/prisma'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
-  const [featured, totalListings, trustedPartners] = await Promise.all([
+  const [featured, trustedPartners] = await Promise.all([
     prisma.listing.findMany({
       where: { featured: true, published: true },
       orderBy: { createdAt: 'desc' },
@@ -20,7 +24,6 @@ export default async function HomePage() {
         priceDisplay: true, price: true, images: true, status: true, featured: true,
       },
     }),
-    prisma.listing.count(),
     prisma.partnerProfile.findMany({
       where: { featured: true, logo: { not: null } },
       select: { userId: true, brandName: true, logo: true },
@@ -28,111 +31,65 @@ export default async function HomePage() {
   ])
   const featuredListings = featured.map((l) => ({ ...l, price: l.price ? Number(l.price) : null }))
 
-  const stats = [
-    { value: 'AI', label: 'Powered Matching' },
-    { value: '8', label: 'Asset Categories' },
-    { value: String(totalListings), label: totalListings === 1 ? 'Listing' : 'Curated Listings' },
-    { value: 'Global', label: 'Luxury Network' },
-  ]
-
   return (
     <div style={{ background: '#080c08' }}>
       <Navbar />
 
-      {/* HERO */}
-      <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=90"
-            alt="Luxury landscape"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div
-            className="absolute inset-0"
-            style={{ background: 'linear-gradient(180deg, rgba(8,12,8,0.3) 0%, rgba(8,12,8,0.6) 40%, rgba(8,12,8,0.95) 100%)' }}
-          />
-        </div>
+      <HeroCinematic />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 pb-20 md:pb-28 pt-36">
-          <div className="max-w-3xl">
-            <p
-              className="text-xs tracking-[0.35em] uppercase mb-6"
-              style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
-            >
-              The Definitive Luxury Asset Discovery Platform
-            </p>
+      <Pillars />
 
-            <h1
-              className="text-5xl md:text-7xl leading-[1.05] mb-6"
-              style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}
-            >
-              Every Luxury Asset.
-              <br />
-              <em style={{ color: '#C9A84C' }}>One Destination.</em>
-            </h1>
+      <SeasonStrip />
 
-            <p
-              className="text-base md:text-lg mb-10 max-w-xl leading-relaxed"
-              style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
-            >
-              Curated luxury assets: discovered, desired, acquired. An AI-powered engine matches you to your perfect asset before you even know you want it.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/catalog"
-                className="inline-flex items-center justify-center px-8 py-4 text-xs tracking-[0.2em] uppercase transition-all duration-300 hover:opacity-90 active:scale-95"
-                style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
-              >
-                Browse Catalog
-              </Link>
-              <Link
-                href="/discover"
-                className="inline-flex items-center justify-center px-8 py-4 text-xs tracking-[0.2em] uppercase transition-all duration-300"
-                style={{ border: '1px solid rgba(201,168,76,0.5)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
-              >
-                AI Discovery →
-              </Link>
+      {/* FEATURED: cream gallery. Swipeable rail on phones, grid from tablet up. */}
+      <section style={{ background: '#f8f4ee' }} className="py-20 md:py-28">
+        <div className="max-w-7xl mx-auto px-5 md:px-12">
+          <Reveal className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-12 gap-4">
+            <div>
+              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5f22', fontFamily: 'var(--font-inter)' }}>
+                Featured Collection
+              </p>
+              <h2 className="text-3xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#1a1208' }}>
+                Curated this season
+              </h2>
             </div>
-          </div>
-        </div>
+            <Link
+              href="/catalog"
+              className="group inline-flex items-center gap-2 min-h-11 text-xs tracking-[0.18em] uppercase self-start md:self-auto"
+              style={{ color: '#7a5f22', fontFamily: 'var(--font-inter)' }}
+            >
+              View all listings
+              <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
+          </Reveal>
 
-        <div className="absolute bottom-8 right-8 md:right-12 flex flex-col items-center gap-2">
-          <span
-            className="text-[9px] tracking-[0.25em] uppercase"
-            style={{ color: '#5a5248', fontFamily: 'var(--font-inter)', writingMode: 'vertical-rl' }}
-          >
-            Scroll
-          </span>
-          <div style={{ width: 1, height: 48, background: 'linear-gradient(180deg, #C9A84C, transparent)' }} />
+          {featuredListings.length === 0 ? (
+            <p className="text-sm" style={{ color: '#6b604c', fontFamily: 'var(--font-inter)' }}>
+              New listings are being added. Browse the full catalog in the meantime.
+            </p>
+          ) : (
+            <RevealGroup className="-mx-5 px-5 md:mx-0 md:px-0 flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory no-scrollbar pb-2">
+              {featuredListings.map((asset) => (
+                <RevealItem key={asset.id} className="snap-start shrink-0 w-[82%] sm:w-[60%] md:w-auto">
+                  <AssetCard asset={asset} href={`${categoryHrefs[asset.category] ?? '/catalog'}/${asset.slug}`} />
+                </RevealItem>
+              ))}
+            </RevealGroup>
+          )}
+          {featuredListings.length > 1 && (
+            <p className="md:hidden mt-4 text-[11px] tracking-[0.2em] uppercase" style={{ color: '#7a5f22', fontFamily: 'var(--font-inter)' }}>
+              Swipe to see more &rarr;
+            </p>
+          )}
         </div>
       </section>
 
-      {/* STATS BAR */}
-      <div style={{ borderTop: '1px solid rgba(201,168,76,0.12)', borderBottom: '1px solid rgba(201,168,76,0.12)', background: '#0f1a10' }}>
-        <div className="max-w-7xl mx-auto px-6 md:px-12 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((s) => (
-              <div key={s.value} className="text-center">
-                <p className="text-3xl md:text-4xl mb-1" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C' }}>
-                  {s.value}
-                </p>
-                <p className="text-[10px] tracking-[0.2em] uppercase" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
-                  {s.label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <HowItWorks />
 
-      {/* TRUSTED PARTNERS */}
       {trustedPartners.length > 0 && (
-        <div style={{ borderBottom: '1px solid rgba(201,168,76,0.12)', background: '#0f1a10' }}>
-          <div className="max-w-7xl mx-auto px-6 md:px-12 py-10">
-            <p className="text-[10px] tracking-[0.3em] uppercase text-center mb-8" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+        <section style={{ borderTop: '1px solid rgba(201,168,76,0.12)', background: '#0b120b' }}>
+          <div className="max-w-7xl mx-auto px-5 md:px-12 py-12">
+            <p className="text-[11px] tracking-[0.3em] uppercase text-center mb-8" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Trusted Partners
             </p>
             <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
@@ -148,147 +105,40 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-        </div>
+        </section>
       )}
 
-      {/* CATEGORIES */}
-      <CategoryGrid />
-
-      {/* FEATURED LISTINGS: cream section */}
-      <section style={{ background: '#f8f4ee' }} className="py-20 md:py-28">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div>
-              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#8a6f2e', fontFamily: 'var(--font-inter)' }}>
-                Featured Collection
-              </p>
-              <h2 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#1a1208' }}>
-                Curated This Season
-              </h2>
-            </div>
-            <Link
-              href="/catalog"
-              className="text-xs tracking-[0.18em] uppercase flex items-center gap-2 group transition-colors self-start md:self-auto"
-              style={{ color: '#8a6f2e', fontFamily: 'var(--font-inter)' }}
-            >
-              View All Listings <span className="transition-transform group-hover:translate-x-1">→</span>
-            </Link>
-          </div>
-
-          {featuredListings.length === 0 ? (
-            <p className="text-sm" style={{ color: '#8a7f68', fontFamily: 'var(--font-inter)' }}>
-              New listings are being added, check back shortly or browse the full catalog above.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {featuredListings.map((asset) => (
-                <AssetCard
-                  key={asset.id}
-                  asset={asset}
-                  href={`${categoryHrefs[asset.category] ?? '/catalog'}/${asset.slug}`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* AI CTA */}
-      <section className="relative py-24 md:py-36 overflow-hidden" style={{ background: '#080c08' }}>
+      {/* AI DISCOVERY */}
+      <section className="relative py-24 md:py-32 overflow-hidden" style={{ background: '#080c08', borderTop: '1px solid rgba(201,168,76,0.08)' }}>
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.05) 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(ellipse 55% 55% at 50% 50%, rgba(201,168,76,0.07) 0%, transparent 70%)' }}
         />
-        <div className="relative max-w-3xl mx-auto text-center px-6 md:px-12">
-          <p className="text-xs tracking-[0.35em] uppercase mb-6" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
-            AI-Powered Discovery
-          </p>
-          <h2 className="text-3xl md:text-5xl leading-tight mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-            Your Perfect Asset,
+        <Reveal className="relative max-w-3xl mx-auto text-center px-5 md:px-12">
+          <span
+            className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-6"
+            style={{ border: '1px solid rgba(201,168,76,0.45)' }}
+          >
+            <Sparkles size={18} style={{ color: '#C9A84C' }} />
+          </span>
+          <h2 className="text-3xl md:text-5xl leading-tight mb-5" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            Not sure where to start?
             <br />
-            <em style={{ color: '#C9A84C' }}>Found Before You Ask</em>
+            <em style={{ color: '#C9A84C' }}>Describe it. We&apos;ll find it.</em>
           </h2>
-          <p className="text-base mb-10 max-w-xl mx-auto leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-            Our AI engine learns your preferences, lifestyle, and aspirations, then surfaces assets that are precisely right for you.
+          <p className="text-base mb-9 max-w-xl mx-auto leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+            Tell our AI matchmaker what you want, in your own words. A waterfront stay for six, a weekend convertible, a
+            discreet security detail. It surfaces the assets that fit.
           </p>
-
-          <div className="flex flex-wrap gap-3 justify-center mb-10">
-            {['Preference Analysis', 'Real-Time Matching', 'Personalised Ranking', 'Global Inventory'].map((f) => (
-              <span
-                key={f}
-                className="px-4 py-2 text-[10px] tracking-[0.15em] uppercase"
-                style={{ border: '1px solid rgba(201,168,76,0.2)', color: '#8a6f2e', fontFamily: 'var(--font-inter)' }}
-              >
-                {f}
-              </span>
-            ))}
-          </div>
-
           <Link
             href="/discover"
-            className="inline-flex items-center gap-3 px-10 py-4 text-xs tracking-[0.2em] uppercase transition-all duration-300 hover:opacity-90 active:scale-95"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            className="group inline-flex items-center justify-center gap-3 min-h-[52px] px-10 text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-[rgba(201,168,76,0.1)]"
+            style={{ border: '1px solid #C9A84C', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
           >
-            Start AI Discovery
+            Try AI Discovery
+            <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
-        </div>
-      </section>
-
-      {/* BRAND QUOTE */}
-      <section style={{ background: '#f8f4ee', borderTop: '1px solid #e5ddd0' }} className="py-16 md:py-20">
-        <div className="max-w-4xl mx-auto text-center px-6 md:px-12">
-          <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, #8a6f2e, transparent)', marginBottom: '2rem' }} />
-          <blockquote className="text-2xl md:text-3xl leading-snug mb-6 italic" style={{ fontFamily: 'var(--font-playfair)', color: '#1a1208' }}>
-            &ldquo;Curated luxury assets: discovered, desired, acquired.&rdquo;
-          </blockquote>
-          <p className="text-[10px] tracking-[0.3em] uppercase" style={{ color: '#8a6f2e', fontFamily: 'var(--font-inter)' }}>
-            The Lux Catalog Promise
-          </p>
-          <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, #8a6f2e, transparent)', marginTop: '2rem' }} />
-        </div>
-      </section>
-
-      {/* SCOPE FEATURES */}
-      <section className="py-20 md:py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          <div>
-            <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
-              Platform Scope
-            </p>
-            <h2 className="text-3xl md:text-4xl mb-6 leading-snug" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-              Built for Discerning
-              <br />Global Buyers
-            </h2>
-            <p className="text-sm leading-relaxed mb-8" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-              Lux Catalog is the single destination for discovering and acquiring the world&apos;s finest assets: prime real estate, supercars, superyachts, bespoke interior decor, and everything that defines the luxury lifestyle.
-            </p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center px-8 py-4 text-xs tracking-[0.2em] uppercase transition-all duration-300"
-              style={{ border: '1px solid #C9A84C', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
-            >
-              Book a Consultation
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              'AI-powered matching engine',
-              'Prime real estate catalogue',
-              'Supercars, yachts & lifestyle',
-              'Personalised discovery flow',
-              'Commercial real estate',
-              'Premium editorial UX design',
-            ].map((item) => (
-              <div key={item} className="p-5 lux-card">
-                <span className="text-lg mb-3 block" style={{ color: '#C9A84C' }}>◈</span>
-                <p className="text-sm leading-snug" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-                  {item}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
+        </Reveal>
       </section>
 
       <Footer />

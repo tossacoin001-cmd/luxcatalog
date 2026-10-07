@@ -1,33 +1,27 @@
 import { NextResponse } from 'next/server'
-import { clerkClient } from '@clerk/nextjs/server'
-import { requireAdminApi, resolveRole, LUX_CATALOG_ORG_ID } from '@/lib/admin-auth'
-import { getAppUrl } from '@/lib/utils'
+import { audit, requireAdminApi } from '@/lib/admin-auth'
+import { createStaffInvitation } from '@/lib/invitations'
+import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   const admin = await requireAdminApi()
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const clerk = await clerkClient()
   const [members, invitations] = await Promise.all([
-    clerk.organizations.getOrganizationMembershipList({ organizationId: LUX_CATALOG_ORG_ID }),
-    clerk.organizations.getOrganizationInvitationList({ organizationId: LUX_CATALOG_ORG_ID, status: ['pending'] }),
+    prisma.user.findMany({
+      where: { role: { in: ['admin', 'partner'] } },
+      select: { id: true, name: true, email: true, role: true, image: true },
+      orderBy: { createdAt: 'asc' },
+    }),
+    prisma.staffInvitation.findMany({
+      where: { acceptedAt: null, revokedAt: null, expiresAt: { gt: new Date() } },
+      orderBy: { createdAt: 'desc' },
+    }),
   ])
 
   return NextResponse.json({
-    members: members.data.map((m) => ({
-      id: m.id,
-      userId: m.publicUserData?.userId,
-      name: [m.publicUserData?.firstName, m.publicUserData?.lastName].filter(Boolean).join(' ') || null,
-      email: m.publicUserData?.identifier,
-      role: resolveRole(m),
-      imageUrl: m.publicUserData?.imageUrl,
-    })),
-    invitations: invitations.data.map((i) => ({
-      id: i.id,
-      email: i.emailAddress,
-      role: resolveRole(i),
-      status: i.status,
-    })),
+    members: members.map((m) => ({ id: m.id, userId: m.id, name: m.name, email: m.email, role: m.role, imageUrl: m.image })),
+    invitations: invitations.map((i) => ({ id: i.id, email: i.email, role: i.role, status: 'pending' })),
   })
 }
 
@@ -37,31 +31,19 @@ export async function POST(req: Request) {
 
   try {
     const { email, role } = await req.json()
-    if (!email || !['org:admin', 'org:vendor'].includes(role)) {
+    if (typeof email !== 'string' || !email.includes('@') || !['admin', 'partner'].includes(role)) {
       return NextResponse.json({ error: 'Missing email or invalid role' }, { status: 400 })
     }
 
-    // org:vendor is a virtual app-level role, not a real Clerk role, custom
-    // roles require Clerk's paid B2B add-on. Partners get Clerk's free
-    // org:member role plus a publicMetadata flag, resolveRole() turns that
-    // back into 'org:vendor' everywhere else in the app.
-    const clerkRole = role === 'org:vendor' ? 'org:member' : role
-    const publicMetadata = role === 'org:vendor' ? { partnerType: 'vendor' } : undefined
+    const { invitation, link, emailed } = await createStaffInvitation({ email, role, invitedById: admin.userId })
+    await audit(admin.userId, 'team.invite', invitation.email, { role, emailed })
 
-    const clerk = await clerkClient()
-    const invitation = await clerk.organizations.createOrganizationInvitation({
-      organizationId: LUX_CATALOG_ORG_ID,
-      emailAddress: email,
-      role: clerkRole,
-      publicMetadata,
-      inviterUserId: admin.userId,
-      redirectUrl: `${getAppUrl()}/sign-up`,
-    })
-
-    return NextResponse.json({ success: true, invitation: { id: invitation.id, email: invitation.emailAddress } })
+    // The link is returned so the admin can also share it directly (e.g. on
+    // WhatsApp) when email delivery isn't set up or is slow.
+    return NextResponse.json({ success: true, invitation: { id: invitation.id, email: invitation.email }, link, emailed })
   } catch (err) {
     console.error('Invite error:', err)
-    return NextResponse.json({ error: 'Unable to send invitation' }, { status: 500 })
+    return NextResponse.json({ error: 'Unable to create invitation' }, { status: 500 })
   }
 }
 
@@ -71,19 +53,21 @@ export async function DELETE(req: Request) {
 
   try {
     const { type, id } = await req.json()
-    const clerk = await clerkClient()
 
     if (type === 'invitation') {
-      await clerk.organizations.revokeOrganizationInvitation({
-        organizationId: LUX_CATALOG_ORG_ID,
-        invitationId: id,
-        requestingUserId: admin.userId,
-      })
+      await prisma.staffInvitation.update({ where: { id }, data: { revokedAt: new Date() } })
+      await audit(admin.userId, 'team.invite.revoke', id)
     } else if (type === 'member') {
-      await clerk.organizations.deleteOrganizationMembership({
-        organizationId: LUX_CATALOG_ORG_ID,
-        userId: id,
-      })
+      if (id === admin.userId) {
+        return NextResponse.json({ error: 'You cannot remove yourself' }, { status: 400 })
+      }
+      // Removing staff demotes to customer and ends every active session, so
+      // access is cut immediately rather than when their session expires.
+      await prisma.$transaction([
+        prisma.user.update({ where: { id }, data: { role: 'customer' } }),
+        prisma.session.deleteMany({ where: { userId: id } }),
+      ])
+      await audit(admin.userId, 'team.member.remove', id)
     } else {
       return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
     }

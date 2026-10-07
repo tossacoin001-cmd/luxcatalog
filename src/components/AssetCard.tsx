@@ -33,6 +33,7 @@ interface AssetCardProps {
 export default function AssetCard({ asset, href, saved = false, onToggleSave }: AssetCardProps) {
   const [isSaved, setIsSaved] = useState(saved)
   const [imgError, setImgError] = useState(false)
+  const [imgLoaded, setImgLoaded] = useState(false)
 
   const handleSave = async (e: React.MouseEvent) => {
     e.preventDefault()
@@ -69,13 +70,15 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
   return (
     <Link href={href} className="group block lux-card overflow-hidden">
       {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className={`relative aspect-[4/3] overflow-hidden ${imgLoaded || imgError ? '' : 'skeleton-shimmer'}`}>
         {asset.images[0] && !imgError ? (
           <Image
             src={asset.images[0]}
             alt={asset.title}
             fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            className="img-fade object-cover group-hover:scale-[1.06]"
+            data-loaded={imgLoaded}
+            onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
@@ -105,7 +108,7 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
 
         {/* Featured badge */}
         {asset.featured && (
-          <div className="absolute top-3 right-10">
+          <div className="absolute top-3 right-14">
             <Badge variant="gold-filled">Featured</Badge>
           </div>
         )}
@@ -113,16 +116,17 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
         {/* Save button */}
         <button
           onClick={handleSave}
-          className="absolute top-3 right-3 p-2 transition-all duration-200"
+          className="absolute top-2 right-2 flex items-center justify-center w-11 h-11 transition-all duration-200 active:scale-90"
           style={{
             background: 'rgba(8,12,8,0.6)',
             backdropFilter: 'blur(8px)',
             border: '1px solid rgba(201,168,76,0.2)',
           }}
-          aria-label={isSaved ? 'Unsave' : 'Save'}
+          aria-label={isSaved ? 'Remove from saved' : 'Save to collection'}
+          aria-pressed={isSaved}
         >
           <Heart
-            size={14}
+            size={16}
             className="transition-colors"
             style={{ color: isSaved ? '#C9A84C' : '#9a8f7a', fill: isSaved ? '#C9A84C' : 'transparent' }}
           />
@@ -133,7 +137,7 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
       <div className="p-5">
         {/* Category */}
         <p
-          className="text-[10px] tracking-[0.2em] uppercase mb-2"
+          className="text-[11px] tracking-[0.2em] uppercase mb-2"
           style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
         >
           {categoryLabels[asset.category] ?? asset.category}
@@ -149,10 +153,10 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
 
         {/* Location */}
         <div className="flex items-center gap-1.5 mb-4">
-          <MapPin size={11} style={{ color: '#5a5248', flexShrink: 0 }} />
+          <MapPin size={11} style={{ color: '#908673', flexShrink: 0 }} />
           <span
             className="text-xs truncate"
-            style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+            style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
           >
             {asset.location}, {asset.country}
           </span>

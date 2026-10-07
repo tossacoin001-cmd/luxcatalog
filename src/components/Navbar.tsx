@@ -3,9 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Show, UserButton } from '@clerk/nextjs'
+import UserMenu from '@/components/UserMenu'
+import ConciergeButton from '@/components/ConciergeButton'
+import { useSession } from '@/lib/auth-client'
 import { Menu, X, ShoppingBag } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useCurrency } from '@/components/CurrencyProvider'
 import { useCart } from '@/components/CartProvider'
@@ -17,21 +19,18 @@ const navLinks = [
   { label: 'Dashboard', href: '/dashboard' },
 ]
 
-// NEXT_PUBLIC_ vars are inlined at build time: false when keys aren't set
-const hasClerk = !!(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
-
 function CurrencyToggle() {
   const { currency, setCurrency } = useCurrency()
   return (
     <div
-      className="hidden md:flex items-center text-[10px] tracking-[0.1em]"
+      className="hidden md:flex items-center text-[11px] tracking-[0.1em]"
       style={{ fontFamily: 'var(--font-inter)', border: '1px solid rgba(201,168,76,0.25)' }}
     >
       {(['NGN', 'USD'] as const).map((c) => (
         <button
           key={c}
           onClick={() => setCurrency(c)}
-          className="px-2.5 py-1.5 transition-colors"
+          className="px-3 h-9 transition-colors"
           style={{
             background: currency === c ? '#C9A84C' : 'transparent',
             color: currency === c ? '#080c08' : '#9a8f7a',
@@ -47,11 +46,11 @@ function CurrencyToggle() {
 function CartIcon() {
   const { count } = useCart()
   return (
-    <Link href="/cart" className="relative p-1" aria-label="Cart">
+    <Link href="/cart" className="relative flex items-center justify-center w-11 h-11 -mx-2" aria-label="Cart">
       <ShoppingBag size={18} style={{ color: '#9a8f7a' }} />
       {count > 0 && (
         <span
-          className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 text-[9px] rounded-full"
+          className="absolute top-1 right-1 flex items-center justify-center min-w-4 h-4 px-1 text-[10px] leading-none rounded-full"
           style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
         >
           {count > 9 ? '9+' : count}
@@ -65,7 +64,7 @@ function MobileCurrencyToggle() {
   const { currency, setCurrency } = useCurrency()
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs tracking-[0.2em] uppercase" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+      <span className="text-xs tracking-[0.2em] uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
         Currency
       </span>
       <div className="flex" style={{ border: '1px solid rgba(201,168,76,0.25)' }}>
@@ -73,7 +72,7 @@ function MobileCurrencyToggle() {
           <button
             key={c}
             onClick={() => setCurrency(c)}
-            className="px-3 py-1.5 text-xs tracking-wider transition-colors"
+            className="px-4 h-11 text-xs tracking-wider transition-colors"
             style={{
               fontFamily: 'var(--font-inter)',
               background: currency === c ? '#C9A84C' : 'transparent',
@@ -90,16 +89,39 @@ function MobileCurrencyToggle() {
 
 export default function Navbar() {
   const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  // The drawer remembers which page it was opened on, so navigating
+  // anywhere closes it without an effect.
+  const [openOn, setOpenOn] = useState<string | null>(null)
+  const open = openOn === pathname
+  const setOpen = (next: boolean) => setOpenOn(next ? pathname : null)
+  const [scrolled, setScrolled] = useState(false)
+  const { data: session } = useSession()
+
+  // Airy over the hero, a compact frosted bar once the page moves.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
 
   return (
     <>
       <header
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-20"
+        className={cn(
+          'fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 md:px-12 transition-[height,background-color,box-shadow,border-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
+          scrolled ? 'h-16 md:h-[68px]' : 'h-20'
+        )}
         style={{
-          background: 'linear-gradient(180deg, rgba(8,12,8,0.95) 0%, rgba(8,12,8,0.8) 100%)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(201,168,76,0.1)',
+          background: scrolled ? 'rgba(8,12,8,0.78)' : 'linear-gradient(180deg, rgba(8,12,8,0.75) 0%, rgba(8,12,8,0) 100%)',
+          backdropFilter: scrolled ? 'blur(18px) saturate(140%)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(18px) saturate(140%)' : 'none',
+          borderBottom: `1px solid ${scrolled ? 'rgba(201,168,76,0.14)' : 'transparent'}`,
+          // Paint the gradient under the border too; otherwise its dark top edge
+          // repeats into the transparent 1px border as a hard line.
+          backgroundOrigin: 'border-box',
+          boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.35)' : 'none',
         }}
       >
         {/* Logo */}
@@ -110,6 +132,7 @@ export default function Navbar() {
             width={200}
             height={46}
             priority
+            className={cn('h-auto transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]', scrolled ? 'w-[150px] md:w-[170px]' : 'w-[160px] md:w-[200px]')}
           />
         </Link>
 
@@ -120,14 +143,21 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               className={cn(
-                'text-xs font-inter tracking-[0.2em] uppercase transition-colors duration-200',
-                pathname === link.href
+                'group relative py-3 text-xs font-inter tracking-[0.2em] uppercase transition-colors duration-200',
+                pathname === link.href || pathname.startsWith(`${link.href}/`)
                   ? 'text-lux-gold'
                   : 'text-lux-text-muted hover:text-lux-text'
               )}
               style={{ fontFamily: 'var(--font-inter)' }}
             >
               {link.label}
+              <span
+                aria-hidden
+                className={cn(
+                  'absolute left-0 right-0 bottom-1.5 h-px origin-left bg-lux-gold transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
+                  pathname === link.href || pathname.startsWith(`${link.href}/`) ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                )}
+              />
             </Link>
           ))}
         </nav>
@@ -136,34 +166,7 @@ export default function Navbar() {
         <div className="flex items-center gap-4">
           <CurrencyToggle />
           <CartIcon />
-          {hasClerk ? (
-            <>
-              <Show when="signed-out">
-                <Link
-                  href="/sign-in"
-                  className="hidden md:inline-flex text-xs tracking-[0.18em] uppercase text-lux-text-muted hover:text-lux-text transition-colors"
-                  style={{ fontFamily: 'var(--font-inter)' }}
-                >
-                  Sign In
-                </Link>
-              </Show>
-              <Show when="signed-in">
-                <UserButton
-                  appearance={{
-                    elements: { avatarBox: 'w-8 h-8 ring-1 ring-lux-gold-muted' },
-                  }}
-                />
-              </Show>
-            </>
-          ) : (
-            <Link
-              href="/sign-in"
-              className="hidden md:inline-flex text-xs tracking-[0.18em] uppercase transition-colors"
-              style={{ fontFamily: 'var(--font-inter)', color: '#9a8f7a' }}
-            >
-              Sign In
-            </Link>
-          )}
+          <UserMenu />
 
           {/* Book a call CTA */}
           <Link
@@ -189,8 +192,9 @@ export default function Navbar() {
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden text-lux-text-muted hover:text-lux-gold transition-colors"
+            className="md:hidden flex items-center justify-center w-11 h-11 -mr-2 text-lux-text-muted hover:text-lux-gold transition-colors"
             onClick={() => setOpen(!open)}
+            aria-expanded={open}
             aria-label="Toggle menu"
           >
             {open ? <X size={20} /> : <Menu size={20} />}
@@ -206,7 +210,7 @@ export default function Navbar() {
         >
           <div className="absolute inset-0" style={{ background: 'rgba(8,12,8,0.6)' }} />
           <nav
-            className="absolute top-20 left-0 right-0 px-6 py-8 flex flex-col gap-6"
+            className={cn("absolute left-0 right-0 px-6 py-8 flex flex-col gap-6 max-h-[calc(100dvh-4rem)] overflow-y-auto", scrolled ? "top-16" : "top-20")}
             style={{ background: '#0f1a10', borderBottom: '1px solid #1e2e1f' }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -222,18 +226,7 @@ export default function Navbar() {
               </Link>
             ))}
             <MobileCurrencyToggle />
-            {hasClerk ? (
-              <Show when="signed-out">
-                <Link
-                  href="/sign-in"
-                  className="text-sm tracking-[0.2em] uppercase text-lux-text-muted hover:text-lux-gold transition-colors"
-                  style={{ fontFamily: 'var(--font-inter)' }}
-                  onClick={() => setOpen(false)}
-                >
-                  Sign In
-                </Link>
-              </Show>
-            ) : (
+            {!session && (
               <Link
                 href="/sign-in"
                 className="text-sm tracking-[0.2em] uppercase text-lux-text-muted hover:text-lux-gold transition-colors"
@@ -254,6 +247,7 @@ export default function Navbar() {
           </nav>
         </div>
       )}
+      <ConciergeButton />
     </>
   )
 }

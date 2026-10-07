@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { X, Mail } from 'lucide-react'
+import { X, Mail, Copy } from 'lucide-react'
 
 interface Member {
   id: string
@@ -28,8 +28,7 @@ const inputStyle = {
   fontFamily: 'var(--font-inter)',
 }
 
-const roleLabel = (role: string) =>
-  role === 'org:admin' ? 'Admin' : role === 'org:vendor' ? 'Partner' : 'Member'
+const roleLabel = (role: string) => (role === 'admin' ? 'Admin' : role === 'partner' ? 'Partner' : 'Member')
 
 export default function AdminTeamManager({
   members,
@@ -42,7 +41,8 @@ export default function AdminTeamManager({
 }) {
   const router = useRouter()
   const [email, setEmail] = useState('')
-  const [role, setRole] = useState<'org:admin' | 'org:vendor'>('org:vendor')
+  const [role, setRole] = useState<'admin' | 'partner'>('partner')
+  const [lastInvite, setLastInvite] = useState<{ email: string; link: string; emailed: boolean } | null>(null)
   const [inviting, setInviting] = useState(false)
   const [removingId, setRemovingId] = useState<string | null>(null)
 
@@ -57,7 +57,9 @@ export default function AdminTeamManager({
         body: JSON.stringify({ email: email.trim(), role }),
       })
       if (!res.ok) throw new Error()
-      toast.success(`Invitation sent to ${email.trim()}.`)
+      const data = await res.json()
+      setLastInvite({ email: email.trim(), link: data.link, emailed: data.emailed })
+      toast.success(data.emailed ? `Invitation sent to ${email.trim()}.` : 'Invitation created. Copy the link below to share it.')
       setEmail('')
       router.refresh()
     } catch {
@@ -91,7 +93,7 @@ export default function AdminTeamManager({
       {/* Invite form */}
       <form onSubmit={handleInvite} className="p-6 flex flex-col md:flex-row gap-4 md:items-end" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
         <div className="flex-1">
-          <label className="block text-[10px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+          <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
             Invite by Email
           </label>
           <input
@@ -105,17 +107,17 @@ export default function AdminTeamManager({
           />
         </div>
         <div>
-          <label className="block text-[10px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+          <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
             Role
           </label>
           <select
             value={role}
-            onChange={(e) => setRole(e.target.value as 'org:admin' | 'org:vendor')}
+            onChange={(e) => setRole(e.target.value as 'admin' | 'partner')}
             className="h-11 px-4 text-sm focus:outline-none"
             style={{ ...inputStyle, appearance: 'none' as const }}
           >
-            <option value="org:vendor">Partner (their own listings only)</option>
-            <option value="org:admin">Admin (full access)</option>
+            <option value="partner">Partner (their own listings only)</option>
+            <option value="admin">Admin (full access)</option>
           </select>
         </div>
         <button
@@ -128,9 +130,32 @@ export default function AdminTeamManager({
         </button>
       </form>
 
+      {lastInvite && (
+        <div className="p-5 space-y-3" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.3)' }}>
+          <p className="text-sm" style={{ color: '#e8d9b0', fontFamily: 'var(--font-inter)' }}>
+            {lastInvite.emailed ? `Emailed to ${lastInvite.email}.` : `Email could not be sent to ${lastInvite.email}.`} You can also share this
+            link directly (for example on WhatsApp). It works once, only for that email address, and expires in 7 days.
+          </p>
+          <div className="flex gap-2">
+            <input readOnly value={lastInvite.link} className="flex-1 h-10 px-3 text-xs" style={inputStyle} onFocus={(e) => e.target.select()} />
+            <button
+              type="button"
+              onClick={async () => {
+                await navigator.clipboard.writeText(lastInvite.link)
+                toast.success('Link copied.')
+              }}
+              className="h-10 px-4 flex items-center gap-2 text-xs tracking-[0.15em] uppercase"
+              style={{ border: '1px solid #C9A84C', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+            >
+              <Copy size={13} /> Copy
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Current members */}
       <div>
-        <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+        <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
           Team Members
         </p>
         <div className="space-y-3">
@@ -140,14 +165,14 @@ export default function AdminTeamManager({
                 <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                   {m.name || m.email}
                   {m.userId === currentUserId && (
-                    <span className="ml-2 text-[10px] uppercase" style={{ color: '#5a5248' }}>(You)</span>
+                    <span className="ml-2 text-[11px] uppercase" style={{ color: '#908673' }}>(You)</span>
                   )}
                 </p>
-                <p className="text-xs" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>{m.email}</p>
+                <p className="text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>{m.email}</p>
               </div>
               <div className="flex items-center gap-4">
                 <span
-                  className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1"
+                  className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1"
                   style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
                 >
                   {roleLabel(m.role)}
@@ -157,7 +182,7 @@ export default function AdminTeamManager({
                     onClick={() => handleRemove('member', m.userId!)}
                     disabled={removingId === m.userId}
                     className="p-1.5 transition-colors hover:text-lux-sold disabled:opacity-60"
-                    style={{ color: '#5a5248' }}
+                    style={{ color: '#908673' }}
                     aria-label="Remove member"
                   >
                     <X size={14} />
@@ -172,20 +197,20 @@ export default function AdminTeamManager({
       {/* Pending invitations */}
       {invitations.length > 0 && (
         <div>
-          <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
             Pending Invitations
           </p>
           <div className="space-y-3">
             {invitations.map((inv) => (
               <div key={inv.id} className="flex items-center justify-between p-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
                 <div className="flex items-center gap-3">
-                  <Mail size={14} style={{ color: '#5a5248' }} />
+                  <Mail size={14} style={{ color: '#908673' }} />
                   <p className="text-sm" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>{inv.email}</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <span
-                    className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1"
-                    style={{ border: '1px solid #1e2e1f', color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+                    className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1"
+                    style={{ border: '1px solid #1e2e1f', color: '#908673', fontFamily: 'var(--font-inter)' }}
                   >
                     {roleLabel(inv.role)} &middot; Pending
                   </span>
@@ -193,7 +218,7 @@ export default function AdminTeamManager({
                     onClick={() => handleRemove('invitation', inv.id)}
                     disabled={removingId === inv.id}
                     className="p-1.5 transition-colors hover:text-lux-sold disabled:opacity-60"
-                    style={{ color: '#5a5248' }}
+                    style={{ color: '#908673' }}
                     aria-label="Revoke invitation"
                   >
                     <X size={14} />

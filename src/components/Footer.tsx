@@ -59,17 +59,17 @@ export default function Footer() {
             </Link>
             <p
               className="mt-5 text-sm leading-relaxed"
-              style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
             >
               The definitive platform for discovering and acquiring the world&apos;s finest luxury assets.
             </p>
             {/* Direct contact */}
-            <div className="mt-6 flex flex-col gap-2.5">
+            <div className="mt-4 flex flex-col">
               <a
                 href={whatsappLink("Hello, I'd like to speak with a Lux Catalog specialist.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm transition-colors hover:text-lux-gold w-fit"
+                className="inline-flex items-center gap-2 min-h-11 text-sm transition-colors hover:text-lux-gold w-fit"
                 style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
               >
                 <MessageCircle size={14} />
@@ -77,25 +77,12 @@ export default function Footer() {
               </a>
               <a
                 href={PHONE_LINK}
-                className="inline-flex items-center gap-2 text-sm transition-colors hover:text-lux-gold w-fit"
+                className="inline-flex items-center gap-2 min-h-11 text-sm transition-colors hover:text-lux-gold w-fit"
                 style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
               >
                 <Phone size={14} />
                 Call: {PHONE_DISPLAY}
               </a>
-            </div>
-
-            {/* Social links placeholder */}
-            <div className="mt-6 flex gap-4">
-              {['IG', 'X', 'LI'].map((s) => (
-                <span
-                  key={s}
-                  className="text-xs tracking-[0.15em] cursor-pointer transition-colors hover:text-lux-gold"
-                  style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
-                >
-                  {s}
-                </span>
-              ))}
             </div>
           </div>
 
@@ -109,13 +96,13 @@ export default function Footer() {
                 >
                   {heading}
                 </h4>
-                <ul className="flex flex-col gap-3">
+                <ul className="flex flex-col">
                   {links.map((link) => (
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="text-sm transition-colors hover:text-lux-text"
-                        style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}
+                        className="inline-flex items-center min-h-11 text-sm transition-colors hover:text-lux-text"
+                        style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
                       >
                         {link.label}
                       </Link>
@@ -134,19 +121,19 @@ export default function Footer() {
         >
           <p
             className="text-xs tracking-wider"
-            style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}
+            style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
           >
             &copy; {new Date().getFullYear()} Lux Catalog. All rights reserved.
           </p>
           <p
             className="text-xs tracking-wider"
-            style={{ color: '#3a3028', fontFamily: 'var(--font-inter)' }}
+            style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
           >
             Crafted by{' '}
             <a
               href="https://tossacoin.com"
-              className="hover:text-lux-gold-muted transition-colors"
-              style={{ color: '#5a5248' }}
+              className="inline-flex items-center min-h-11 hover:text-lux-gold-muted transition-colors"
+              style={{ color: '#908673' }}
             >
               Toss Enterprise
             </a>

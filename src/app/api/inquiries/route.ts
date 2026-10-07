@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server'
-import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-import { requireAdminApi } from '@/lib/admin-auth'
+import { getUserId, requireAdminApi } from '@/lib/admin-auth'
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth()
+    const userId = await getUserId()
     const body = await req.json()
     const { name, email, phone, message, listingId, checkIn, checkOut } = body
 

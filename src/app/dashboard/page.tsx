@@ -1,4 +1,4 @@
-import { auth, currentUser } from '@clerk/nextjs/server'
+import { getUserId } from '@/lib/admin-auth'
 import { redirect } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -20,11 +20,11 @@ const formatDate = (d: Date) => new Date(d).toLocaleDateString('en-GB', { day: '
 const RESERVATION_CATEGORIES = ['real_estate', 'supercar', 'yacht', 'commercial', 'lifestyle']
 
 export default async function DashboardPage() {
-  const { userId } = await auth()
-  if (!userId) redirect('/sign-in')
+  const userId = await getUserId()
+  if (!userId) redirect('/sign-in?redirect_url=/dashboard')
 
   const [user, orders, inquiries] = await Promise.all([
-    currentUser(),
+    prisma.user.findUnique({ where: { id: userId }, select: { name: true, email: true, createdAt: true } }),
     prisma.order.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
             Member Dashboard
           </p>
           <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-            Welcome, {user?.firstName ?? 'Member'}
+            Welcome, {user?.name.split(' ')[0] || 'Member'}
           </h1>
         </div>
       </div>
@@ -65,24 +65,24 @@ export default async function DashboardPage() {
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Profile card */}
         <div className="p-7 h-fit" style={sectionStyle}>
-          <p className="text-[10px] tracking-[0.2em] uppercase mb-5" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-5" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
             Profile
           </p>
           <div className="space-y-4">
             <div>
-              <p className="text-[10px] tracking-wider uppercase mb-1" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>Name</p>
+              <p className="text-[11px] tracking-wider uppercase mb-1" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>Name</p>
               <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
-                {user?.fullName ?? 'Not set'}
+                {user?.name || 'Not set'}
               </p>
             </div>
             <div>
-              <p className="text-[10px] tracking-wider uppercase mb-1" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>Email</p>
+              <p className="text-[11px] tracking-wider uppercase mb-1" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>Email</p>
               <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
-                {user?.emailAddresses[0]?.emailAddress ?? 'Not set'}
+                {user?.email ?? 'Not set'}
               </p>
             </div>
             <div>
-              <p className="text-[10px] tracking-wider uppercase mb-1" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>Member Since</p>
+              <p className="text-[11px] tracking-wider uppercase mb-1" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>Member Since</p>
               <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                 {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : 'Not set'}
               </p>
@@ -94,7 +94,7 @@ export default async function DashboardPage() {
         <div className="lg:col-span-2 space-y-8">
           {!hasActivity && (
             <div className="p-6" style={sectionStyle}>
-              <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                 Get Started
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -108,7 +108,7 @@ export default async function DashboardPage() {
                     <p className="text-base mb-1 group-hover:text-lux-gold transition-colors" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
                       {link.label}
                     </p>
-                    <p className="text-xs" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                       {link.desc}
                     </p>
                   </Link>
@@ -120,7 +120,7 @@ export default async function DashboardPage() {
           {/* Orders (Interior Decor) */}
           {orders.length > 0 && (
             <div className="p-6" style={sectionStyle}>
-              <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                 Orders
               </p>
               <div className="space-y-4">
@@ -130,11 +130,11 @@ export default async function DashboardPage() {
                       <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                         {order.items.map((i) => i.titleSnapshot).join(', ')}
                       </p>
-                      <span className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0" style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}>
+                      <span className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0" style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}>
                         {order.status}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-[10px]" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                    <div className="flex items-center justify-between text-[11px]" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                       <span>{formatDate(order.createdAt)} · {naira(Number(order.total))}</span>
                       <span>Delivering to {order.shippingCity}, {order.shippingState}</span>
                     </div>
@@ -147,7 +147,7 @@ export default async function DashboardPage() {
           {/* Bookings (Shortlets) */}
           {bookings.length > 0 && (
             <div className="p-6" style={sectionStyle}>
-              <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                 Bookings
               </p>
               <div className="space-y-4">
@@ -157,11 +157,11 @@ export default async function DashboardPage() {
                       <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                         {b.listing?.title ?? 'Shortlet'}
                       </p>
-                      <span className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0" style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}>
+                      <span className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0" style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}>
                         {b.status.replace('_', ' ')}
                       </span>
                     </div>
-                    <p className="text-[10px]" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-[11px]" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                       {b.checkIn && b.checkOut
                         ? `${formatDate(b.checkIn)} – ${formatDate(b.checkOut)}`
                         : formatDate(b.createdAt)}
@@ -175,7 +175,7 @@ export default async function DashboardPage() {
           {/* Reservations (Real Estate, Supercars, Yachts, Commercial, Lifestyle) */}
           {reservations.length > 0 && (
             <div className="p-6" style={sectionStyle}>
-              <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                 Reservations
               </p>
               <div className="space-y-4">
@@ -185,11 +185,11 @@ export default async function DashboardPage() {
                       <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                         {r.listing?.title ?? 'Asset Reservation'}
                       </p>
-                      <span className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0" style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}>
+                      <span className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0" style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}>
                         {r.status.replace('_', ' ')}
                       </span>
                     </div>
-                    <p className="text-[10px]" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-[11px]" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                       {formatDate(r.createdAt)}
                     </p>
                   </div>
@@ -201,7 +201,7 @@ export default async function DashboardPage() {
           {/* Service Requests (Executive Services) */}
           {serviceRequests.length > 0 && (
             <div className="p-6" style={sectionStyle}>
-              <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                 Service Requests
               </p>
               <div className="space-y-4">
@@ -211,11 +211,11 @@ export default async function DashboardPage() {
                       <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                         {s.listing?.title ?? 'Service Request'}
                       </p>
-                      <span className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0" style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}>
+                      <span className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0" style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}>
                         {s.status.replace('_', ' ')}
                       </span>
                     </div>
-                    <p className="text-[10px]" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-[11px]" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                       {s.checkIn ? formatDate(s.checkIn) : formatDate(s.createdAt)}
                     </p>
                   </div>
@@ -227,7 +227,7 @@ export default async function DashboardPage() {
           {/* General enquiries fallback */}
           {generalEnquiries.length > 0 && (
             <div className="p-6" style={sectionStyle}>
-              <p className="text-[10px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                 Enquiries
               </p>
               <div className="space-y-3">
@@ -237,11 +237,11 @@ export default async function DashboardPage() {
                       <p className="text-sm truncate" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                         {inq.listing?.title ?? 'General enquiry'}
                       </p>
-                      <p className="text-[10px]" style={{ color: '#5a5248', fontFamily: 'var(--font-inter)' }}>
+                      <p className="text-[11px]" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                         {formatDate(inq.createdAt)}
                       </p>
                     </div>
-                    <span className="text-[10px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0" style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}>
+                    <span className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1 flex-shrink-0" style={{ color: '#C9A84C', border: '1px solid rgba(201,168,76,0.3)', fontFamily: 'var(--font-inter)' }}>
                       {inq.status.replace('_', ' ')}
                     </span>
                   </div>

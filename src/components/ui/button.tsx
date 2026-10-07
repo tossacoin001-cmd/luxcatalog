@@ -14,7 +14,7 @@ const buttonVariants = cva(
         cream: 'bg-lux-cream text-lux-bg hover:bg-lux-cream2 active:scale-95',
       },
       size: {
-        sm: 'h-9 px-5 text-[10px]',
+        sm: 'h-9 px-5 text-[11px]',
         md: 'h-11 px-7',
         lg: 'h-13 px-10 text-xs',
         icon: 'h-9 w-9',
