@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireAdminApi } from '@/lib/admin-auth'
+import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ userId: string }> }) {
   const admin = await requireAdminApi()
@@ -15,6 +16,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ userId
       data: { featured: !!featured },
     })
 
+    revalidateCatalog()
     return NextResponse.json({ success: true, profile })
   } catch (err) {
     console.error('Update partner profile error:', err)

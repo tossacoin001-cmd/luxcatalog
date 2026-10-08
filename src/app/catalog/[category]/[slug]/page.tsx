@@ -25,7 +25,16 @@ const categorySlugMap: Record<string, string> = {
   'executive-services':   'executive_services',
 }
 
-export const dynamic = 'force-dynamic'
+// Cached at the edge and refreshed every 5 minutes, or immediately when an
+// admin or partner changes a listing (revalidateCatalog). Visitors get an
+// instant page and the database isn't woken for every view.
+export const revalidate = 300
+
+// No pages are pre-built at deploy; each is rendered on its first visit and
+// then served from the cache like the rest.
+export async function generateStaticParams() {
+  return []
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string; slug: string }> }): Promise<Metadata> {
   const { slug } = await params

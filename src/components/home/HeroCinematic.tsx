@@ -87,17 +87,21 @@ export default function HeroCinematic() {
             >
               {/* Re-keyed on activation so the slow drift restarts each time. */}
               <div key={active ? `on-${index}` : 'off'} className={active && !reduce ? 'absolute inset-0 animate-kenburns' : 'absolute inset-0'}>
-                <Image
-                  src={sl.src}
-                  alt={active ? sl.alt : ''}
-                  fill
-                  priority={i === 0}
-                  loading={i === 0 ? undefined : 'eager'}
-                  fetchPriority={i === 0 ? 'high' : 'low'}
-                  sizes="100vw"
-                  className="object-cover"
-                  onLoad={() => markLoaded(i)}
-                />
+                {/* Only the first photo competes for bandwidth on arrival; the
+                    rest start downloading once it is on screen. */}
+                {(i === 0 || loaded.has(0)) && (
+                  <Image
+                    src={sl.src}
+                    alt={active ? sl.alt : ''}
+                    fill
+                    priority={i === 0}
+                    loading={i === 0 ? undefined : 'eager'}
+                    fetchPriority={i === 0 ? 'high' : 'low'}
+                    sizes="100vw"
+                    className="object-cover"
+                    onLoad={() => markLoaded(i)}
+                  />
+                )}
               </div>
             </div>
           )
@@ -113,24 +117,19 @@ export default function HeroCinematic() {
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-5 md:px-12 pt-32 pb-10 md:pb-16">
         <div className="max-w-3xl">
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: EASE_OUT_EXPO, delay: 0.1 }}
-            className="text-[11px] md:text-xs tracking-[0.32em] uppercase mb-5 md:mb-6"
-            style={{ color: '#e4c878', fontFamily: 'var(--font-inter)', textShadow: '0 1px 14px rgba(0,0,0,0.65)' }}
+          <p
+            className="hero-rise text-[11px] md:text-xs tracking-[0.32em] uppercase mb-5 md:mb-6"
+            style={{ color: '#e4c878', fontFamily: 'var(--font-inter)', textShadow: '0 1px 14px rgba(0,0,0,0.65)', animationDelay: '0.1s' }}
           >
             The Luxury Asset Platform &middot; Lagos to the World
-          </motion.p>
+          </p>
 
           <h1 className="text-[2.6rem] leading-[1.04] sm:text-6xl md:text-7xl md:leading-[1.02] mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8', textShadow: '0 2px 30px rgba(0,0,0,0.45)' }}>
             <span className="sr-only">Every Luxury Asset. One Destination.</span>
             <span aria-hidden>
-              <motion.span
-                className="block"
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: EASE_OUT_EXPO, delay: 0.2 }}
+              <span
+                className="block hero-rise"
+                style={{ animationDelay: '0.2s' }}
               >
                 Every Luxury{' '}
                 {/* All words share one grid cell so the line never reflows as they change. */}
@@ -155,35 +154,27 @@ export default function HeroCinematic() {
                     </AnimatePresence>
                   </span>
                 </span>
-              </motion.span>
-              <motion.em
-                className="block"
-                style={{ color: '#C9A84C', fontStyle: 'italic' }}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: EASE_OUT_EXPO, delay: 0.35 }}
+              </span>
+              <em
+                className="block hero-rise"
+                style={{ color: '#C9A84C', fontStyle: 'italic', animationDelay: '0.35s' }}
               >
                 One Destination.
-              </motion.em>
+              </em>
             </span>
           </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: EASE_OUT_EXPO, delay: 0.5 }}
-            className="text-base md:text-lg mb-9 max-w-xl leading-relaxed"
-            style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)', textShadow: '0 1px 18px rgba(0,0,0,0.6)' }}
+          <p
+            className="hero-rise text-base md:text-lg mb-9 max-w-xl leading-relaxed"
+            style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)', textShadow: '0 1px 18px rgba(0,0,0,0.6)', animationDelay: '0.5s' }}
           >
             Prime real estate, supercars, superyachts and private protection, bought, sold and booked through one private
             concierge. In Lagos today, and around the world.
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: EASE_OUT_EXPO, delay: 0.65 }}
-            className="flex flex-col sm:flex-row gap-3 sm:gap-4"
+          <div
+            className="hero-rise flex flex-col sm:flex-row gap-3 sm:gap-4"
+            style={{ animationDelay: '0.65s' }}
           >
             <Link
               href="/catalog"
@@ -203,7 +194,7 @@ export default function HeroCinematic() {
               <MessageCircle size={15} />
               Speak to a Concierge
             </a>
-          </motion.div>
+          </div>
         </div>
 
         {/* Slide selector: doubles as progress indicator and category legend. */}

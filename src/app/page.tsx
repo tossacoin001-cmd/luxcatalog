@@ -11,7 +11,10 @@ import Reveal, { RevealGroup, RevealItem } from '@/components/motion/Reveal'
 import { categoryHrefs } from '@/lib/utils'
 import { prisma } from '@/lib/prisma'
 
-export const dynamic = 'force-dynamic'
+// Cached at the edge and refreshed every 5 minutes, or immediately when an
+// admin or partner changes a listing (revalidateCatalog). Visitors get an
+// instant page and the database isn't woken for every view.
+export const revalidate = 300
 
 export default async function HomePage() {
   const [featured, trustedPartners] = await Promise.all([

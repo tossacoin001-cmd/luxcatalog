@@ -283,3 +283,13 @@ a, button, [role='button'], label, summary {
     display: none;
   }
 }
+
+/* Hero entrance in pure CSS: runs as soon as the HTML paints, so the
+   headline is never hidden while JavaScript downloads on slow networks. */
+@keyframes heroRise {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.hero-rise {
+  animation: heroRise 0.9s var(--ease-out-expo) both;
+}

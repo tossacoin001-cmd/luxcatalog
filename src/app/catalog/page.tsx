@@ -11,7 +11,10 @@ export const metadata: Metadata = {
   description: 'Browse the full Lux Catalog: prime real estate, supercars, yachts, decor, commercial properties and lifestyle assets.',
 }
 
-export const dynamic = 'force-dynamic'
+// Cached at the edge and refreshed every 5 minutes, or immediately when an
+// admin or partner changes a listing (revalidateCatalog). Visitors get an
+// instant page and the database isn't woken for every view.
+export const revalidate = 300
 
 export default async function CatalogPage() {
   const listings = await prisma.listing.findMany({

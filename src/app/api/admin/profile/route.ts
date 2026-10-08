@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireStaffApi } from '@/lib/admin-auth'
+import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function GET() {
   const staff = await requireStaffApi()
@@ -26,6 +27,7 @@ export async function POST(req: Request) {
       update: { brandName: brandName.trim(), logo: logo || null, bio: bio || null },
     })
 
+    revalidateCatalog()
     return NextResponse.json({ success: true, profile })
   } catch (err) {
     console.error('Partner profile save error:', err)

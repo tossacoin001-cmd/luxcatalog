@@ -4,6 +4,7 @@ import { slugify } from '@/lib/utils'
 import { requireStaffApi } from '@/lib/admin-auth'
 import { optimizeListingDraft } from '@/lib/ai-optimize'
 import { resolvePlacement } from '@/lib/taxonomy'
+import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function POST(req: Request) {
   const staff = await requireStaffApi()
@@ -83,6 +84,7 @@ export async function POST(req: Request) {
       },
     })
 
+    revalidateCatalog()
     return NextResponse.json({ success: true, listing })
   } catch (err) {
     console.error('Create listing error:', err)

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireStaffApi } from '@/lib/admin-auth'
 import { resolvePlacement } from '@/lib/taxonomy'
+import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const staff = await requireStaffApi()
@@ -56,6 +57,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       },
     })
 
+    revalidateCatalog()
     return NextResponse.json({ success: true, listing })
   } catch (err) {
     console.error('Update listing error:', err)
@@ -79,6 +81,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     }
 
     await prisma.listing.delete({ where: { id } })
+    revalidateCatalog()
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('Delete listing error:', err)
