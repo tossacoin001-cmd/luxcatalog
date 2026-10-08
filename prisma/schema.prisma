@@ -219,11 +219,17 @@ model User {
   // changed by an admin or by redeeming a staff invitation.
   role             UserRole  @default(customer)
   twoFactorEnabled Boolean?  @default(false)
+  // Marketing consent (Nigeria Data Protection Act 2023): only users who
+  // opted in receive the customer "Lux Edit". Service and account emails
+  // don't need it.
+  marketingConsent Boolean   @default(false)
+  consentAt        DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   sessions         Session[]
   accounts         Account[]
   twoFactors       TwoFactor[]
+  notificationPref NotificationPreference?
 }
 
 model Session {
@@ -322,6 +328,71 @@ model AuditLog {
   target    String?
   detail    Json?
   ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Notifications & Watchdog
+// ---------------------------------------------------------------------------
+
+enum DigestFrequency {
+  daily
+  weekly
+  off
+}
+
+// One row per user, created lazily the first time a digest considers them.
+// unsubscribeToken powers one-click unsubscribe links without a login.
+model NotificationPreference {
+  id               String          @id @default(uuid())
+  userId           String          @unique
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  luxEdit          DigestFrequency @default(weekly)
+  partnerDigest    Boolean         @default(true)
+  adminBriefing    Boolean         @default(true)
+  instantAlerts    Boolean         @default(true)
+  unsubscribeToken String          @unique
+  updatedAt        DateTime        @updatedAt
+}
+
+// Every email the system sends (or deliberately skips), for the admin
+// briefing, the Watchdog's failed-delivery check, and to avoid double sends.
+model EmailLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  to        String
+  kind      String
+  subject   String
+  status    String
+  error     String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, kind, createdAt])
+}
+
+// Lightweight listing view events: powers partner stats ("42 views today")
+// and personalised picks. visitorId is a random first-party cookie, never
+// tied to anything outside this site.
+model ListingView {
+  id        String   @id @default(uuid())
+  listingId String
+  userId    String?
+  visitorId String
+  createdAt DateTime @default(now())
+
+  @@index([listingId, createdAt])
+  @@index([userId, createdAt])
+  @@index([visitorId, listingId, createdAt])
+}
+
+model WatchdogRun {
+  id        String   @id @default(uuid())
+  kind      String
+  ok        Boolean
+  checks    Json
   createdAt DateTime @default(now())
 
   @@index([createdAt])

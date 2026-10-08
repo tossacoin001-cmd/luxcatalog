@@ -1,10 +1,11 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { renderSVG } from 'uqr'
-import { ShieldCheck, ShieldAlert, LogOut } from 'lucide-react'
+import { ShieldCheck, ShieldAlert, LogOut, Mail, ChevronRight } from 'lucide-react'
 import { AuthError, AuthField, AuthNotice, AuthSubmit } from '@/components/auth/AuthShell'
 import { authClient, signOut } from '@/lib/auth-client'
 
@@ -63,6 +64,21 @@ export default function AccountClient({ user, requireTwoFactor }: { user: Accoun
         </dl>
         {!user.emailVerified && <ResendVerification email={user.email} />}
       </Section>
+
+      <Link
+        href="/account/notifications"
+        className="group flex items-center justify-between gap-4 p-6 md:p-8 transition-colors hover:border-lux-gold-muted"
+        style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}
+      >
+        <span className="flex items-center gap-4">
+          <Mail size={18} style={{ color: '#C9A84C' }} />
+          <span>
+            <span className="block text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>Email preferences</span>
+            <span className="block text-sm" style={text}>Choose how often we write, and about what.</span>
+          </span>
+        </span>
+        <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" style={{ color: '#C9A84C' }} />
+      </Link>
 
       <TwoFactorSection enabled={user.twoFactorEnabled} onChange={() => router.refresh()} />
 

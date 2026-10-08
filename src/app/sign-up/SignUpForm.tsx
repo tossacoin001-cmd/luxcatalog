@@ -16,6 +16,7 @@ export default function SignUpForm({
   invitedEmail: string | null
 }) {
   const [form, setForm] = useState({ name: '', email: invitedEmail ?? '', phone: '', password: '', confirm: '' })
+  const [consent, setConsent] = useState(false)
   const [captcha, setCaptcha] = useState<string | null>(null)
   const [resetCaptcha, setResetCaptcha] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -42,6 +43,7 @@ export default function SignUpForm({
         email: form.email.trim(),
         password: form.password,
         phone: form.phone.trim() || undefined,
+        marketingConsent: consent,
         callbackURL: '/dashboard',
       },
       { headers: captchaHeaders(captcha) }
@@ -86,6 +88,10 @@ export default function SignUpForm({
           onChange={set('password')}
         />
         <AuthField label="Confirm Password" type="password" autoComplete="new-password" required value={form.confirm} onChange={set('confirm')} />
+        <label className="flex items-start gap-3 text-sm leading-relaxed cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 w-4 h-4 accent-[#C9A84C]" />
+          <span>Send me the Lux Edit: hand-picked listings and private offers, weekly. You can change or stop this any time.</span>
+        </label>
         <Turnstile onToken={onToken} resetKey={resetCaptcha} />
         <AuthSubmit loading={loading}>Create Account</AuthSubmit>
       </form>

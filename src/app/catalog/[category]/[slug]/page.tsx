@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import ListingGallery from '@/components/ListingGallery'
 import ListingActionBar from '@/components/ListingActionBar'
 import Breadcrumbs from '@/components/Breadcrumbs'
+import ViewTracker from '@/components/ViewTracker'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Badge } from '@/components/ui/badge'
@@ -56,6 +57,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
       <Navbar />
+      <ViewTracker listingId={listing.id} />
 
       {/* Hero gallery */}
       <ListingGallery images={listing.images} title={listing.title}>
