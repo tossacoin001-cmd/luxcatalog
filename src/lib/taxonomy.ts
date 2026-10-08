@@ -82,8 +82,8 @@ export function specTemplate(subcategory: string | null | undefined): string[] {
   return subcategory ? SPEC_TEMPLATES[subcategory] ?? [] : []
 }
 
-// Default commission (percent of the client price) proposed in the partner
-// terms research, 2026-10-08. Real values live in CommissionRule rows and can
+// Default commission (percent of the client price), approved by the founder
+// 2026-10-08. Real values live in CommissionRule rows and can
 // be changed per category or per partner by an admin; these only seed them.
 export const DEFAULT_COMMISSION: { category?: string; subcategory?: string; mode?: Mode; ratePercent: number; payoutTiming: string; notes: string }[] = [
   { subcategory: 'luxury_shortlets', ratePercent: 15, payoutTiming: 'after_checkin', notes: 'Self-managed host. Lux Managed: 20-25% (set per partner).' },

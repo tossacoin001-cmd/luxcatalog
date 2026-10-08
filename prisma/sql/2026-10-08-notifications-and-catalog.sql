@@ -120,6 +120,19 @@ UPDATE "Listing" SET "subcategory" = 'chauffeur', "mode" = 'booking' WHERE "cate
 UPDATE "Listing" SET "subcategory" = 'experiences', "mode" = 'request' WHERE "category" = 'lifestyle' AND "subcategory" IS NULL;
 UPDATE "Listing" SET "subcategory" = 'for_sale', "mode" = 'sale' WHERE "category" IN ('real_estate', 'supercar', 'yacht', 'commercial', 'decor') AND "subcategory" IS NULL;
 
--- Commission rules are intentionally NOT seeded here: defaults in
--- src/lib/taxonomy.ts (DEFAULT_COMMISSION) are a proposal awaiting the
--- founder's confirmation.
+-- Commission defaults approved by the founder on 2026-10-08 (adjustable per
+-- category or per partner later; each booking stores the rate it used).
+-- Mirrors DEFAULT_COMMISSION in src/lib/taxonomy.ts. Only inserted once.
+INSERT INTO "CommissionRule" ("id", "subcategory", "mode", "ratePercent", "payoutTiming", "notes", "updatedAt")
+SELECT gen_random_uuid()::text, v.subcategory, v.mode::"ListingMode", v.rate, v.timing, v.notes, now()
+FROM (VALUES
+  ('luxury_shortlets', NULL, 15.00, 'after_checkin', 'Self-managed host. Lux Managed: 20-25% (set per partner).'),
+  ('aqua_homes',       NULL, 15.00, 'after_checkin', 'As shortlets.'),
+  ('car_rental',       NULL, 18.00, 'after_checkin', 'Chauffeur-driven first; 15-20% range.'),
+  ('chauffeur',        NULL, 18.00, 'after_checkin', '15-20% range.'),
+  ('close_protection', NULL, 18.00, 'after_completion', '15-20% range; paid after the assignment ends.'),
+  ('boat_cruises',     NULL, 13.00, 'after_checkin', '12-15% if the operator holds marine insurance.'),
+  ('for_rent',         NULL,  5.00, 'on_completion_of_sale', 'Max 5% of annual rent (Lagos tenancy reform).'),
+  (NULL,             'sale',  3.00, 'on_completion_of_sale', 'Success fee; negotiate per deal or Lux Partner Pro subscription.')
+) AS v(subcategory, mode, rate, timing, notes)
+WHERE NOT EXISTS (SELECT 1 FROM "CommissionRule");
