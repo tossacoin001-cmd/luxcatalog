@@ -17,12 +17,45 @@ const transporter = smtpConfigured
 
 const FROM = process.env.EMAIL_FROM ?? `Lux Catalog <${process.env.SMTP_USER ?? 'no-reply@localhost'}>`
 
-export async function sendEmail({ to, subject, text, html }: { to: string; subject: string; text: string; html?: string }) {
+export const emailConfigured = smtpConfigured
+
+export async function sendEmail({
+  to,
+  subject,
+  text,
+  html,
+  headers,
+}: {
+  to: string
+  subject: string
+  text: string
+  html?: string
+  headers?: Record<string, string>
+}) {
   if (!transporter) {
     console.info(`[email:not-configured] to=${to} subject="${subject}"\n${text}`)
+    // Local preview: write the rendered HTML to disk so designs can be
+    // checked in a browser. Never active in production (SMTP is set there).
+    if (process.env.EMAIL_DEBUG_DIR && html) {
+      const { writeFile, mkdir } = await import('node:fs/promises')
+      await mkdir(process.env.EMAIL_DEBUG_DIR, { recursive: true })
+      const safe = `${Date.now()}-${to.replace(/[^a-z0-9]/gi, '_')}.html`
+      await writeFile(`${process.env.EMAIL_DEBUG_DIR}/${safe}`, html)
+    }
     return
   }
-  await transporter.sendMail({ from: FROM, to, subject, text, html })
+  await transporter.sendMail({ from: FROM, to, subject, text, html, headers })
+}
+
+// Cheap SMTP login check for the health endpoint (no message is sent).
+export async function verifyEmailTransport(): Promise<boolean> {
+  if (!transporter) return false
+  try {
+    await transporter.verify()
+    return true
+  } catch {
+    return false
+  }
 }
 
 // Minimal on-brand wrapper for transactional auth emails. Inline styles only,

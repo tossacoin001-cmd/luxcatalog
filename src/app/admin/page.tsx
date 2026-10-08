@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import AdminNavbar from '@/components/AdminNavbar'
+import AdminEmailTools from '@/components/AdminEmailTools'
 import { prisma } from '@/lib/prisma'
 import { requireStaff } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
@@ -84,6 +85,9 @@ export default async function AdminPage() {
     prisma.listing.count({ where: { published: false } }),
   ])
 
+  const lastRun = await prisma.watchdogRun.findFirst({ where: { kind: 'daily' }, orderBy: { createdAt: 'desc' } })
+  const lastRunHasWarn = Array.isArray(lastRun?.checks) && (lastRun.checks as { status?: string }[]).some((c) => c.status === 'warn')
+
   const statCards = [
     { label: 'Total Listings', value: String(totalListings), href: '/admin/listings' },
     { label: 'Featured', value: String(featuredCount), href: '/admin/listings' },
@@ -165,6 +169,8 @@ export default async function AdminPage() {
             ))}
           </div>
         </div>
+
+        <AdminEmailTools lastRun={lastRun ? { at: lastRun.createdAt.toISOString(), status: lastRun.ok ? (lastRunHasWarn ? 'warn' : 'ok') : 'fail' } : null} />
       </div>
     </div>
   )

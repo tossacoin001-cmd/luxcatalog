@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { slugify } from '@/lib/utils'
 import { requireStaffApi } from '@/lib/admin-auth'
 import { optimizeListingDraft } from '@/lib/ai-optimize'
+import { resolvePlacement } from '@/lib/taxonomy'
 
 export async function POST(req: Request) {
   const staff = await requireStaffApi()
@@ -16,6 +17,7 @@ export async function POST(req: Request) {
       location, country, images, features, status, featured,
       hireAvailable, hireRatePerDay, hireRateDisplay, specs, marginRequested,
     } = body
+    const placement = resolvePlacement(category, body.subcategory, body.mode, { allowModeOverride: !isVendor })
 
     // The Quick List form (partners) doesn't collect a display string, just a
     // number, so derive one when it's missing rather than requiring it.
@@ -42,12 +44,16 @@ export async function POST(req: Request) {
     let finalDescription = description
     let finalPriceDisplay = priceDisplay
     let finalSpecs = specs && typeof specs === 'object' ? specs : {}
+    let finalFeatures: string[] = Array.isArray(features) ? features.map((f: unknown) => String(f).trim()).filter(Boolean) : []
 
     if (isVendor) {
       const optimized = await optimizeListingDraft({ title, category, description, priceDisplay, location, country })
       finalDescription = optimized.description
       finalPriceDisplay = optimized.priceDisplay
       finalSpecs = { ...finalSpecs, ...optimized.specs }
+      // The partner's own highlights win; otherwise use the outline the AI
+      // extracted from their description (customers see a list, not prose).
+      if (!finalFeatures.length) finalFeatures = optimized.highlights
     }
 
     const listing = await prisma.listing.create({
@@ -55,13 +61,15 @@ export async function POST(req: Request) {
         title,
         slug,
         category,
+        subcategory: placement.subcategory,
+        mode: placement.mode,
         description: finalDescription,
         priceDisplay: finalPriceDisplay,
         price: price ? Number(price) : null,
         location,
         country,
         images: Array.isArray(images) ? images : [],
-        features: Array.isArray(features) ? features : [],
+        features: finalFeatures,
         status: isVendor ? 'available' : (status || 'available'),
         featured: isVendor ? false : !!featured,
         hireAvailable: !!hireAvailable,

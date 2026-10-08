@@ -44,6 +44,15 @@ export const auth = betterAuth({
     },
   },
 
+  databaseHooks: {
+    user: {
+      create: {
+        // Timestamp consent given at sign-up (NDPA 2023 evidence of opt-in).
+        before: async (user) => ({ data: { ...user, consentAt: (user as { marketingConsent?: boolean }).marketingConsent ? new Date() : null } }),
+      },
+    },
+  },
+
   emailVerification: {
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
@@ -64,6 +73,9 @@ export const auth = betterAuth({
       // visitor can't register themselves as admin by adding a field.
       role: { type: 'string', required: false, defaultValue: 'customer', input: false },
       phone: { type: 'string', required: false },
+      // Opt-in for the marketing Lux Edit, ticked by the user at sign-up.
+      marketingConsent: { type: 'boolean', required: false, defaultValue: false },
+      consentAt: { type: 'date', required: false, input: false },
     },
   },
 

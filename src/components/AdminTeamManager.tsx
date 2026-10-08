@@ -69,6 +69,26 @@ export default function AdminTeamManager({
     }
   }
 
+  const handleResend = async (inv: Invitation) => {
+    setRemovingId(inv.id)
+    try {
+      const res = await fetch('/api/admin/team', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resendId: inv.id }),
+      })
+      if (!res.ok) throw new Error()
+      const data = await res.json()
+      setLastInvite({ email: inv.email, link: data.link, emailed: data.emailed })
+      toast.success(data.emailed ? `Invitation re-sent to ${inv.email}. Ask them to check Spam too.` : 'New link created. Copy it below to share.')
+      router.refresh()
+    } catch {
+      toast.error('Could not resend. Please try again.')
+    } finally {
+      setRemovingId(null)
+    }
+  }
+
   const handleRemove = async (type: 'member' | 'invitation', id: string) => {
     if (!confirm(type === 'member' ? 'Remove this team member?' : 'Revoke this invitation?')) return
     setRemovingId(id)
@@ -214,6 +234,14 @@ export default function AdminTeamManager({
                   >
                     {roleLabel(inv.role)} &middot; Pending
                   </span>
+                  <button
+                    onClick={() => handleResend(inv)}
+                    disabled={removingId === inv.id}
+                    className="inline-flex items-center min-h-11 px-3 text-[11px] tracking-[0.14em] uppercase transition-colors hover:text-lux-gold disabled:opacity-60"
+                    style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                  >
+                    Resend
+                  </button>
                   <button
                     onClick={() => handleRemove('invitation', inv.id)}
                     disabled={removingId === inv.id}

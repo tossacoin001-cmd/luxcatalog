@@ -30,7 +30,18 @@ export async function POST(req: Request) {
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
-    const { email, role } = await req.json()
+    const { email, role, resendId } = await req.json()
+
+    // Resend: the raw token is never stored, so issue a fresh invitation for
+    // the same email + role (createStaffInvitation retires the old link).
+    if (typeof resendId === 'string') {
+      const old = await prisma.staffInvitation.findUnique({ where: { id: resendId } })
+      if (!old || old.acceptedAt) return NextResponse.json({ error: 'Invitation not found' }, { status: 404 })
+      const { invitation, link, emailed } = await createStaffInvitation({ email: old.email, role: old.role as 'admin' | 'partner', invitedById: admin.userId })
+      await audit(admin.userId, 'team.invite.resend', invitation.email, { emailed })
+      return NextResponse.json({ success: true, invitation: { id: invitation.id, email: invitation.email }, link, emailed })
+    }
+
     if (typeof email !== 'string' || !email.includes('@') || !['admin', 'partner'].includes(role)) {
       return NextResponse.json({ error: 'Missing email or invalid role' }, { status: 400 })
     }

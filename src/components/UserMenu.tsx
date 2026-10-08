@@ -69,6 +69,7 @@ export default function UserMenu({ showStaffLink = true }: { showStaffLink?: boo
           </div>
           <Link href="/dashboard" className={item} onClick={() => setOpen(false)}>Dashboard</Link>
           <Link href="/account" className={item} onClick={() => setOpen(false)}>Account &amp; Security</Link>
+          <Link href="/account/notifications" className={item} onClick={() => setOpen(false)}>Email Preferences</Link>
           {isStaff && showStaffLink && (
             <Link href="/admin" className={item} onClick={() => setOpen(false)}>Admin Panel</Link>
           )}

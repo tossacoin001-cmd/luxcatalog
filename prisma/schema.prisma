@@ -17,6 +17,17 @@ enum Category {
   executive_services
 }
 
+// How a listing is transacted. Drives the call to action and, later, the
+// booking engine: sale (buy outright), rent (monthly/annual lease),
+// booking (by night/day/hour/slot, paid online), request (quote only, e.g.
+// private jets).
+enum ListingMode {
+  sale
+  rent
+  booking
+  request
+}
+
 enum ListingStatus {
   available
   under_offer
@@ -56,6 +67,10 @@ model Listing {
   features     String[]
   status       ListingStatus @default(available)
   featured     Boolean       @default(false)
+  mode         ListingMode   @default(sale)
+  // Sub-collection within the category (src/lib/taxonomy.ts), e.g.
+  // "luxury_shortlets", "car_rental", "boat_cruises", "aqua_homes".
+  subcategory  String?
 
   // Clerk userId of the partner who submitted this listing. Null means it was
   // created directly by full admin (a "house" listing), not a partner.
@@ -219,11 +234,17 @@ model User {
   // changed by an admin or by redeeming a staff invitation.
   role             UserRole  @default(customer)
   twoFactorEnabled Boolean?  @default(false)
+  // Marketing consent (Nigeria Data Protection Act 2023): only users who
+  // opted in receive the customer "Lux Edit". Service and account emails
+  // don't need it.
+  marketingConsent Boolean   @default(false)
+  consentAt        DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   sessions         Session[]
   accounts         Account[]
   twoFactors       TwoFactor[]
+  notificationPref NotificationPreference?
 }
 
 model Session {
@@ -325,4 +346,94 @@ model AuditLog {
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Notifications & Watchdog
+// ---------------------------------------------------------------------------
+
+enum DigestFrequency {
+  daily
+  weekly
+  off
+}
+
+// One row per user, created lazily the first time a digest considers them.
+// unsubscribeToken powers one-click unsubscribe links without a login.
+model NotificationPreference {
+  id               String          @id @default(uuid())
+  userId           String          @unique
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  luxEdit          DigestFrequency @default(weekly)
+  partnerDigest    Boolean         @default(true)
+  adminBriefing    Boolean         @default(true)
+  instantAlerts    Boolean         @default(true)
+  unsubscribeToken String          @unique
+  updatedAt        DateTime        @updatedAt
+}
+
+// Every email the system sends (or deliberately skips), for the admin
+// briefing, the Watchdog's failed-delivery check, and to avoid double sends.
+model EmailLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  to        String
+  kind      String
+  subject   String
+  status    String
+  error     String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, kind, createdAt])
+}
+
+// Lightweight listing view events: powers partner stats ("42 views today")
+// and personalised picks. visitorId is a random first-party cookie, never
+// tied to anything outside this site.
+model ListingView {
+  id        String   @id @default(uuid())
+  listingId String
+  userId    String?
+  visitorId String
+  createdAt DateTime @default(now())
+
+  @@index([listingId, createdAt])
+  @@index([userId, createdAt])
+  @@index([visitorId, listingId, createdAt])
+}
+
+model WatchdogRun {
+  id        String   @id @default(uuid())
+  kind      String
+  ok        Boolean
+  checks    Json
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// Commission the platform takes, deducted from the partner payout (clients
+// always see one all-inclusive price). Resolution order when a booking/sale
+// is priced: partner + subcategory > partner + category > partner >
+// subcategory > category > mode default. Every booking stores the rate it
+// was charged, so later changes never rewrite history.
+model CommissionRule {
+  id           String       @id @default(uuid())
+  partnerId    String?
+  category     Category?
+  subcategory  String?
+  mode         ListingMode?
+  ratePercent  Decimal      @db.Decimal(5, 2)
+  // after_checkin: released ~24h after the stay/service starts (Airbnb-style)
+  // after_completion: released when it ends (new partners, higher risk)
+  // on_completion_of_sale: sales, released once the transfer completes
+  payoutTiming String       @default("after_checkin")
+  notes        String?
+  active       Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([partnerId])
+  @@index([category, subcategory])
 }
