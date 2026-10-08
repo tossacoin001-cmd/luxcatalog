@@ -43,12 +43,15 @@ export async function createStaffInvitation({ email, role, invitedById }: { emai
     actionUrl: link,
   })
   let emailed = true
+  const subject = 'Your Lux Catalog invitation'
   try {
-    await sendEmail({ to: normalized, subject: 'Your Lux Catalog invitation', ...mail })
+    await sendEmail({ to: normalized, subject, ...mail })
+    await prisma.emailLog.create({ data: { to: normalized, kind: 'staff_invite', subject, status: 'sent' } })
   } catch (err) {
     // The link is still returned to the admin to share directly.
     console.error('Invitation email failed:', err)
     emailed = false
+    await prisma.emailLog.create({ data: { to: normalized, kind: 'staff_invite', subject, status: 'failed', error: String(err).slice(0, 500) } })
   }
 
   return { invitation, link, emailed }
