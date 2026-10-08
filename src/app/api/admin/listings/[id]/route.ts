@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireStaffApi } from '@/lib/admin-auth'
+import { resolvePlacement } from '@/lib/taxonomy'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const staff = await requireStaffApi()
@@ -23,12 +24,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       location, country, images, features, status, featured,
       hireAvailable, hireRatePerDay, hireRateDisplay, specs, published,
     } = body
+    const placement = category ? resolvePlacement(category, body.subcategory, body.mode, { allowModeOverride: !isVendor }) : null
 
     const listing = await prisma.listing.update({
       where: { id },
       data: {
         title,
         category,
+        ...(placement ? { subcategory: placement.subcategory, mode: placement.mode } : {}),
         description,
         priceDisplay,
         price: price ? Number(price) : null,

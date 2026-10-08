@@ -17,6 +17,17 @@ enum Category {
   executive_services
 }
 
+// How a listing is transacted. Drives the call to action and, later, the
+// booking engine: sale (buy outright), rent (monthly/annual lease),
+// booking (by night/day/hour/slot, paid online), request (quote only, e.g.
+// private jets).
+enum ListingMode {
+  sale
+  rent
+  booking
+  request
+}
+
 enum ListingStatus {
   available
   under_offer
@@ -56,6 +67,10 @@ model Listing {
   features     String[]
   status       ListingStatus @default(available)
   featured     Boolean       @default(false)
+  mode         ListingMode   @default(sale)
+  // Sub-collection within the category (src/lib/taxonomy.ts), e.g.
+  // "luxury_shortlets", "car_rental", "boat_cruises", "aqua_homes".
+  subcategory  String?
 
   // Clerk userId of the partner who submitted this listing. Null means it was
   // created directly by full admin (a "house" listing), not a partner.
@@ -396,4 +411,29 @@ model WatchdogRun {
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+// Commission the platform takes, deducted from the partner payout (clients
+// always see one all-inclusive price). Resolution order when a booking/sale
+// is priced: partner + subcategory > partner + category > partner >
+// subcategory > category > mode default. Every booking stores the rate it
+// was charged, so later changes never rewrite history.
+model CommissionRule {
+  id           String       @id @default(uuid())
+  partnerId    String?
+  category     Category?
+  subcategory  String?
+  mode         ListingMode?
+  ratePercent  Decimal      @db.Decimal(5, 2)
+  // after_checkin: released ~24h after the stay/service starts (Airbnb-style)
+  // after_completion: released when it ends (new partners, higher risk)
+  // on_completion_of_sale: sales, released once the transfer completes
+  payoutTiming String       @default("after_checkin")
+  notes        String?
+  active       Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([partnerId])
+  @@index([category, subcategory])
 }

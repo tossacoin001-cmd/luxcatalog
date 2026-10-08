@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import InquiryModal from '@/components/InquiryModal'
 import AddToCartPanel from '@/components/AddToCartPanel'
 import PriceDisplay from '@/components/PriceDisplay'
-import { categoryLabels, specLabel } from '@/lib/utils'
+import { categoryLabels, specLabel, splitHighlights } from '@/lib/utils'
 import { prisma } from '@/lib/prisma'
 import { MapPin, Check } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -51,6 +51,9 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
   const price = listing.price ? Number(listing.price) : null
   const specs = (listing.specs ?? {}) as Record<string, string>
+  // Older listings stored highlights as long sentences or one comma list;
+  // split those into outline points so every listing reads the same way.
+  const highlights = [...new Set(listing.features.flatMap((f) => (f.length > 90 || f.split(',').length >= 3 ? splitHighlights(f) : [f.trim()])).filter(Boolean))]
   const statusVariant =
     listing.status === 'available' ? 'available' : listing.status === 'under_offer' ? 'under_offer' : 'sold'
 
@@ -137,22 +140,24 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
             </div>
           )}
 
-          {/* Features */}
-          {listing.features.length > 0 && (
+          {/* Highlights: an outline, never a paragraph */}
+          {highlights.length > 0 && (
             <div>
               <h2 className="text-xl mb-5" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-                Features &amp; Highlights
+                What&apos;s included
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {listing.features.map((f) => (
-                  <div key={f} className="flex items-center gap-3">
-                    <Check size={13} style={{ color: '#C9A84C', flexShrink: 0 }} />
-                    <span className="text-sm" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+                {highlights.map((f) => (
+                  <li key={f} className="flex items-start gap-3 py-3" style={{ borderBottom: '1px solid #1e2e1f' }}>
+                    <span className="mt-0.5 flex items-center justify-center w-5 h-5 shrink-0 rounded-full" style={{ background: 'rgba(201,168,76,0.12)', border: '1px solid rgba(201,168,76,0.35)' }}>
+                      <Check size={11} style={{ color: '#C9A84C' }} />
+                    </span>
+                    <span className="text-sm leading-relaxed" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
                       {f}
                     </span>
-                  </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           )}
         </div>

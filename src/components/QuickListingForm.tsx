@@ -4,9 +4,10 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { X, Loader2, Plus } from 'lucide-react'
-import { categoryLabels } from '@/lib/utils'
+import HighlightsEditor from '@/components/HighlightsEditor'
+import CategoryPicker from '@/components/CategoryPicker'
+import type { Mode } from '@/lib/taxonomy'
 
-const categories = Object.entries(categoryLabels).map(([key, label]) => ({ key, label }))
 
 const inputStyle = {
   background: '#0f1a10',
@@ -35,16 +36,28 @@ export default function QuickListingForm() {
   const [form, setForm] = useState({
     title: '',
     category: 'decor',
+    subcategory: 'for_sale' as string | null,
+    mode: 'sale' as Mode,
     description: '',
     price: '',
     location: '',
     country: 'Nigeria',
     images: [] as string[],
+    features: [] as string[],
     marginRequested: false,
     hireAvailable: false,
     hireRateDisplay: '',
   })
   const [specRows, setSpecRows] = useState<SpecRow[]>([{ key: '', value: '' }])
+
+  // Adds the chosen collection's ready-made detail labels as empty rows.
+  const addTemplateRows = (labels: string[]) =>
+    setSpecRows((rows) => {
+      const filled = rows.filter((r) => r.key.trim() || r.value.trim())
+      const have = new Set(filled.map((r) => r.key.trim().toLowerCase()))
+      const next = [...filled, ...labels.filter((l) => !have.has(l.toLowerCase())).map((key) => ({ key, value: '' }))]
+      return next.length ? next : [{ key: '', value: '' }]
+    })
 
   const set = <K extends keyof typeof form>(key: K, val: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [key]: val }))
@@ -135,21 +148,11 @@ export default function QuickListingForm() {
             />
           </div>
 
-          <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Category <span style={{ color: '#C9A84C' }}>*</span>
-            </label>
-            <select
-              value={form.category}
-              onChange={(e) => set('category', e.target.value)}
-              className={fieldClass}
-              style={{ ...inputStyle, appearance: 'none' as const }}
-            >
-              {categories.map((c) => (
-                <option key={c.key} value={c.key}>{c.label}</option>
-              ))}
-            </select>
-          </div>
+          <CategoryPicker
+            value={{ category: form.category, subcategory: form.subcategory, mode: form.mode }}
+            onChange={(v) => setForm((f) => ({ ...f, category: v.category, subcategory: v.subcategory, mode: v.mode }))}
+            onTemplate={addTemplateRows}
+          />
 
           <div>
             <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
@@ -251,6 +254,13 @@ export default function QuickListingForm() {
               className="w-full px-4 py-3 text-sm focus:outline-none transition-colors resize-none"
               style={inputStyle}
             />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              Highlights <span className="normal-case tracking-normal" style={{ color: '#908673' }}>(optional, we&apos;ll extract them from your description if you skip this)</span>
+            </label>
+            <HighlightsEditor value={form.features} onChange={(v) => set('features', v)} />
           </div>
 
           <div className="md:col-span-2">

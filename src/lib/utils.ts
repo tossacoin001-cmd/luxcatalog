@@ -92,3 +92,32 @@ export function specLabel(key: string): string {
     .trim()
     .replace(/\b\w/g, (c) => c.toUpperCase())
 }
+
+// Turn pasted prose or comma lists into outline points.
+// Splits on line breaks, bullets and semicolons; long comma lists become
+// items; very long sentences are left for the admin to edit.
+export function splitHighlights(text: string): string[] {
+  const parts = text
+    .split(/\r?\n|•|·|;|•|(?:^|\s)-\s+/)
+    .flatMap((p) => (p.split(',').length >= 3 && p.length < 400 ? p.split(',') : [p]))
+    .map((p) => p.replace(/^[\s*\-–—]+|[\s.]+$/g, '').trim())
+    .map(tidyPoint)
+    .filter((p) => p.length >= 2 && p.length <= 90)
+  return [...new Set(parts)].slice(0, 12)
+}
+
+// Strip conversational lead-ins so prose reads as an outline point:
+// "This villa comes with an infinity pool" -> "Infinity pool",
+// "plus a private chef on request" -> "Private chef on request".
+function tidyPoint(point: string): string {
+  let p = point
+    // Only strip when the lead-in describes the listing itself ("This
+    // villa…", "The apartment…") or the point starts with the verb, so
+    // "Chef has 10 years experience" keeps its subject.
+    .replace(/^(?:(?:this|the|it|our|each|every)\b.{0,50}?\s)?(comes with|come with|features|featuring|includes|including|offers|offering|boasts|has|have)\s+/i, '')
+    .replace(/^(and|plus|also|with|as well as|along with)\s+/i, '')
+    .replace(/^(an?|the)\s+/i, '')
+    .trim()
+  if (!p) p = point.trim()
+  return p.charAt(0).toUpperCase() + p.slice(1)
+}

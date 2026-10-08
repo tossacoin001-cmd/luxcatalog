@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { X, Loader2, Plus } from 'lucide-react'
-import { categoryLabels } from '@/lib/utils'
-
-const categories = Object.entries(categoryLabels).map(([key, label]) => ({ key, label }))
+import HighlightsEditor from '@/components/HighlightsEditor'
+import CategoryPicker from '@/components/CategoryPicker'
+import type { Mode } from '@/lib/taxonomy'
 
 const inputStyle = {
   background: '#0f1a10',
@@ -19,13 +19,15 @@ export interface AdminListingFormValues {
   id?: string
   title: string
   category: string
+  subcategory?: string | null
+  mode?: string
   description: string
   priceDisplay: string
   price: string
   location: string
   country: string
   images: string[]
-  features: string
+  features: string[]
   status: string
   featured: boolean
   hireAvailable: boolean
@@ -41,13 +43,15 @@ interface SpecRow {
 const emptyForm: AdminListingFormValues = {
   title: '',
   category: 'real_estate',
+  subcategory: 'for_sale',
+  mode: 'sale',
   description: '',
   priceDisplay: '',
   price: '',
   location: '',
   country: '',
   images: [],
-  features: '',
+  features: [],
   status: 'available',
   featured: false,
   hireAvailable: false,
@@ -70,6 +74,17 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
 
   const setSpecRow = (i: number, field: keyof SpecRow, val: string) =>
     setSpecRows((rows) => rows.map((r, idx) => (idx === i ? { ...r, [field]: val } : r)))
+
+  // Adds the sub-collection's ready-made spec labels as empty rows (keeps
+  // anything already filled in).
+  const addTemplateRows = (labels: string[]) =>
+    setSpecRows((rows) => {
+      const filled = rows.filter((r) => r.key.trim() || r.value.trim())
+      const have = new Set(filled.map((r) => r.key.trim().toLowerCase()))
+      const extra = labels.filter((l) => !have.has(l.toLowerCase())).map((key) => ({ key, value: '' }))
+      const next = [...filled, ...extra]
+      return next.length ? next : [{ key: '', value: '' }]
+    })
 
   const addSpecRow = () => setSpecRows((rows) => [...rows, { key: '', value: '' }])
   const removeSpecRow = (i: number) => setSpecRows((rows) => rows.filter((_, idx) => idx !== i))
@@ -107,7 +122,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
       )
       const payload = {
         ...form,
-        features: form.features.split(',').map((f) => f.trim()).filter(Boolean),
+        features: form.features.map((f) => f.trim()).filter(Boolean),
         specs,
       }
       const res = await fetch(
@@ -168,21 +183,12 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
             />
           </div>
 
-          <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Category <span style={{ color: '#C9A84C' }}>*</span>
-            </label>
-            <select
-              value={form.category}
-              onChange={(e) => set('category', e.target.value)}
-              className={fieldClass}
-              style={{ ...inputStyle, appearance: 'none' as const }}
-            >
-              {categories.map((c) => (
-                <option key={c.key} value={c.key}>{c.label}</option>
-              ))}
-            </select>
-          </div>
+          <CategoryPicker
+            allowModeOverride={!restricted}
+            value={{ category: form.category, subcategory: form.subcategory ?? null, mode: (form.mode ?? 'sale') as Mode }}
+            onChange={(v) => setForm((f) => ({ ...f, category: v.category, subcategory: v.subcategory, mode: v.mode }))}
+            onTemplate={addTemplateRows}
+          />
 
           <div>
             <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
@@ -323,17 +329,9 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
 
           <div className="md:col-span-2">
             <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Features (comma-separated)
+              Highlights (what the client gets)
             </label>
-            <input
-              type="text"
-              value={form.features}
-              onChange={(e) => set('features', e.target.value)}
-              placeholder="Infinity Pool, Private Beach Access, Home Cinema…"
-              className={fieldClass}
-              style={inputStyle}
-              {...focusHandlers}
-            />
+            <HighlightsEditor value={form.features} onChange={(v) => set('features', v)} />
           </div>
 
           <div className="md:col-span-2">
