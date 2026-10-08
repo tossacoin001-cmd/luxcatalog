@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import Navbar from '@/components/Navbar'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import Footer from '@/components/Footer'
@@ -56,9 +55,10 @@ export default async function CatalogPage() {
         </div>
       </div>
 
-      <Suspense fallback={<div className="p-12 text-center text-lux-text-muted">Loading catalog…</div>}>
-        <CatalogClient listings={plainListings} />
-      </Suspense>
+      {/* Rendered in document order (no Suspense boundary): the grid is part
+          of the first HTML paint instead of being streamed in after the
+          footer, which caused a large layout jump on slow networks. */}
+      <CatalogClient listings={plainListings} />
 
       <Footer />
     </div>
