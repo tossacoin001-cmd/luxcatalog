@@ -89,6 +89,36 @@ export default async function HomePage() {
 
       <HowItWorks />
 
+      {/* PARTNER INVITATION */}
+      <section className="px-5 md:px-12 pb-20 md:pb-28">
+        <Reveal className="max-w-7xl mx-auto relative overflow-hidden p-8 md:p-12 flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: 'linear-gradient(120deg, rgba(201,168,76,0.12), rgba(201,168,76,0.02) 55%, transparent)', border: '1px solid rgba(201,168,76,0.25)' }}
+          />
+          <div className="relative max-w-2xl">
+            <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              For owners, operators and brands
+            </p>
+            <h2 className="text-2xl md:text-4xl leading-tight mb-3" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+              Own something exceptional? <em style={{ color: '#C9A84C' }}>List it with us.</em>
+            </h2>
+            <p className="text-sm md:text-base leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+              Shortlets, cars, yachts, chauffeur and protection services, interiors. Verified partners, discerning clients, secure payouts.
+            </p>
+          </div>
+          <Link
+            href="/partners"
+            className="relative group inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase shrink-0"
+            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          >
+            Become a Partner
+            <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
+        </Reveal>
+      </section>
+
       {trustedPartners.length > 0 && (
         <section style={{ borderTop: '1px solid rgba(201,168,76,0.12)', background: '#0b120b' }}>
           <div className="max-w-7xl mx-auto px-5 md:px-12 py-12">

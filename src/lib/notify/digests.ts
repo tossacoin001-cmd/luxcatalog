@@ -88,6 +88,8 @@ export async function sendAdminBriefings(checks: Check[], { dryRun = false } = {
   ]
 
   const actions: { text: string; tone?: 'ok' | 'warn' | 'alert' }[] = []
+  const waitingApps = await prisma.partnerApplication.count({ where: { status: 'submitted' } })
+  if (waitingApps) actions.push({ text: `${waitingApps} partner application${waitingApps === 1 ? ' is' : 's are'} waiting for review.`, tone: 'warn' })
   if (unanswered) actions.push({ text: `${unanswered} enquir${unanswered === 1 ? 'y has' : 'ies have'} waited over 24 hours. A quick reply wins the booking.`, tone: 'alert' })
   if (pending) actions.push({ text: `${pending} partner listing${pending === 1 ? ' is' : 's are'} waiting for your approval.`, tone: 'warn' })
   if (actions.length) blocks.push({ type: 'heading', text: 'Needs your attention' }, { type: 'bullets', items: actions })

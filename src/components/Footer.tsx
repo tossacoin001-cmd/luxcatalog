@@ -15,6 +15,7 @@ const footerLinks = {
     { label: 'Lifestyle', href: '/catalog/lifestyle' },
   ],
   Platform: [
+    { label: 'Become a Partner', href: '/partners' },
     { label: 'AI Discovery', href: '/discover' },
     { label: 'Saved Assets', href: '/saved' },
     { label: 'Dashboard', href: '/dashboard' },

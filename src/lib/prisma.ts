@@ -8,7 +8,10 @@ function createPrismaClient() {
   // every connection (shown as an error in Vercel logs, burying real ones).
   // Ask for verify-full explicitly: same security, no noise.
   const connectionString = process.env.DATABASE_URL!.replace(/sslmode=(require|prefer|verify-ca)/, 'sslmode=verify-full')
-  const adapter = new PrismaPg({ connectionString })
+  // DATABASE_POOL_MAX caps connections per instance. Unset in production;
+  // the local test database (prisma dev / PGlite) needs 1.
+  const max = Number(process.env.DATABASE_POOL_MAX) || undefined
+  const adapter = new PrismaPg({ connectionString, ...(max ? { max } : {}) })
   return new PrismaClient({ adapter })
 }
 

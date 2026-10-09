@@ -131,6 +131,14 @@ export async function deepChecks(): Promise<Check[]> {
     detail: pending ? `${pending} awaiting your approval` : 'none waiting',
   })
 
+  const waitingApps = await prisma.partnerApplication.count({ where: { status: 'submitted' } })
+  const staleApps = await prisma.partnerApplication.count({ where: { status: 'submitted', submittedAt: { lt: new Date(Date.now() - 2 * 24 * 3600_000) } } })
+  checks.push({
+    name: 'partner_applications_waiting',
+    status: staleApps ? 'warn' : 'ok',
+    detail: waitingApps ? `${waitingApps} waiting${staleApps ? `, ${staleApps} for over 2 days (we promise 2 working days)` : ''}` : 'none waiting',
+  })
+
   const failedEmails = await prisma.emailLog.count({ where: { status: 'failed', createdAt: { gte: dayAgo } } })
   checks.push({
     name: 'failed_emails_24h',
@@ -157,5 +165,6 @@ export const CHECK_LABELS: Record<string, string> = {
   broken_cover_photos: 'Broken cover photos',
   unanswered_enquiries: 'Unanswered enquiries',
   partner_listings_awaiting_approval: 'Partner listings to approve',
+  partner_applications_waiting: 'Partner applications',
   failed_emails_24h: 'Failed emails (24h)',
 }

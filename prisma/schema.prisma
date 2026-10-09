@@ -437,3 +437,83 @@ model CommissionRule {
   @@index([partnerId])
   @@index([category, subcategory])
 }
+
+// ---------------------------------------------------------------------------
+// Partner programme: "Become a Partner" applications and their private
+// documents. Requirements per partner type live in
+// src/lib/partner-requirements.ts.
+// ---------------------------------------------------------------------------
+
+enum PartnerType {
+  property_host
+  fleet_owner
+  marine_operator
+  chauffeur_service
+  security_company
+  brand_retailer
+  agent
+}
+
+enum ApplicationStatus {
+  draft
+  submitted
+  info_requested
+  approved
+  rejected
+}
+
+model PartnerApplication {
+  id                  String            @id @default(uuid())
+  // One application per account; re-applying after a rejection reuses it.
+  userId              String            @unique
+  partnerType         PartnerType
+  status              ApplicationStatus @default(draft)
+  legalForm           String            @default("individual")
+  businessName        String            @default("")
+  contactName         String            @default("")
+  phone               String            @default("")
+  city                String            @default("")
+  country             String            @default("Nigeria")
+  website             String?
+  socialHandle        String?
+  cacNumber           String?
+  collections         String[]
+  about               String            @default("")
+  yearsOperating      Int?
+  // Which declarations were ticked, each with the time it was accepted.
+  declarations        Json?
+  submittedAt         DateTime?
+  reviewedAt          DateTime?
+  reviewedById        String?
+  // Shown to the applicant (more info needed / reason for decision).
+  reviewNote          String?
+  // Admin-only notes, never shown to the applicant.
+  internalNote        String?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  documents           PartnerDocument[]
+
+  @@index([status, submittedAt])
+}
+
+// Identity, licence and insurance documents. Stored privately (Vercel Blob
+// private access, or in the database as a fallback) and only ever served
+// through an authenticated route to the owner or an admin.
+model PartnerDocument {
+  id            String             @id @default(uuid())
+  applicationId String
+  application   PartnerApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  kind          String
+  fileName      String
+  contentType   String
+  size          Int
+  storage       String
+  blobPathname  String?
+  data          Bytes?
+  expiresAt     DateTime?
+  status        String             @default("pending")
+  note          String?
+  createdAt     DateTime           @default(now())
+
+  @@index([applicationId])
+}
