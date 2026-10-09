@@ -3,6 +3,8 @@ import AdminNavbar from '@/components/AdminNavbar'
 import AdminEmailTools from '@/components/AdminEmailTools'
 import { prisma } from '@/lib/prisma'
 import { requireStaff } from '@/lib/admin-auth'
+import { partnerMustSign } from '@/lib/agreements-server'
+import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Admin' }
@@ -11,6 +13,9 @@ export const dynamic = 'force-dynamic'
 export default async function AdminPage() {
   const { userId, role } = await requireStaff()
   const isVendor = role === 'partner'
+
+  // Partners sign the current agreement before using the dashboard.
+  if (isVendor && (await partnerMustSign(userId))) redirect('/partners/agreement')
 
   if (isVendor) {
     const [myListings, live, pendingReview, itemsSold, enquiries] = await Promise.all([

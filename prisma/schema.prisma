@@ -95,12 +95,12 @@ model Listing {
   marginRequested       Boolean  @default(false)
   partnerRequestedPrice Decimal?
 
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  savedBy           SavedListing[]
-  inquiries         Inquiry[]
-  unavailableDates  UnavailableDate[]
-  orderItems        OrderItem[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  savedBy          SavedListing[]
+  inquiries        Inquiry[]
+  unavailableDates UnavailableDate[]
+  orderItems       OrderItem[]
 }
 
 // A partner's public identity. Created by the partner themselves the first
@@ -158,7 +158,7 @@ model Inquiry {
   checkIn  DateTime?
   checkOut DateTime?
 
-  createdAt DateTime      @default(now())
+  createdAt DateTime @default(now())
 }
 
 // Single-row cache of the NGN->USD rate so the storefront currency toggle
@@ -224,23 +224,23 @@ enum UserRole {
 }
 
 model User {
-  id               String    @id
+  id               String                  @id
   name             String
-  email            String    @unique
-  emailVerified    Boolean   @default(false)
+  email            String                  @unique
+  emailVerified    Boolean                 @default(false)
   image            String?
   phone            String?
   // Never accepted from sign-up input (input: false in auth config), only
   // changed by an admin or by redeeming a staff invitation.
-  role             UserRole  @default(customer)
-  twoFactorEnabled Boolean?  @default(false)
+  role             UserRole                @default(customer)
+  twoFactorEnabled Boolean?                @default(false)
   // Marketing consent (Nigeria Data Protection Act 2023): only users who
   // opted in receive the customer "Lux Edit". Service and account emails
   // don't need it.
-  marketingConsent Boolean   @default(false)
+  marketingConsent Boolean                 @default(false)
   consentAt        DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
   sessions         Session[]
   accounts         Account[]
   twoFactors       TwoFactor[]
@@ -463,35 +463,35 @@ enum ApplicationStatus {
 }
 
 model PartnerApplication {
-  id                  String            @id @default(uuid())
+  id             String            @id @default(uuid())
   // One application per account; re-applying after a rejection reuses it.
-  userId              String            @unique
-  partnerType         PartnerType
-  status              ApplicationStatus @default(draft)
-  legalForm           String            @default("individual")
-  businessName        String            @default("")
-  contactName         String            @default("")
-  phone               String            @default("")
-  city                String            @default("")
-  country             String            @default("Nigeria")
-  website             String?
-  socialHandle        String?
-  cacNumber           String?
-  collections         String[]
-  about               String            @default("")
-  yearsOperating      Int?
+  userId         String            @unique
+  partnerType    PartnerType
+  status         ApplicationStatus @default(draft)
+  legalForm      String            @default("individual")
+  businessName   String            @default("")
+  contactName    String            @default("")
+  phone          String            @default("")
+  city           String            @default("")
+  country        String            @default("Nigeria")
+  website        String?
+  socialHandle   String?
+  cacNumber      String?
+  collections    String[]
+  about          String            @default("")
+  yearsOperating Int?
   // Which declarations were ticked, each with the time it was accepted.
-  declarations        Json?
-  submittedAt         DateTime?
-  reviewedAt          DateTime?
-  reviewedById        String?
+  declarations   Json?
+  submittedAt    DateTime?
+  reviewedAt     DateTime?
+  reviewedById   String?
   // Shown to the applicant (more info needed / reason for decision).
-  reviewNote          String?
+  reviewNote     String?
   // Admin-only notes, never shown to the applicant.
-  internalNote        String?
-  createdAt           DateTime          @default(now())
-  updatedAt           DateTime          @updatedAt
-  documents           PartnerDocument[]
+  internalNote   String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  documents      PartnerDocument[]
 
   @@index([status, submittedAt])
 }
@@ -516,4 +516,28 @@ model PartnerDocument {
   createdAt     DateTime           @default(now())
 
   @@index([applicationId])
+}
+
+// A partner's signature on one version of one agreement. Keeps the exact
+// text that was signed (content: the JSON string, byte for byte) and its
+// SHA-256 (contentHash), so anyone can re-hash content and prove it is
+// what was signed, even after the template changes. No FK to User:
+// signed records are legal evidence and outlive account changes.
+model PartnerAgreement {
+  id           String   @id @default(uuid())
+  userId       String
+  agreementKey String
+  version      String
+  title        String
+  content      String
+  contentHash  String
+  signedName   String
+  signerEmail  String
+  businessName String
+  ipAddress    String?
+  userAgent    String?
+  signedAt     DateTime @default(now())
+
+  @@unique([userId, agreementKey, version])
+  @@index([signedAt])
 }

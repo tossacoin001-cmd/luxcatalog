@@ -25,12 +25,14 @@ export async function sendEmail({
   text,
   html,
   headers,
+  attachments,
 }: {
   to: string
   subject: string
   text: string
   html?: string
   headers?: Record<string, string>
+  attachments?: { filename: string; content: Buffer; contentType: string }[]
 }) {
   if (!transporter) {
     console.info(`[email:not-configured] to=${to} subject="${subject}"\n${text}`)
@@ -44,7 +46,7 @@ export async function sendEmail({
     }
     return
   }
-  await transporter.sendMail({ from: FROM, to, subject, text, html, headers })
+  await transporter.sendMail({ from: FROM, to, subject, text, html, headers, attachments })
 }
 
 // Cheap SMTP login check for the health endpoint (no message is sent).

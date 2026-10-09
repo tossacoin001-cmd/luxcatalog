@@ -206,8 +206,8 @@ export default function ApplyClient({
       <StatusCard
         icon={<CheckCircle2 size={22} style={{ color: '#6fbf73' }} />}
         title="Approved: welcome to Lux Catalog"
-        body="Set up two-step verification on your account, then add your first listing from the partner dashboard."
-        cta={{ label: 'Open partner dashboard', href: '/admin' }}
+        body="Next, sign your partner agreement, then add your first listing from the partner dashboard."
+        cta={{ label: 'Sign your partner agreement', href: '/partners/agreement' }}
       />
     )
   }

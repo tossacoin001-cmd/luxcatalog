@@ -5,11 +5,15 @@ import { requireStaffApi } from '@/lib/admin-auth'
 import { optimizeListingDraft } from '@/lib/ai-optimize'
 import { resolvePlacement } from '@/lib/taxonomy'
 import { revalidateCatalog } from '@/lib/revalidate'
+import { partnerMustSign } from '@/lib/agreements-server'
 
 export async function POST(req: Request) {
   const staff = await requireStaffApi()
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const isVendor = staff.role === 'partner'
+  if (isVendor && (await partnerMustSign(staff.userId))) {
+    return NextResponse.json({ error: 'Sign your partner agreement before adding listings', signUrl: '/partners/agreement' }, { status: 403 })
+  }
 
   try {
     const body = await req.json()

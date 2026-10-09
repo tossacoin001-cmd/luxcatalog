@@ -199,10 +199,10 @@ export async function emailApplicationDecision(
           subject: `Welcome to Lux Catalog, ${name}`,
           eyebrow: 'Application approved',
           greeting: `You're in, ${name}`,
-          intro: `${app.businessName} is now a Lux Catalog partner. Set up two-step verification, then add your first listing; our team polishes and publishes it.`,
+          intro: `${app.businessName} is now a Lux Catalog partner. Next, read and sign your partner agreement (it takes a few minutes), then add your first listing; our team polishes and publishes it.`,
           blocks: [
             ...(note ? [{ type: 'paragraph' as const, text: note }] : []),
-            { type: 'cta' as const, label: 'Open your partner dashboard', url: `${getAppUrl()}/admin` },
+            { type: 'cta' as const, label: 'Sign your partner agreement', url: `${getAppUrl()}/partners/agreement` },
           ],
         }
       : decision === 'info_requested'

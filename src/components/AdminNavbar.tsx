@@ -13,6 +13,7 @@ const adminLinks = [
   { label: 'Enquiries', href: '/admin/inquiries' },
   { label: 'Orders', href: '/admin/orders' },
   { label: 'Applications', href: '/admin/applications' },
+  { label: 'Agreements', href: '/admin/agreements' },
   { label: 'Partners', href: '/admin/partners' },
   { label: 'Team', href: '/admin/team' },
 ]
@@ -21,6 +22,7 @@ const vendorLinks = [
   { label: 'Dashboard', href: '/admin' },
   { label: 'My Listings', href: '/admin/listings' },
   { label: 'My Profile', href: '/admin/profile' },
+  { label: 'Agreement', href: '/partners/agreement' },
 ]
 
 export default function AdminNavbar({ role }: { role?: 'admin' | 'partner' | null }) {

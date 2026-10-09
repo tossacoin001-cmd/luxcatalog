@@ -5,6 +5,7 @@ import AdminListingForm from '@/components/AdminListingForm'
 import QuickListingForm from '@/components/QuickListingForm'
 import { prisma } from '@/lib/prisma'
 import { requireStaff } from '@/lib/admin-auth'
+import { partnerMustSign } from '@/lib/agreements-server'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Add Listing | Admin' }
@@ -14,6 +15,7 @@ export default async function NewListingPage() {
   const { userId, role } = await requireStaff()
   const isVendor = role === 'partner'
 
+  if (isVendor && (await partnerMustSign(userId))) redirect('/partners/agreement')
   if (isVendor) {
     const profile = await prisma.partnerProfile.findUnique({ where: { userId } })
     if (!profile) redirect('/admin/profile')
