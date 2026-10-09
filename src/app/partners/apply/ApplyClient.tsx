@@ -493,6 +493,9 @@ export default function ApplyClient({
   )
 }
 
+// Matches SERVER_UPLOAD_MAX_BYTES in lib/partners (server-side uploads).
+const SERVER_UPLOAD_LIMIT = 4 * 1024 * 1024
+
 function fileSize(bytes: number) {
   return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))}KB` : `${(bytes / 1024 / 1024).toFixed(1)}MB`
 }
@@ -555,6 +558,7 @@ function DocumentRow({
   onChange: (doc: Doc | null) => void
 }) {
   const [busy, setBusy] = useState(false)
+  const [progress, setProgress] = useState<number | null>(null)
   const [expiry, setExpiry] = useState(doc?.expiresAt?.slice(0, 10) ?? '')
   const input = useRef<HTMLInputElement>(null)
 
@@ -563,20 +567,54 @@ function DocumentRow({
     if (!ALLOWED_DOC_TYPES.includes(file.type)) return toast.error('Upload a PDF or a photo (JPG, PNG, WEBP, HEIC)')
     if (requirement.expires && !expiry) return toast.error(`Add the expiry date for ${requirement.label} first`)
     setBusy(true)
+    setProgress(null)
+    const endpoint = '/api/partner-application/documents'
+    const post = async (body: BodyInit, json = true) => {
+      const res = await fetch(endpoint, { method: 'POST', body, ...(json ? { headers: { 'content-type': 'application/json' } } : {}) })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || (res.status === 413 ? 'That file is too large. Try a smaller photo or a compressed PDF.' : 'Upload failed. Please try again.'))
+      return data
+    }
     try {
-      const body = new FormData()
-      body.append('file', file)
-      body.append('kind', requirement.kind)
-      if (expiry) body.append('expiresAt', expiry)
-      const res = await fetch('/api/partner-application/documents', { method: 'POST', body })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      // Send the file straight to private storage through a presigned URL
+      // for a path the server chose; otherwise (store not set up) send it
+      // through the server.
+      const meta = { kind: requirement.kind, fileName: file.name, contentType: file.type, size: file.size, expiresAt: expiry || undefined }
+      const grant = await post(JSON.stringify({ action: 'start', ...meta }))
+      let data
+      if (grant.direct) {
+        const { uploadPresigned } = await import('@vercel/blob/client')
+        const sent = await uploadPresigned(grant.pathname, file, {
+          access: 'private',
+          handleUploadUrl: `${endpoint}/presign`,
+          clientPayload: JSON.stringify(meta),
+          contentType: file.type,
+          multipart: file.size > 5 * 1024 * 1024,
+          onUploadProgress: ({ percentage }) => setProgress(Math.round(percentage)),
+        }).then(
+          () => true,
+          () => false
+        )
+        if (sent) data = await post(JSON.stringify({ action: 'complete', kind: requirement.kind, pathname: grant.pathname, expiresAt: expiry || undefined }))
+        else if (file.size > SERVER_UPLOAD_LIMIT) throw new Error('Upload interrupted. Check your connection and try again.')
+      }
+      if (!data) {
+        // Store not set up, or the direct upload failed: go through the server.
+        setProgress(null)
+        if (file.size > SERVER_UPLOAD_LIMIT) throw new Error('Files must be under 4MB here. Try a smaller photo or a compressed PDF.')
+        const body = new FormData()
+        body.append('file', file)
+        body.append('kind', requirement.kind)
+        if (expiry) body.append('expiresAt', expiry)
+        data = await post(body, false)
+      }
       onChange({ ...data.document, expiresAt: data.document.expiresAt })
       toast.success(`${requirement.label} uploaded`)
     } catch (err) {
       toast.error((err as Error).message || 'Upload failed. Please try again.')
     } finally {
       setBusy(false)
+      setProgress(null)
       if (input.current) input.current.value = ''
     }
   }
@@ -621,7 +659,7 @@ function DocumentRow({
           {!disabled && (
             <>
               <button type="button" onClick={() => input.current?.click()} disabled={busy} className="inline-flex items-center gap-1.5 min-h-11 px-3 text-xs tracking-[0.12em] uppercase" style={{ border: '1px solid #1e2e1f', color: '#C9A84C' }}>
-                Replace
+                {busy ? (progress !== null ? `${progress}%` : <Loader2 size={14} className="animate-spin" />) : 'Replace'}
               </button>
               <button type="button" onClick={remove} disabled={busy} aria-label={`Remove ${requirement.label}`} className="inline-flex items-center justify-center w-11 h-11" style={{ color: '#908673' }}>
                 <X size={15} />
@@ -639,7 +677,7 @@ function DocumentRow({
             style={{ border: '1px dashed rgba(201,168,76,0.5)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
           >
             {busy ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
-            {busy ? 'Uploading…' : 'Upload file'}
+            {busy ? (progress !== null ? `Uploading ${progress}%` : 'Uploading…') : 'Upload file'}
           </button>
         )
       )}
