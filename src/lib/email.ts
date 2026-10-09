@@ -55,7 +55,11 @@ export async function verifyEmailTransport(): Promise<boolean> {
   try {
     await transporter.verify()
     return true
-  } catch {
+  } catch (err) {
+    // Log the server's reason (e.g. "535 Username and Password not accepted")
+    // so a failing health check can be diagnosed. Never includes the password.
+    const e = err as { code?: string; responseCode?: number; response?: string; message?: string }
+    console.error('SMTP verify failed:', e.code, e.responseCode, (e.response ?? e.message ?? '').slice(0, 200))
     return false
   }
 }
