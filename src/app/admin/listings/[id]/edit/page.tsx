@@ -3,14 +3,14 @@ import Link from 'next/link'
 import AdminNavbar from '@/components/AdminNavbar'
 import AdminListingForm from '@/components/AdminListingForm'
 import { prisma } from '@/lib/prisma'
-import { requireStaff } from '@/lib/admin-auth'
+import { requireListings } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Edit Listing | Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
-  const { userId, role } = await requireStaff()
+  const { userId, role } = await requireListings()
   const isVendor = role === 'partner'
 
   const { id } = await params

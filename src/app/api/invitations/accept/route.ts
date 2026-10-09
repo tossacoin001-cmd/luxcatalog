@@ -20,10 +20,13 @@ export async function POST(req: Request) {
   }
 
   await prisma.$transaction([
-    prisma.user.update({ where: { id: session.user.id }, data: { role: invitation.role } }),
+    prisma.user.update({
+      where: { id: session.user.id },
+      data: { role: invitation.role, permissions: invitation.role === 'team' ? invitation.permissions : [] },
+    }),
     prisma.staffInvitation.update({ where: { id: invitation.id }, data: { acceptedAt: new Date() } }),
   ])
-  await audit(session.user.id, 'team.invite.accept', invitation.id, { role: invitation.role })
+  await audit(session.user.id, 'team.invite.accept', invitation.id, { role: invitation.role, permissions: invitation.permissions })
 
   return NextResponse.json({ success: true, role: invitation.role })
 }

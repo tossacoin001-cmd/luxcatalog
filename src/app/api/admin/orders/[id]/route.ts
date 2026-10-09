@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { requireAdminApi } from '@/lib/admin-auth'
+import { requireAreaApi } from '@/lib/admin-auth'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const admin = await requireAdminApi()
+  const admin = await requireAreaApi('orders')
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {

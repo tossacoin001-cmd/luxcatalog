@@ -2,14 +2,14 @@ import Link from 'next/link'
 import AdminNavbar from '@/components/AdminNavbar'
 import PartnerAdminTable from '@/components/PartnerAdminTable'
 import { prisma } from '@/lib/prisma'
-import { requireAdmin } from '@/lib/admin-auth'
+import { requireArea } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Partners | Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function AdminPartnersPage() {
-  await requireAdmin()
+  await requireArea('partners')
 
   const profiles = await prisma.partnerProfile.findMany({ orderBy: { createdAt: 'desc' } })
   const counts = await prisma.listing.groupBy({

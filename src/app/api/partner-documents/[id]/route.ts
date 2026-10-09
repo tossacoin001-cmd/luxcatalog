@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { audit, getSession, isAdmin } from '@/lib/admin-auth'
+import { audit, getSession, can } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { readDocument } from '@/lib/partners'
 
@@ -14,7 +14,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   if (!doc) return new NextResponse('Not found', { status: 404 })
 
   const owner = doc.application.userId === session.user.id
-  const admin = !owner && (await isAdmin(session.user.id))
+  const admin = !owner && (await can(session.user.id, 'applications'))
   if (!owner && !admin) return new NextResponse('Not found', { status: 404 })
   if (admin) await audit(session.user.id, 'partner_document.view', doc.id, { kind: doc.kind })
 

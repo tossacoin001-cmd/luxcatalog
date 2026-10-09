@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { slugify } from '@/lib/utils'
-import { requireStaffApi } from '@/lib/admin-auth'
+import { requireListingsApi } from '@/lib/admin-auth'
 import { optimizeListingDraft } from '@/lib/ai-optimize'
 import { resolvePlacement } from '@/lib/taxonomy'
 import { revalidateCatalog } from '@/lib/revalidate'
 import { partnerMustSign } from '@/lib/agreements-server'
 
 export async function POST(req: Request) {
-  const staff = await requireStaffApi()
+  const staff = await requireListingsApi()
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const isVendor = staff.role === 'partner'
   if (isVendor && (await partnerMustSign(staff.userId))) {

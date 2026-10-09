@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { CheckCircle2, Clock, FileText } from 'lucide-react'
 import AdminNavbar from '@/components/AdminNavbar'
-import { requireAdmin } from '@/lib/admin-auth'
+import { requireArea } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { AGREEMENTS, COMPANY } from '@/lib/agreements'
 import { agreementStatus } from '@/lib/agreements-server'
@@ -15,7 +15,7 @@ const card = { background: '#0f1a10', border: '1px solid #1e2e1f' }
 const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
 export default async function AgreementsAdminPage() {
-  await requireAdmin()
+  await requireArea('partners')
   const partners = await prisma.user.findMany({ where: { role: 'partner' }, select: { id: true, name: true, email: true }, orderBy: { createdAt: 'desc' } })
   const statuses = await Promise.all(partners.map(async (p) => ({ p, s: await agreementStatus(p.id) })))
   const unreviewed = AGREEMENTS.filter((a) => !a.reviewed).length

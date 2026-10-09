@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { requireStaffApi } from '@/lib/admin-auth'
+import { requireListingsApi } from '@/lib/admin-auth'
 import { resolvePlacement } from '@/lib/taxonomy'
 import { revalidateCatalog } from '@/lib/revalidate'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const staff = await requireStaffApi()
+  const staff = await requireListingsApi()
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const isVendor = staff.role === 'partner'
 
@@ -66,7 +66,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const staff = await requireStaffApi()
+  const staff = await requireListingsApi()
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const isVendor = staff.role === 'partner'
 

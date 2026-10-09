@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { audit, requireAdminApi } from '@/lib/admin-auth'
+import { audit, requireAreaApi } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { emailApplicationDecision } from '@/lib/partners'
 import { revalidateCatalog } from '@/lib/revalidate'
@@ -11,7 +11,7 @@ type Action = (typeof ACTIONS)[number]
 // partner and creates their public partner profile; every decision emails the
 // applicant and is written to the audit log.
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const admin = await requireAdminApi()
+  const admin = await requireAreaApi('applications')
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const { id } = await params
   const body = await req.json().catch(() => ({}))

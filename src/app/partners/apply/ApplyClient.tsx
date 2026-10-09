@@ -182,7 +182,17 @@ export default function ApplyClient({
   // ---------------------------------------------------------------------------
   // Already a partner / decided / under review
   // ---------------------------------------------------------------------------
-  if (userRole === 'admin' || (userRole === 'partner' && app?.status !== 'info_requested')) {
+  if (userRole === 'admin' || userRole === 'team') {
+    return (
+      <StatusCard
+        icon={<CheckCircle2 size={22} style={{ color: '#6fbf73' }} />}
+        title="You're on the Lux Catalog team"
+        body="Team accounts don't apply as partners. Partner applications are reviewed in the admin panel."
+        cta={{ label: 'Review applications', href: '/admin/applications' }}
+      />
+    )
+  }
+  if (userRole === 'partner' && app?.status !== 'info_requested') {
     return (
       <StatusCard
         icon={<CheckCircle2 size={22} style={{ color: '#6fbf73' }} />}

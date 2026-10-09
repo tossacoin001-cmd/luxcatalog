@@ -1,4 +1,4 @@
-import { getSession, isAdmin } from '@/lib/admin-auth'
+import { can, getSession } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { buildAgreementPdf, pdfFileName } from '@/lib/agreements-server'
 
@@ -9,7 +9,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   if (!session) return new Response('Sign in first', { status: 401 })
   const { id } = await params
   const record = await prisma.partnerAgreement.findUnique({ where: { id } })
-  if (!record || (record.userId !== session.user.id && !(await isAdmin(session.user.id)))) {
+  if (!record || (record.userId !== session.user.id && !(await can(session.user.id, 'partners')))) {
     return new Response('Not found', { status: 404 })
   }
   const pdf = await buildAgreementPdf(record)

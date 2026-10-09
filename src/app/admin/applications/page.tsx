@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import AdminNavbar from '@/components/AdminNavbar'
-import { requireAdmin } from '@/lib/admin-auth'
+import { requireArea } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { partnerTypeSpec } from '@/lib/partner-requirements'
 
@@ -17,7 +17,7 @@ const STATUS_LABEL: Record<string, { label: string; color: string }> = {
 }
 
 export default async function ApplicationsPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
-  await requireAdmin()
+  await requireArea('applications')
   const { status } = await searchParams
   const filter = status && STATUS_LABEL[status] ? status : 'submitted'
 

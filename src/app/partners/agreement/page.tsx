@@ -14,7 +14,7 @@ export default async function AgreementPage() {
   const session = await getSession()
   if (!session) redirect('/sign-in?redirect_url=/partners/agreement')
   const role = await getRole(session.user.id)
-  if (role === 'admin') redirect('/admin/agreements')
+  if (role === 'admin' || role === 'team') redirect('/admin/agreements')
   if (role !== 'partner') redirect('/partners/apply')
 
   const status = await agreementStatus(session.user.id)

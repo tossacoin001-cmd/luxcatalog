@@ -12,7 +12,17 @@ export function hashToken(token: string): string {
 
 // Creates an invitation and returns the raw link. The raw token is never
 // stored, only its hash, so a database leak can't be turned into staff access.
-export async function createStaffInvitation({ email, role, invitedById }: { email: string; role: StaffRole; invitedById: string }) {
+export async function createStaffInvitation({
+  email,
+  role,
+  permissions = [],
+  invitedById,
+}: {
+  email: string
+  role: StaffRole
+  permissions?: string[]
+  invitedById: string
+}) {
   const normalized = email.trim().toLowerCase()
 
   // One live invitation per email: issuing a new one retires the old link.
@@ -26,6 +36,7 @@ export async function createStaffInvitation({ email, role, invitedById }: { emai
     data: {
       email: normalized,
       role,
+      permissions: role === 'team' ? permissions : [],
       tokenHash: hashToken(token),
       invitedById,
       expiresAt: new Date(Date.now() + INVITE_TTL_MS),
@@ -34,11 +45,14 @@ export async function createStaffInvitation({ email, role, invitedById }: { emai
 
   const link = `${getAppUrl()}/invite?token=${token}`
   const mail = actionEmail({
-    heading: role === 'admin' ? 'You have been invited as an admin' : 'You have been invited as a partner',
+    heading:
+      role === 'admin' ? 'You have been invited as an admin' : role === 'team' ? 'Welcome to the Lux Catalog team' : 'You have been invited as a partner',
     body:
       role === 'admin'
         ? 'You have been given full admin access to Lux Catalog. Accept within 7 days to set up your account.'
-        : 'You have been invited to list and manage your assets on Lux Catalog. Accept within 7 days to set up your account.',
+        : role === 'team'
+          ? 'You have been added to the Lux Catalog team, with access to listings, enquiries, orders and partner applications. Accept within 7 days to set up your account.'
+          : 'You have been invited to list and manage your assets on Lux Catalog. Accept within 7 days to set up your account.',
     actionLabel: 'Accept invitation',
     actionUrl: link,
   })

@@ -14,7 +14,7 @@ interface AccountUser {
   email: string
   emailVerified: boolean
   phone: string | null
-  role: 'customer' | 'partner' | 'admin'
+  role: 'customer' | 'partner' | 'team' | 'admin'
   twoFactorEnabled: boolean
 }
 

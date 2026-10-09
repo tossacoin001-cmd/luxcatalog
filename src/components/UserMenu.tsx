@@ -42,7 +42,7 @@ export default function UserMenu({ showStaffLink = true }: { showStaffLink?: boo
     .slice(0, 2)
     .map((p) => p[0]?.toUpperCase())
     .join('') || user.email[0]?.toUpperCase()
-  const isStaff = user.role === 'admin' || user.role === 'partner'
+  const isStaff = user.role === 'admin' || user.role === 'team' || user.role === 'partner'
 
   const item = 'block px-4 py-2.5 text-xs tracking-[0.12em] uppercase text-left w-full hover:bg-white/5 transition-colors'
 

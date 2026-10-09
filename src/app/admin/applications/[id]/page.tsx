@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import { FileText, AlertTriangle } from 'lucide-react'
 import AdminNavbar from '@/components/AdminNavbar'
 import ApplicationDecision from '@/components/ApplicationDecision'
-import { requireAdmin } from '@/lib/admin-auth'
+import { requireArea } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { isDocRequired, missingForSubmit, partnerTypeSpec } from '@/lib/partner-requirements'
 import { SUBCATEGORIES } from '@/lib/taxonomy'
@@ -16,7 +16,7 @@ const COLLECTION_LABEL: Record<string, string> = Object.fromEntries(Object.value
 const muted = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
 
 export default async function ApplicationDetail({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin()
+  await requireArea('applications')
   const { id } = await params
   const app = await prisma.partnerApplication.findUnique({
     where: { id },

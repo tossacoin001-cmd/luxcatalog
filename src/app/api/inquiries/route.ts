@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getUserId, requireAdminApi } from '@/lib/admin-auth'
+import { getUserId, requireAreaApi } from '@/lib/admin-auth'
 
 export async function POST(req: Request) {
   try {
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    const admin = await requireAdminApi()
+    const admin = await requireAreaApi('enquiries')
     if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const inquiries = await prisma.inquiry.findMany({

@@ -2,14 +2,14 @@ import Link from 'next/link'
 import AdminNavbar from '@/components/AdminNavbar'
 import AdminListingsTable from '@/components/AdminListingsTable'
 import { prisma } from '@/lib/prisma'
-import { requireStaff } from '@/lib/admin-auth'
+import { requireListings } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Manage Listings | Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function AdminListingsPage() {
-  const { userId, role } = await requireStaff()
+  const { userId, role } = await requireListings()
   const isVendor = role === 'partner'
 
   const listings = await prisma.listing.findMany({

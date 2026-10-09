@@ -220,6 +220,9 @@ model OrderItem {
 enum UserRole {
   customer
   partner
+  // Lux Catalog staff: runs operations in the admin panel, but cannot manage
+  // the team. Never goes through the partner application or agreement.
+  team
   admin
 }
 
@@ -233,6 +236,8 @@ model User {
   // Never accepted from sign-up input (input: false in auth config), only
   // changed by an admin or by redeeming a staff invitation.
   role             UserRole                @default(customer)
+  // Areas a team member may use (lib/access). Ignored for other roles.
+  permissions      String[]                @default([])
   twoFactorEnabled Boolean?                @default(false)
   // Marketing consent (Nigeria Data Protection Act 2023): only users who
   // opted in receive the customer "Lux Edit". Service and account emails
@@ -324,6 +329,8 @@ model StaffInvitation {
   id          String    @id @default(uuid())
   email       String
   role        UserRole
+  // Areas the team member gets on accepting (lib/access).
+  permissions String[]  @default([])
   tokenHash   String    @unique
   invitedById String
   expiresAt   DateTime

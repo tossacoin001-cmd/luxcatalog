@@ -1,14 +1,14 @@
 import AdminNavbar from '@/components/AdminNavbar'
 import AdminOrdersTable from '@/components/AdminOrdersTable'
 import { prisma } from '@/lib/prisma'
-import { requireAdmin } from '@/lib/admin-auth'
+import { requireArea } from '@/lib/admin-auth'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Orders | Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function AdminOrdersPage() {
-  await requireAdmin()
+  await requireArea('orders')
 
   const orders = await prisma.order.findMany({
     orderBy: { createdAt: 'desc' },

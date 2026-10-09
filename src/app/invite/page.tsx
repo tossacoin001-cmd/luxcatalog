@@ -28,7 +28,7 @@ export default async function InvitePage({ searchParams }: { searchParams: Promi
   return (
     <AuthShell
       title="Accept Invitation"
-      subtitle={`You have been invited to join Lux Catalog as ${invitation.role === 'admin' ? 'an admin' : 'a partner'}.`}
+      subtitle={`You have been invited to join Lux Catalog as ${invitation.role === 'admin' ? 'an admin' : invitation.role === 'team' ? 'a team member' : 'a partner'}.`}
     >
       <AcceptInvite token={token} invitedEmail={invitation.email} currentEmail={session.user.email} />
     </AuthShell>

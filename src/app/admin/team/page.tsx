@@ -11,21 +11,28 @@ export const dynamic = 'force-dynamic'
 export default async function AdminTeamPage() {
   const userId = await requireAdmin()
 
-  const [members, invitations] = await Promise.all([
+  const [members, invitations, invitedPartners] = await Promise.all([
     prisma.user.findMany({
-      where: { role: { in: ['admin', 'partner'] } },
-      select: { id: true, name: true, email: true, role: true },
+      where: { role: { in: ['admin', 'team'] } },
+      select: { id: true, name: true, email: true, role: true, permissions: true },
       orderBy: { createdAt: 'asc' },
     }),
     prisma.staffInvitation.findMany({
       where: { acceptedAt: null, revokedAt: null, expiresAt: { gt: new Date() } },
-      select: { id: true, email: true, role: true },
+      select: { id: true, email: true, role: true, permissions: true },
       orderBy: { createdAt: 'desc' },
     }),
+    // Partner accounts that never applied: people invited through the old
+    // team invite, which only offered "partner". Usually staff, not brands.
+    prisma.user.findMany({ where: { role: 'partner' }, select: { id: true, name: true, email: true } }),
   ])
+  const applied = new Set(
+    (await prisma.partnerApplication.findMany({ where: { userId: { in: invitedPartners.map((p) => p.id) } }, select: { userId: true } })).map((a) => a.userId)
+  )
 
-  const plainMembers = members.map((m) => ({ id: m.id, userId: m.id, name: m.name, email: m.email, role: m.role }))
+  const plainMembers = members.map((m) => ({ id: m.id, userId: m.id, name: m.name, email: m.email, role: m.role, permissions: m.permissions }))
   const plainInvitations = invitations.map((i) => ({ ...i, status: 'pending' }))
+  const plainInvitedPartners = invitedPartners.filter((p) => !applied.has(p.id))
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
@@ -40,13 +47,13 @@ export default async function AdminTeamPage() {
             Team &amp; Access
           </h1>
           <p className="mt-2 text-sm" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-            Invite teammates and partners to manage listings and enquiries alongside you.
+            Invite your team and choose exactly what each person can access. Brand partners join through the partner application instead.
           </p>
         </div>
       </div>
 
       <div className="max-w-3xl mx-auto px-6 md:px-12 py-10">
-        <AdminTeamManager members={plainMembers} invitations={plainInvitations} currentUserId={userId} />
+        <AdminTeamManager members={plainMembers} invitations={plainInvitations} invitedPartners={plainInvitedPartners} currentUserId={userId} />
       </div>
     </div>
   )
