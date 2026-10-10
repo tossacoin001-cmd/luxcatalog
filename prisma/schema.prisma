@@ -101,6 +101,7 @@ model Listing {
   inquiries        Inquiry[]
   unavailableDates UnavailableDate[]
   bookingSettings  BookingSettings?
+  bookings         Booking[]
   orderItems       OrderItem[]
 }
 
@@ -585,4 +586,55 @@ model PartnerAgreement {
 
   @@unique([userId, agreementKey, version])
   @@index([signedAt])
+}
+
+enum BookingStatus {
+  // Dates held for the guest while they pay (holdExpiresAt); expired holds free the dates.
+  pending_payment
+  confirmed
+  cancelled
+  expired
+  completed
+}
+
+// A guest's booking of a listing for [startDate, endDate) (endDate exclusive,
+// whole days at UTC midnight). Prices are snapshotted at booking time so the
+// record never changes if the listing's price does. Money is NGN.
+model Booking {
+  id                 String             @id @default(uuid())
+  // Human reference (LUX-XXXXXX), also used as the Paystack reference.
+  reference          String             @unique
+  listingId          String
+  listing            Listing            @relation(fields: [listingId], references: [id])
+  userId             String
+  guestName          String
+  guestEmail         String
+  guestPhone         String?
+  startDate          DateTime
+  endDate            DateTime
+  unit               String
+  units              Int
+  guests             Int?
+  rate               Decimal            @db.Decimal(14, 2)
+  base               Decimal            @db.Decimal(14, 2)
+  cleaningFee        Decimal            @db.Decimal(14, 2)
+  total              Decimal            @db.Decimal(14, 2)
+  cautionDeposit     Decimal            @db.Decimal(14, 2)
+  amountDue          Decimal            @db.Decimal(14, 2)
+  currency           String             @default("NGN")
+  cancellationPolicy CancellationPolicy
+  status             BookingStatus      @default(pending_payment)
+  holdExpiresAt      DateTime?
+  paidAt             DateTime?
+  paymentChannel     String?
+  // Paid after the hold lapsed and someone else took the dates: a person
+  // must refund it (shown to admins).
+  needsRefund        Boolean            @default(false)
+  note               String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@index([listingId, startDate])
+  @@index([userId])
+  @@index([status, holdExpiresAt])
 }

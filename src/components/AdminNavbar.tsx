@@ -4,6 +4,7 @@ import type { Area } from '@/lib/access'
 
 const AREA_LINKS: { area: Area; label: string; href: string }[] = [
   { area: 'listings', label: 'Listings', href: '/admin/listings' },
+  { area: 'bookings', label: 'Bookings', href: '/admin/bookings' },
   { area: 'enquiries', label: 'Enquiries', href: '/admin/inquiries' },
   { area: 'orders', label: 'Orders', href: '/admin/orders' },
   { area: 'applications', label: 'Applications', href: '/admin/applications' },
@@ -24,6 +25,7 @@ export default async function AdminNavbar(_props: { role?: string | null }) {
     links = [
       { label: 'Dashboard', href: '/admin' },
       { label: 'My Listings', href: '/admin/listings' },
+      { label: 'Bookings', href: '/admin/bookings' },
       { label: 'My Profile', href: '/admin/profile' },
       { label: 'Agreement', href: '/partners/agreement' },
     ]

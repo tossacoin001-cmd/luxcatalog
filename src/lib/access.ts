@@ -4,6 +4,7 @@
 
 export const AREAS = [
   { key: 'listings', label: 'Listings', help: 'Add, edit and publish any listing' },
+  { key: 'bookings', label: 'Bookings', help: 'Bookings, guests and dates, payment status' },
   { key: 'enquiries', label: 'Enquiries', help: 'Read and answer client enquiries' },
   { key: 'orders', label: 'Orders', help: 'Orders and payments' },
   { key: 'applications', label: 'Applications', help: 'Review partner applications and their private documents' },
@@ -15,9 +16,9 @@ export type Area = (typeof AREAS)[number]['key']
 export const AREA_KEYS = AREAS.map((a) => a.key) as Area[]
 
 export const PRESETS: { label: string; areas: Area[] }[] = [
-  { label: 'Operations manager', areas: ['listings', 'enquiries', 'orders', 'applications', 'partners'] },
+  { label: 'Operations manager', areas: ['listings', 'bookings', 'enquiries', 'orders', 'applications', 'partners'] },
   { label: 'Listings manager', areas: ['listings'] },
-  { label: 'Concierge / sales', areas: ['enquiries', 'orders'] },
+  { label: 'Concierge / sales', areas: ['bookings', 'enquiries', 'orders'] },
   { label: 'Partner onboarding', areas: ['applications', 'partners'] },
 ]
 

@@ -94,6 +94,30 @@ export default function BookingPanel({ listingId, listingTitle }: { listingId: s
       return
     }
     setSending(true)
+    if (avail.rules.instantBook) {
+      // Instant booking: the server re-prices and holds the dates, then we
+      // go to Paystack's secure checkout. Confirmation happens on return.
+      try {
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ listingId, start: sel.first, end: sel.last, guests }),
+        })
+        const data = await res.json().catch(() => ({}))
+        if (res.status === 401) {
+          router.push(`/sign-in?redirect_url=${encodeURIComponent(`${pathname}?${search.toString()}#enquire`)}`)
+          return
+        }
+        if (!res.ok || !data.url) throw new Error(data.error || 'Could not start the payment. Please try again.')
+        window.location.assign(data.url)
+        return
+      } catch (err) {
+        toast.error((err as Error).message)
+        setResult(null)
+        setSending(false)
+        return
+      }
+    }
     try {
       const r = avail.rules
       const lines = [
@@ -227,8 +251,13 @@ export default function BookingPanel({ listingId, listingTitle }: { listingId: s
           style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
         >
           {sending && <Loader2 size={14} className="animate-spin" />}
-          {q?.ok ? 'Request these dates' : r.unit === 'night' ? 'Choose your dates' : 'Choose your days'}
+          {q?.ok ? (r.instantBook ? `Reserve & pay ${naira(q.dueNow)}` : 'Request these dates') : r.unit === 'night' ? 'Choose your dates' : 'Choose your days'}
         </button>
+      )}
+      {r.instantBook && q?.ok && (
+        <p className="text-center text-xs" style={text}>
+          Secure payment by Paystack: card, bank transfer or USSD. Instant confirmation.
+        </p>
       )}
 
       <p className="flex items-start gap-2 text-xs leading-relaxed" style={text}>
