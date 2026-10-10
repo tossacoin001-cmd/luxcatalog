@@ -19,6 +19,9 @@ interface ListingRow {
   submittedBy?: string
   inquiryCount?: number
   soldCount?: number
+  // Takes bookings (shortlets, rentals...): shows the Calendar link.
+  bookable?: boolean
+  bookingOnline?: boolean
 }
 
 export default function AdminListingsTable({
@@ -182,6 +185,15 @@ export default function AdminListingsTable({
                   >
                     Edit
                   </Link>
+                  {listing.bookable && (
+                    <Link
+                      href={`/admin/listings/${listing.id}/booking`}
+                      className="text-xs tracking-wider hover:text-lux-gold transition-colors whitespace-nowrap"
+                      style={{ color: listing.bookingOnline ? '#6fbf73' : '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                    >
+                      {listing.bookingOnline ? 'Calendar · online' : 'Set up booking'}
+                    </Link>
+                  )}
                   <button
                     type="button"
                     disabled={deletingId === listing.id}

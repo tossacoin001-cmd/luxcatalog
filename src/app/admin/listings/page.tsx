@@ -17,7 +17,8 @@ export default async function AdminListingsPage() {
     orderBy: { createdAt: 'desc' },
     select: {
       id: true, title: true, category: true, priceDisplay: true, status: true, featured: true,
-      published: true, ownerId: true, marginRequested: true,
+      published: true, ownerId: true, marginRequested: true, mode: true,
+      bookingSettings: { select: { enabled: true } },
       _count: {
         select: {
           inquiries: true,
@@ -45,6 +46,8 @@ export default async function AdminListingsPage() {
     submittedBy: l.ownerId ? (brandByOwner[l.ownerId] ?? 'Partner') : 'House',
     inquiryCount: l._count.inquiries,
     soldCount: l._count.orderItems,
+    bookable: l.mode === 'booking',
+    bookingOnline: !!l.bookingSettings?.enabled,
   }))
 
   return (

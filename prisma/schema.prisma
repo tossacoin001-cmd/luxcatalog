@@ -100,6 +100,7 @@ model Listing {
   savedBy          SavedListing[]
   inquiries        Inquiry[]
   unavailableDates UnavailableDate[]
+  bookingSettings  BookingSettings?
   orderItems       OrderItem[]
 }
 
@@ -122,6 +123,9 @@ model PartnerProfile {
 // Manually blocked date ranges for shortlet listings (e.g. Aqua). Booking
 // stays inquiry-based for v1 — this only powers the "unavailable" calendar
 // state shown to guests, not a live payment/reservation system.
+// Dates a listing can't be booked. Whole days at UTC midnight; endDate is
+// exclusive (a block from the 20th to the 22nd frees the 22nd). source is
+// "manual" (partner/admin) now; Airbnb calendar sync adds "ical" later.
 model UnavailableDate {
   id        String   @id @default(uuid())
   listingId String
@@ -129,7 +133,41 @@ model UnavailableDate {
   startDate DateTime
   endDate   DateTime
   note      String?
+  source    String   @default("manual")
   createdAt DateTime @default(now())
+
+  @@index([listingId, startDate])
+}
+
+enum CancellationPolicy {
+  flexible
+  moderate
+  strict
+}
+
+// How a bookable listing (shortlets, aqua homes, car rental, chauffeur...)
+// is priced and booked online. One row per listing; absent or enabled=false
+// means the listing is enquiry-only. Money is NGN.
+model BookingSettings {
+  listingId          String             @id
+  listing            Listing            @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  enabled            Boolean            @default(false)
+  // "night" (stays: checkout day is free) or "day" (hire: every day counts)
+  unit               String             @default("night")
+  rate               Decimal            @db.Decimal(14, 2)
+  cleaningFee        Decimal            @default(0) @db.Decimal(14, 2)
+  cautionDeposit     Decimal            @default(0) @db.Decimal(14, 2)
+  minUnits           Int                @default(1)
+  maxUnits           Int                @default(30)
+  maxGuests          Int?
+  instantBook        Boolean            @default(true)
+  cancellationPolicy CancellationPolicy @default(moderate)
+  checkInTime        String             @default("14:00")
+  checkOutTime       String             @default("11:00")
+  // Chauffeur hours included per day (car rental / chauffeur)
+  hoursPerDay        Int?
+  advanceNoticeHours Int                @default(24)
+  updatedAt          DateTime           @updatedAt
 }
 
 model SavedListing {

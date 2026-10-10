@@ -9,6 +9,9 @@ import { Badge } from '@/components/ui/badge'
 import InquiryModal from '@/components/InquiryModal'
 import AddToCartPanel from '@/components/AddToCartPanel'
 import PriceDisplay from '@/components/PriceDisplay'
+import BookingPanel from '@/components/booking/BookingPanel'
+import { Suspense } from 'react'
+import { naira } from '@/lib/booking'
 import { categoryLabels, specLabel, splitHighlights } from '@/lib/utils'
 import { prisma } from '@/lib/prisma'
 import { MapPin, Check } from 'lucide-react'
@@ -51,7 +54,10 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
   const categoryKey = categorySlugMap[categorySlug]
   if (!categoryKey) notFound()
 
-  const listing = await prisma.listing.findFirst({ where: { slug, category: categoryKey as never, published: true } })
+  const listing = await prisma.listing.findFirst({
+    where: { slug, category: categoryKey as never, published: true },
+    include: { bookingSettings: { select: { enabled: true, rate: true, unit: true } } },
+  })
   if (!listing) notFound()
 
   const partner = listing.ownerId
@@ -59,6 +65,8 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
     : null
 
   const price = listing.price ? Number(listing.price) : null
+  // Listings that take online bookings show the booking panel instead of an asking price.
+  const booking = listing.bookingSettings?.enabled ? listing.bookingSettings : null
   const specs = (listing.specs ?? {}) as Record<string, string>
   // Older listings stored highlights as long sentences or one comma list;
   // split those into outline points so every listing reads the same way.
@@ -177,14 +185,20 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
             className="sticky top-24 p-7 space-y-6"
             style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}
           >
-            <div>
-              <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                Asking Price
-              </p>
-              <p className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: !price ? 'italic' : 'normal' }}>
-                <PriceDisplay price={price} priceDisplay={listing.priceDisplay} />
-              </p>
-            </div>
+            {booking ? (
+              <Suspense fallback={<div className="min-h-[420px]" aria-hidden />}>
+                <BookingPanel listingId={listing.id} listingTitle={listing.title} />
+              </Suspense>
+            ) : (
+              <div>
+                <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                  Asking Price
+                </p>
+                <p className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: !price ? 'italic' : 'normal' }}>
+                  <PriceDisplay price={price} priceDisplay={listing.priceDisplay} />
+                </p>
+              </div>
+            )}
 
             <div style={{ height: 1, background: '#1e2e1f' }} />
 
@@ -219,7 +233,11 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
             <div style={{ height: 1, background: '#1e2e1f' }} />
 
-            {listing.category === 'decor' ? (
+            {booking ? (
+              <p className="text-[11px] leading-relaxed text-center" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                Questions before you book? Tap the concierge button and a specialist will help.
+              </p>
+            ) : listing.category === 'decor' ? (
               <AddToCartPanel
                 listingId={listing.id}
                 title={listing.title}
@@ -249,9 +267,9 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
       <Footer />
       <ListingActionBar
         title={listing.title}
-        price={price}
-        priceDisplay={listing.priceDisplay}
-        primaryLabel={listing.category === 'decor' ? 'Buy' : 'Reserve'}
+        price={booking ? null : price}
+        priceDisplay={booking ? `${naira(Number(booking.rate))} / ${booking.unit === 'day' ? 'day' : 'night'}` : listing.priceDisplay}
+        primaryLabel={booking ? 'Book' : listing.category === 'decor' ? 'Buy' : 'Reserve'}
       />
     </div>
   )
