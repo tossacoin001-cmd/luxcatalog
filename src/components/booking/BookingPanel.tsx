@@ -21,7 +21,7 @@ export default function BookingPanel({ listingId, listingTitle }: { listingId: s
   const router = useRouter()
   const pathname = usePathname()
   const search = useSearchParams()
-  const { data: session } = useSession()
+  const { data: session, isPending: sessionPending } = useSession()
   const { rate: fx } = useCurrency()
   // Charged in Naira; the dollar figure is a guide for international guests.
   const usd = (n: number) => (fx ? `≈ $${Math.round(n * fx).toLocaleString('en-US')}` : null)
@@ -85,7 +85,9 @@ export default function BookingPanel({ listingId, listingTitle }: { listingId: s
   const latest = useMemo(() => addDays(lagosToday(), BOOKING_WINDOW_DAYS), [])
 
   async function request() {
-    if (!q?.ok || !avail) return
+    if (!q?.ok || !avail || sessionPending) return
+    // Only once we know they're signed out; a slow session check must not
+    // send a signed-in guest to sign-up.
     if (!session) {
       const back = `${pathname}?${search.toString()}#enquire`
       router.push(`/sign-up?redirect_url=${encodeURIComponent(back)}`)
@@ -220,7 +222,7 @@ export default function BookingPanel({ listingId, listingTitle }: { listingId: s
         <button
           type="button"
           onClick={request}
-          disabled={!q?.ok || sending}
+          disabled={!q?.ok || sending || sessionPending}
           className="sheen w-full inline-flex items-center justify-center gap-2 min-h-[52px] text-xs tracking-[0.2em] uppercase disabled:opacity-50"
           style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
         >

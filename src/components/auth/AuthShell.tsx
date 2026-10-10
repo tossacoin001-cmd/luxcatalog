@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import PasswordInput from '@/components/auth/PasswordInput'
 
 // Shared frame for every auth screen (sign in/up, reset, 2FA) so they read
 // as one flow and match the storefront's palette.
@@ -55,6 +56,10 @@ export default function AuthShell({
   )
 }
 
+const inputClass = 'w-full h-11 px-4 text-sm focus:outline-none focus:border-lux-gold-muted'
+const inputStyle = { background: '#162318', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
+
+// Password fields get a show/hide toggle automatically.
 export function AuthField({
   label,
   ...props
@@ -67,11 +72,11 @@ export function AuthField({
       >
         {label}
       </span>
-      <input
-        {...props}
-        className="w-full h-11 px-4 text-sm focus:outline-none focus:border-lux-gold-muted"
-        style={{ background: '#162318', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}
-      />
+      {props.type === 'password' ? (
+        <PasswordInput {...props} className={inputClass} style={inputStyle} />
+      ) : (
+        <input {...props} className={inputClass} style={inputStyle} />
+      )}
     </label>
   )
 }
