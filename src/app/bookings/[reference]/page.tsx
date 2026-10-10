@@ -10,6 +10,8 @@ import { naira, unitLabel, POLICY_TEXT } from '@/lib/booking'
 import { applyPayment } from '@/lib/bookings-server'
 import { paystackConfigured, verifyTransaction } from '@/lib/paystack'
 import { categoryHrefs } from '@/lib/utils'
+import { guestCancellationQuote } from '@/lib/refunds-server'
+import CancelBooking from '@/components/booking/CancelBooking'
 
 export const metadata: Metadata = { title: 'Your booking', robots: { index: false } }
 export const dynamic = 'force-dynamic'
@@ -20,7 +22,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-GB', { weekday: 'short', day: 
 async function load(reference: string) {
   return prisma.booking.findUnique({
     where: { reference },
-    include: { listing: { select: { title: true, slug: true, category: true, location: true, ownerId: true, images: true, bookingSettings: { select: { checkInTime: true, checkOutTime: true, hoursPerDay: true } } } } },
+    include: { refunds: { orderBy: { createdAt: 'asc' } }, listing: { select: { title: true, slug: true, category: true, location: true, ownerId: true, images: true, bookingSettings: { select: { checkInTime: true, checkOutTime: true, hoursPerDay: true } } } } },
   })
 }
 
@@ -53,6 +55,8 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
     ? { icon: <AlertTriangle size={22} style={{ color: '#e0b75a' }} />, title: 'We’ll refund this payment', body: 'Your payment came through after these dates were taken by another guest. Our team will refund you in full and help you find an alternative.' }
     : b.status === 'confirmed' || b.status === 'completed'
       ? { icon: <CheckCircle2 size={22} style={{ color: '#6fbf73' }} />, title: 'Your booking is confirmed', body: 'A confirmation and receipt are on their way to your email. Our concierge will send arrival details before your stay.' }
+      : b.status === 'cancelled' && b.paidAt
+        ? { icon: <XCircle size={22} style={{ color: '#e85c4c' }} />, title: 'This booking is cancelled', body: b.cancelledBy === 'guest' ? 'You cancelled this booking. Any refund due is shown below.' : `This booking was cancelled by the ${b.cancelledBy ?? 'team'}. You will receive a full refund.` }
       : holdLive
         ? { icon: <Clock size={22} style={{ color: '#C9A84C' }} />, title: 'Waiting for your payment', body: 'Your dates are held for a few more minutes. If you’ve paid, this page updates as soon as the payment is confirmed.' }
         : { icon: <XCircle size={22} style={{ color: '#e85c4c' }} />, title: b.status === 'cancelled' ? 'This booking was cancelled' : 'This booking wasn’t completed', body: 'No payment was taken for it. You can choose your dates again on the listing.' }
@@ -110,6 +114,28 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
             {Number(b.cautionDeposit) > 0 ? ' The caution deposit is refunded within 48 hours of check-out.' : ''}
           </p>
         </section>
+
+        {b.refunds.length > 0 && (
+          <section className="p-5 space-y-2" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+            <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+              Refunds
+            </p>
+            {b.refunds.filter((r) => r.status !== 'rejected').map((r) => (
+              <div key={r.id} className="flex justify-between gap-3 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+                <span style={{ color: '#908673' }}>{r.kind === 'caution' ? 'Caution deposit' : 'Refund'}</span>
+                <span style={{ color: '#d6cdbd' }}>
+                  {naira(Number(r.amount))} ·{' '}
+                  {r.status === 'completed' ? 'sent' : r.status === 'processing' ? 'on its way' : r.status === 'failed' ? 'being retried by our team' : 'being approved'}
+                </span>
+              </div>
+            ))}
+          </section>
+        )}
+
+        {(() => {
+          const cq = guestCancellationQuote(b)
+          return b.userId === session.user.id && cq.ok ? <CancelBooking reference={b.reference} quote={cq} /> : null
+        })()}
 
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href="/bookings" className="inline-flex items-center justify-center min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>

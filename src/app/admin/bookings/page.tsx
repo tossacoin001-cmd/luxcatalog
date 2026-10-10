@@ -4,6 +4,8 @@ import type { Metadata } from 'next'
 import type { Prisma } from '@prisma/client'
 import { AlertTriangle } from 'lucide-react'
 import AdminNavbar from '@/components/AdminNavbar'
+import BookingActions from '@/components/booking/BookingActions'
+import { claimWindowOpen } from '@/lib/refunds-server'
 import { requireStaff } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { lagosToday, naira, toDate } from '@/lib/booking'
@@ -33,17 +35,18 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
   const byView: Record<keyof typeof VIEWS, Prisma.BookingWhereInput> = {
     upcoming: { endDate: { gt: today }, status: { in: ['confirmed', 'pending_payment'] } },
     past: { endDate: { lte: today }, status: { in: ['confirmed', 'completed'] } },
-    attention: { needsRefund: true },
+    attention: { OR: [{ needsRefund: true }, { cautionStatus: 'claimed' }] },
     all: {},
   }
-  const [bookings, attention] = await Promise.all([
+  const [bookings, attention, refundsWaiting] = await Promise.all([
     prisma.booking.findMany({
       where: { ...scope, ...byView[view], ...(view === 'all' ? {} : { NOT: { status: 'expired' } }) },
       orderBy: { startDate: view === 'past' ? 'desc' : 'asc' },
       take: 200,
       include: { listing: { select: { title: true } } },
     }),
-    isPartner ? Promise.resolve(0) : prisma.booking.count({ where: { needsRefund: true } }),
+    isPartner ? Promise.resolve(0) : prisma.booking.count({ where: { OR: [{ needsRefund: true }, { cautionStatus: 'claimed' }] } }),
+    isPartner ? Promise.resolve(0) : prisma.refund.count({ where: { status: { in: ['pending_approval', 'failed'] } } }),
   ])
 
   return (
@@ -54,15 +57,27 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
           <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
             {isPartner ? 'Your listings' : 'All listings'}
           </p>
-          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-            Bookings
-          </h1>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+              Bookings
+            </h1>
+            {!isPartner && (
+              <Link href="/admin/refunds" className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                Refunds{refundsWaiting ? ` (${refundsWaiting})` : ''}
+              </Link>
+            )}
+          </div>
         </div>
       </div>
       <div className="max-w-6xl mx-auto px-5 md:px-12 py-8 space-y-6">
         {attention > 0 && (
           <Link href="/admin/bookings?view=attention" className="flex items-center gap-2 p-4 text-sm" style={{ background: 'rgba(224,183,90,0.08)', border: '1px solid rgba(224,183,90,0.35)', color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
-            <AlertTriangle size={16} /> {attention} payment{attention === 1 ? '' : 's'} need a refund. Open them.
+            <AlertTriangle size={16} /> {attention} booking{attention === 1 ? '' : 's'} need attention (refunds or damage claims). Open them.
+          </Link>
+        )}
+        {refundsWaiting > 0 && (
+          <Link href="/admin/refunds" className="flex items-center gap-2 p-4 text-sm" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.3)', color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
+            {refundsWaiting} refund{refundsWaiting === 1 ? '' : 's'} waiting for approval. Open the refund queue.
           </Link>
         )}
         <nav className="flex flex-wrap gap-2" aria-label="Filter bookings">
@@ -87,7 +102,7 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
               const st = STATUS[b.status]
               const last = b.unit === 'night' ? b.endDate : new Date(b.endDate.getTime() - 86_400_000)
               return (
-                <li key={b.id} className="p-5 grid gap-2 md:grid-cols-[1fr_auto] md:items-center" style={{ background: '#0f1a10', border: `1px solid ${b.needsRefund ? 'rgba(224,183,90,0.45)' : '#1e2e1f'}` }}>
+                <li key={b.id} className="p-5 grid gap-2 md:grid-cols-[1fr_auto] md:items-center" style={{ background: '#0f1a10', border: `1px solid ${b.needsRefund || b.cautionStatus === 'claimed' ? 'rgba(224,183,90,0.45)' : '#1e2e1f'}` }}>
                   <div className="min-w-0">
                     <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
                       {b.listing.title}
@@ -114,6 +129,21 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
                       {b.needsRefund ? 'Refund due' : st.text}
                       {b.paidAt ? ` · paid ${fmt(b.paidAt)}` : ''}
                     </p>
+                    {b.cancelledBy && (
+                      <p className="text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                        by {b.cancelledBy}
+                      </p>
+                    )}
+                  </div>
+                  <div className="md:col-span-2">
+                    <BookingActions
+                      id={b.id}
+                      canCancel={b.status === 'confirmed' && b.endDate > today}
+                      canClaim={isPartner && claimWindowOpen(b)}
+                      canDecide={!isPartner && b.cautionStatus === 'claimed'}
+                      deposit={Number(b.cautionDeposit)}
+                      claim={b.cautionStatus === 'claimed' ? { amount: Number(b.claimAmount ?? 0), note: b.claimNote ?? '' } : null}
+                    />
                   </div>
                 </li>
               )

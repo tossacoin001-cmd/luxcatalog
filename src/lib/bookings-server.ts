@@ -99,6 +99,9 @@ export async function applyPayment(trx: PaystackTransaction): Promise<ConfirmRes
     if (trx.status !== 'success') return { outcome: 'not_paid' as const, bookingId: fresh.id }
     if (trx.currency !== fresh.currency || trx.amount !== toKobo(Number(fresh.amountDue))) {
       await tx.booking.update({ where: { id: fresh.id }, data: { needsRefund: true, note: `Paid ${trx.currency} ${trx.amount / 100}, expected ${fresh.currency} ${Number(fresh.amountDue)}` } })
+      if (trx.currency === 'NGN' && trx.amount > 0) {
+        await tx.refund.create({ data: { bookingId: fresh.id, kind: 'payment_issue', amount: trx.amount / 100, reason: 'Paid the wrong amount; the booking was not confirmed.' } })
+      }
       return { outcome: 'mismatch' as const, bookingId: fresh.id }
     }
     // The hold may have lapsed while the guest paid. If someone else has
@@ -109,8 +112,9 @@ export async function applyPayment(trx: PaystackTransaction): Promise<ConfirmRes
     if (taken.length) {
       await tx.booking.update({
         where: { id: fresh.id },
-        data: { status: 'cancelled', needsRefund: true, paidAt, paymentChannel: trx.channel ?? null, holdExpiresAt: null, note: 'Paid after the hold expired and the dates were taken. Refund in full.' },
+        data: { status: 'cancelled', needsRefund: true, paidAt, paymentChannel: trx.channel ?? null, holdExpiresAt: null, cautionStatus: 'included', note: 'Paid after the hold expired and the dates were taken. Refund in full.' },
       })
+      await tx.refund.create({ data: { bookingId: fresh.id, kind: 'payment_issue', amount: trx.amount / 100, reason: 'Paid after the hold expired and the dates were taken by another guest.' } })
       return { outcome: 'needs_refund' as const, bookingId: fresh.id }
     }
     await tx.booking.update({ where: { id: fresh.id }, data: { status: 'confirmed', paidAt, paymentChannel: trx.channel ?? null, holdExpiresAt: null } })
@@ -127,7 +131,7 @@ export async function applyPayment(trx: PaystackTransaction): Promise<ConfirmRes
 
 const fmtDay = (d: Date) => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 
-async function send(to: string, userId: string | null, kind: string, subject: string, content: { preheader: string; eyebrow: string; greeting: string; intro: string; blocks: Block[]; reason: string }) {
+export async function send(to: string, userId: string | null, kind: string, subject: string, content: { preheader: string; eyebrow: string; greeting: string; intro: string; blocks: Block[]; reason: string }) {
   const { html, text } = renderEmail({ ...content, manageUrl: `${getAppUrl()}/account/notifications` })
   try {
     await sendEmail({ to, subject, text, html })
@@ -138,14 +142,14 @@ async function send(to: string, userId: string | null, kind: string, subject: st
   }
 }
 
-async function loadForEmail(bookingId: string) {
+export async function loadForEmail(bookingId: string) {
   return prisma.booking.findUniqueOrThrow({
     where: { id: bookingId },
     include: { listing: { select: { title: true, location: true, ownerId: true, bookingSettings: { select: { checkInTime: true, checkOutTime: true, hoursPerDay: true } } } } },
   })
 }
 
-function summary(b: Awaited<ReturnType<typeof loadForEmail>>): Block[] {
+export function summary(b: Awaited<ReturnType<typeof loadForEmail>>): Block[] {
   const night = b.unit === 'night'
   const s = b.listing.bookingSettings
   const items = [

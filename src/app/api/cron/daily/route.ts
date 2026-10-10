@@ -3,17 +3,20 @@ import { prisma } from '@/lib/prisma'
 import { deepChecks, overall } from '@/lib/notify/watchdog'
 import { sendAdminBriefings, sendPartnerDigests } from '@/lib/notify/digests'
 import { requireAdminApi } from '@/lib/admin-auth'
+import { runDailyBookingJobs } from '@/lib/refunds-server'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
 async function run(dryRun: boolean) {
+  // Bookings first (finish stays, queue caution refunds) so the briefing sees them.
+  const bookings = dryRun ? null : await runDailyBookingJobs().catch((e) => (console.error('Booking jobs failed:', e), null))
   const checks = await deepChecks()
   const status = overall(checks)
   await prisma.watchdogRun.create({ data: { kind: dryRun ? 'daily_dry' : 'daily', ok: status !== 'fail', checks } })
   const admins = await sendAdminBriefings(checks, { dryRun })
   const partners = await sendPartnerDigests({ dryRun })
-  return { status, checks, emails: { admins, partners } }
+  return { status, checks, bookings, emails: { admins, partners } }
 }
 
 // Vercel Cron calls this once a day (vercel.json) with

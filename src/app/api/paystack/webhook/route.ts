@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { validSignature, type PaystackTransaction } from '@/lib/paystack'
 import { applyPayment } from '@/lib/bookings-server'
+import { applyRefundEvent } from '@/lib/refunds-server'
 
 // Paystack calls this after a payment. Only requests signed with our secret
 // key are accepted; the signature is Paystack's proof the event is genuine.
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
   if (!validSignature(raw, req.headers.get('x-paystack-signature'))) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }
-  let event: { event?: string; data?: PaystackTransaction }
+  let event: { event?: string; data?: PaystackTransaction & { id?: number; transaction_reference?: string; transaction?: { reference?: string } } }
   try {
     event = JSON.parse(raw)
   } catch {
@@ -26,6 +27,10 @@ export async function POST(req: Request) {
       // A 5xx makes Paystack retry later.
       return NextResponse.json({ error: 'Processing failed' }, { status: 500 })
     }
+  }
+  if (event.event === 'refund.processed' || event.event === 'refund.failed') {
+    await applyRefundEvent(event.event, event.data ?? {})
+    return NextResponse.json({ received: true })
   }
   return NextResponse.json({ received: true })
 }

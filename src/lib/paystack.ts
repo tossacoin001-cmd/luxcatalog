@@ -84,3 +84,13 @@ export function validSignature(rawBody: string, signature: string | null) {
   const b = Buffer.from(signature)
   return a.length === b.length && timingSafeEqual(a, b)
 }
+
+export type PaystackRefund = { id?: number; status?: string; amount?: number; transaction?: { reference?: string } }
+
+// Ask Paystack to return money from a successful payment (whole or part).
+export async function createRefund(input: { reference: string; amountKobo: number; note: string }) {
+  return call<PaystackRefund>('/refund', {
+    method: 'POST',
+    body: JSON.stringify({ transaction: input.reference, amount: input.amountKobo, currency: 'NGN', merchant_note: input.note.slice(0, 200) }),
+  })
+}

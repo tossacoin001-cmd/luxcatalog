@@ -631,10 +631,55 @@ model Booking {
   // must refund it (shown to admins).
   needsRefund        Boolean            @default(false)
   note               String?
+  // Cancellation (guest, partner or admin)
+  cancelledAt        DateTime?
+  cancelledBy        String?
+  cancelReason       String?
+  // Caution deposit after check-out: held -> claimed (partner reports
+  // damage within 48h) -> refund queued / kept (in part)
+  cautionStatus      String             @default("held")
+  claimAmount        Decimal?           @db.Decimal(14, 2)
+  claimNote          String?
+  claimAt            DateTime?
+  refunds            Refund[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
   @@index([listingId, startDate])
   @@index([userId])
   @@index([status, holdExpiresAt])
+}
+
+enum RefundStatus {
+  // Waiting for an admin (or team member with Bookings) to approve
+  pending_approval
+  // Sent to Paystack, not yet settled
+  processing
+  completed
+  failed
+  rejected
+}
+
+// Money going back to a guest. Every refund waits for a person to approve it
+// before anything is sent to Paystack.
+model Refund {
+  id             String       @id @default(uuid())
+  bookingId      String
+  booking        Booking      @relation(fields: [bookingId], references: [id])
+  // cancellation | caution | payment_issue
+  kind           String
+  amount         Decimal      @db.Decimal(14, 2)
+  reason         String
+  status         RefundStatus @default(pending_approval)
+  requestedById  String?
+  decidedById    String?
+  decidedAt      DateTime?
+  paystackRefund String?
+  failureReason  String?
+  completedAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([status, createdAt])
+  @@index([bookingId])
 }
