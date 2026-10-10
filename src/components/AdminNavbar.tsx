@@ -26,6 +26,7 @@ export default async function AdminNavbar(_props: { role?: string | null }) {
       { label: 'Dashboard', href: '/admin' },
       { label: 'My Listings', href: '/admin/listings' },
       { label: 'Bookings', href: '/admin/bookings' },
+      { label: 'Payouts', href: '/admin/payouts' },
       { label: 'My Profile', href: '/admin/profile' },
       { label: 'Agreement', href: '/partners/agreement' },
     ]

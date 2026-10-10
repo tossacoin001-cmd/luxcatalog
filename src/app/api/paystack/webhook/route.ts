@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { validSignature, type PaystackTransaction } from '@/lib/paystack'
 import { applyPayment } from '@/lib/bookings-server'
 import { applyRefundEvent } from '@/lib/refunds-server'
+import { applyTransferEvent } from '@/lib/payouts-server'
 
 // Paystack calls this after a payment. Only requests signed with our secret
 // key are accepted; the signature is Paystack's proof the event is genuine.
@@ -27,6 +28,10 @@ export async function POST(req: Request) {
       // A 5xx makes Paystack retry later.
       return NextResponse.json({ error: 'Processing failed' }, { status: 500 })
     }
+  }
+  if (event.event?.startsWith('transfer.')) {
+    await applyTransferEvent(event.event, (event.data ?? {}) as { reference?: string; transfer_code?: string; reason?: string })
+    return NextResponse.json({ received: true })
   }
   if (event.event === 'refund.processed' || event.event === 'refund.failed') {
     await applyRefundEvent(event.event, event.data ?? {})

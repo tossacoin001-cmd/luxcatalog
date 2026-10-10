@@ -7,6 +7,7 @@ import { renderEmail, type Block } from '@/lib/notify/layout'
 import { naira, quote, selectionToRange, toDate, toDay, unitLabel, POLICY_TEXT } from '@/lib/booking'
 import { bookedRanges, closedRanges, rulesFrom } from '@/lib/booking-server'
 import { toKobo, type PaystackTransaction } from '@/lib/paystack'
+import { schedulePayout } from '@/lib/payouts-server'
 
 export const HOLD_MINUTES = 15
 
@@ -120,7 +121,10 @@ export async function applyPayment(trx: PaystackTransaction): Promise<ConfirmRes
     await tx.booking.update({ where: { id: fresh.id }, data: { status: 'confirmed', paidAt, paymentChannel: trx.channel ?? null, holdExpiresAt: null } })
     return { outcome: 'confirmed' as const, bookingId: fresh.id }
   })
-  if (result.outcome === 'confirmed' && result.bookingId) await emailConfirmed(result.bookingId).catch((e) => console.error('Booking emails failed:', e))
+  if (result.outcome === 'confirmed' && result.bookingId) {
+    await schedulePayout(result.bookingId).catch((e) => console.error('Payout scheduling failed:', e))
+    await emailConfirmed(result.bookingId).catch((e) => console.error('Booking emails failed:', e))
+  }
   if ((result.outcome === 'needs_refund' || result.outcome === 'mismatch') && result.bookingId) await emailRefundNeeded(result.bookingId).catch((e) => console.error('Refund alert failed:', e))
   return result
 }

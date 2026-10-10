@@ -3,6 +3,7 @@ import { getAppUrl } from '@/lib/utils'
 import { lagosToday, naira, refundShare, toDate, toDay, POLICY_TEXT } from '@/lib/booking'
 import { loadForEmail, send, summary } from '@/lib/bookings-server'
 import { createRefund, toKobo } from '@/lib/paystack'
+import { addDamageCompensation, adjustPayoutForCancellation, markDuePayouts } from '@/lib/payouts-server'
 
 // Refunds and cancellations. Money only moves when a person approves a
 // refund in the admin queue; everything else just prepares the numbers.
@@ -104,10 +105,11 @@ export async function cancelByGuest(bookingId: string, userId: string) {
         },
       })
     }
-    return q.refund
+    return { refund: q.refund, keptStay: money(Number(b.base) - q.stay) }
   })
-  await emailCancelled(bookingId, result, 'guest').catch((e) => console.error('Cancel emails failed:', e))
-  return result
+  await adjustPayoutForCancellation(bookingId, result.keptStay).catch((e) => console.error('Payout adjust failed:', e))
+  await emailCancelled(bookingId, result.refund, 'guest').catch((e) => console.error('Cancel emails failed:', e))
+  return result.refund
 }
 
 // Partner or Lux Catalog cancels: the guest gets everything back.
@@ -126,6 +128,7 @@ export async function cancelByStaff(bookingId: string, actor: { userId: string; 
     await tx.refund.create({ data: { bookingId: b.id, kind: 'cancellation', amount, reason: `Cancelled by the ${actor.role === 'partner' ? 'partner' : 'team'}: ${reason}`.slice(0, 400), requestedById: actor.userId } })
     return amount
   })
+  await adjustPayoutForCancellation(bookingId, 0).catch((e) => console.error('Payout adjust failed:', e))
   await emailCancelled(bookingId, refund, actor.role === 'partner' ? 'partner' : 'Lux Catalog team').catch((e) => console.error('Cancel emails failed:', e))
   return refund
 }
@@ -169,6 +172,7 @@ export async function decideClaim(bookingId: string, actorId: string, keep: numb
       await tx.refund.create({ data: { bookingId: b.id, kind: 'caution', amount: back, reason: `Caution deposit after a damage claim: ${naira(kept)} kept for damage.`, requestedById: actorId } })
     }
   })
+  await addDamageCompensation(b.id, kept).catch((e) => console.error('Damage compensation failed:', e))
   return { kept, back }
 }
 
@@ -188,7 +192,8 @@ export async function runDailyBookingJobs(now = new Date()) {
       prisma.refund.create({ data: { bookingId: b.id, kind: 'caution', amount: b.cautionDeposit, reason: 'Caution deposit: no damage reported within 48 hours of check-out.' } }),
     ])
   }
-  return { completed: completed.count, cautionQueued: due.length }
+  const payoutsDue = await markDuePayouts(now)
+  return { completed: completed.count, cautionQueued: due.length, payoutsDue }
 }
 
 // One click from a person: send an approved refund to Paystack.

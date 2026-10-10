@@ -5,6 +5,7 @@
 export const AREAS = [
   { key: 'listings', label: 'Listings', help: 'Add, edit and publish any listing' },
   { key: 'bookings', label: 'Bookings', help: 'Bookings, guests and dates, payment status' },
+  { key: 'payouts', label: 'Payouts', help: 'Approve money sent to partners' },
   { key: 'enquiries', label: 'Enquiries', help: 'Read and answer client enquiries' },
   { key: 'orders', label: 'Orders', help: 'Orders and payments' },
   { key: 'applications', label: 'Applications', help: 'Review partner applications and their private documents' },

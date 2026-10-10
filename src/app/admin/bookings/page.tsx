@@ -62,9 +62,16 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
               Bookings
             </h1>
             {!isPartner && (
+              <div className="flex flex-wrap gap-2">
+              {areas.includes('payouts') && (
+                <Link href="/admin/payouts" className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                  Payouts
+                </Link>
+              )}
               <Link href="/admin/refunds" className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                 Refunds{refundsWaiting ? ` (${refundsWaiting})` : ''}
               </Link>
+              </div>
             )}
           </div>
         </div>

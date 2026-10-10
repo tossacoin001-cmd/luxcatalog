@@ -94,3 +94,33 @@ export async function createRefund(input: { reference: string; amountKobo: numbe
     body: JSON.stringify({ transaction: input.reference, amount: input.amountKobo, currency: 'NGN', merchant_note: input.note.slice(0, 200) }),
   })
 }
+
+// --- Transfers (partner payouts) ---------------------------------------
+
+export type Bank = { name: string; code: string }
+
+export async function listBanks() {
+  const banks = await call<{ name: string; code: string; active?: boolean; is_deleted?: boolean }[]>('/bank?country=nigeria&currency=NGN&perPage=200')
+  return banks.filter((b) => b.active !== false && !b.is_deleted).map((b) => ({ name: b.name, code: b.code }))
+}
+
+// Asks the bank who owns the account (name comes from the bank, not the partner).
+export async function resolveAccount(accountNumber: string, bankCode: string) {
+  return call<{ account_number: string; account_name: string }>(`/bank/resolve?account_number=${encodeURIComponent(accountNumber)}&bank_code=${encodeURIComponent(bankCode)}`)
+}
+
+export async function createRecipient(input: { name: string; accountNumber: string; bankCode: string }) {
+  return call<{ recipient_code: string }>('/transferrecipient', {
+    method: 'POST',
+    body: JSON.stringify({ type: 'nuban', name: input.name, account_number: input.accountNumber, bank_code: input.bankCode, currency: 'NGN' }),
+  })
+}
+
+// Sends money from the Paystack balance to a recipient. The reference makes
+// the transfer idempotent on Paystack's side.
+export async function initiateTransfer(input: { amountKobo: number; recipient: string; reference: string; reason: string }) {
+  return call<{ transfer_code: string; status: string; reference: string }>('/transfer', {
+    method: 'POST',
+    body: JSON.stringify({ source: 'balance', amount: input.amountKobo, recipient: input.recipient, reference: input.reference, reason: input.reason.slice(0, 100), currency: 'NGN' }),
+  })
+}

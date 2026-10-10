@@ -642,6 +642,7 @@ model Booking {
   claimNote          String?
   claimAt            DateTime?
   refunds            Refund[]
+  payout             Payout?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
@@ -682,4 +683,56 @@ model Refund {
 
   @@index([status, createdAt])
   @@index([bookingId])
+}
+
+// Where a partner is paid. The account is checked with the bank through
+// Paystack (accountName comes back from the bank) and registered as a
+// Paystack transfer recipient. Only the last 4 digits are ever shown.
+model PayoutAccount {
+  userId        String   @id
+  bankCode      String
+  bankName      String
+  accountNumber String
+  accountName   String
+  recipientCode String
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+}
+
+enum PayoutStatus {
+  // Waiting for its due time (e.g. 24h after check-in)
+  scheduled
+  // Due: waiting for an admin to approve the transfer
+  pending_approval
+  processing
+  paid
+  failed
+  cancelled
+}
+
+// What a partner earns from one booking: total (excluding the caution
+// deposit) minus commission, paid by Paystack Transfer once due and approved.
+model Payout {
+  id             String       @id @default(uuid())
+  bookingId      String       @unique
+  booking        Booking      @relation(fields: [bookingId], references: [id])
+  partnerId      String
+  gross          Decimal      @db.Decimal(14, 2)
+  commissionRate Decimal      @db.Decimal(5, 2)
+  commission     Decimal      @db.Decimal(14, 2)
+  amount         Decimal      @db.Decimal(14, 2)
+  dueAt          DateTime
+  status         PayoutStatus @default(scheduled)
+  reference      String       @unique
+  transferCode   String?
+  decidedById    String?
+  decidedAt      DateTime?
+  paidAt         DateTime?
+  failureReason  String?
+  note           String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([status, dueAt])
+  @@index([partnerId])
 }
