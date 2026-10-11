@@ -13,6 +13,7 @@ const naira = (n: number) => `₦${Math.round(n).toLocaleString('en-NG')}`
 export default function BookingActions({
   id,
   canCancel,
+  canRespond = false,
   canClaim,
   canDecide,
   deposit,
@@ -20,13 +21,14 @@ export default function BookingActions({
 }: {
   id: string
   canCancel: boolean
+  canRespond?: boolean
   canClaim: boolean
   canDecide: boolean
   deposit: number
   claim: { amount: number; note: string } | null
 }) {
   const router = useRouter()
-  const [mode, setMode] = useState<'cancel' | 'claim' | null>(null)
+  const [mode, setMode] = useState<'cancel' | 'claim' | 'decline' | null>(null)
   const [reason, setReason] = useState('')
   const [amount, setAmount] = useState('')
   const [keep, setKeep] = useState(claim ? String(claim.amount) : '')
@@ -71,6 +73,18 @@ export default function BookingActions({
         </div>
       )}
       <div className="flex flex-wrap gap-2">
+        {canRespond && (
+          <>
+            <button type="button" disabled={busy} onClick={() => act({ action: 'accept' }, 'Accepted. The guest has been asked to pay.')} className={btn} style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+              {busy && <Loader2 size={13} className="animate-spin" />} Accept request
+            </button>
+            {mode !== 'decline' && (
+              <button type="button" onClick={() => setMode('decline')} className={btn} style={{ border: '1px solid #1e2e1f', ...text }}>
+                Decline
+              </button>
+            )}
+          </>
+        )}
         {canCancel && mode !== 'cancel' && (
           <button type="button" onClick={() => setMode('cancel')} className={btn} style={{ border: '1px solid rgba(232,92,76,0.4)', color: '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
             Cancel booking
@@ -82,6 +96,19 @@ export default function BookingActions({
           </button>
         )}
       </div>
+      {mode === 'decline' && (
+        <div className="space-y-2">
+          <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Short reason for the guest, e.g. Already booked privately" className="w-full h-11 px-3 text-sm" style={inputStyle} />
+          <div className="flex gap-2">
+            <button type="button" disabled={busy || reason.trim().length < 3} onClick={() => act({ action: 'decline', reason }, 'Declined. The guest has been told.')} className={btn} style={{ border: '1px solid rgba(232,92,76,0.4)', color: '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
+              {busy && <Loader2 size={13} className="animate-spin" />} Decline request
+            </button>
+            <button type="button" onClick={() => setMode(null)} className={btn} style={{ border: '1px solid #1e2e1f', ...text }}>
+              Back
+            </button>
+          </div>
+        </div>
+      )}
       {mode === 'cancel' && (
         <div className="space-y-2">
           <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={2} placeholder="Reason (the guest sees this). They get a full refund." className="w-full p-3 text-sm" style={inputStyle} />

@@ -17,7 +17,7 @@ const fmt = (day: string) => toDate(day).toLocaleDateString('en-GB', { day: 'num
 // The booking side panel for listings that take online bookings. Guests pick
 // dates and see the server's exact price. Phase 4a: the request goes to the
 // concierge team as a dated enquiry; online payment arrives in Phase 4b.
-export default function BookingPanel({ listingId, listingTitle }: { listingId: string; listingTitle: string }) {
+export default function BookingPanel({ listingId }: { listingId: string; listingTitle?: string }) {
   const router = useRouter()
   const pathname = usePathname()
   const search = useSearchParams()
@@ -35,7 +35,7 @@ export default function BookingPanel({ listingId, listingTitle }: { listingId: s
   const [guests, setGuests] = useState<number>(() => Number(search.get('guests')) || 1)
   const [result, setResult] = useState<{ key: string; quote: Quote } | null>(null)
   const [sending, setSending] = useState(false)
-  const [sent, setSent] = useState(false)
+  const [sent, setSent] = useState<string | null>(null)
   const [attempt, setAttempt] = useState(0)
 
   // Availability: state only changes when the request settles.
@@ -94,58 +94,31 @@ export default function BookingPanel({ listingId, listingTitle }: { listingId: s
       return
     }
     setSending(true)
-    if (avail.rules.instantBook) {
-      // Instant booking: the server re-prices and holds the dates, then we
-      // go to Paystack's secure checkout. Confirmation happens on return.
-      try {
-        const res = await fetch('/api/bookings', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ listingId, start: sel.first, end: sel.last, guests }),
-        })
-        const data = await res.json().catch(() => ({}))
-        if (res.status === 401) {
-          router.push(`/sign-in?redirect_url=${encodeURIComponent(`${pathname}?${search.toString()}#enquire`)}`)
-          return
-        }
-        if (!res.ok || !data.url) throw new Error(data.error || 'Could not start the payment. Please try again.')
-        window.location.assign(data.url)
-        return
-      } catch (err) {
-        toast.error((err as Error).message)
-        setResult(null)
-        setSending(false)
-        return
-      }
-    }
+    // The server re-prices and holds the dates. Instant booking then goes to
+    // Paystack's secure checkout; on-request listings wait for the host.
     try {
-      const r = avail.rules
-      const lines = [
-        `Booking request for ${listingTitle}`,
-        `${r.unit === 'night' ? 'Check-in' : 'From'}: ${fmt(sel.first!)}${r.unit === 'night' ? ` (from ${r.checkInTime})` : ''}`,
-        `${r.unit === 'night' ? 'Check-out' : 'Until'}: ${fmt(sel.last!)}${r.unit === 'night' ? ` (by ${r.checkOutTime})` : ''}`,
-        `${q.units} ${unitLabel(q.unit, q.units)}${r.maxGuests ? `, ${guests} guest${guests === 1 ? '' : 's'}` : ''}`,
-        `Quoted total: ${naira(q.total)}${q.cautionDeposit ? ` + ${naira(q.cautionDeposit)} refundable caution deposit` : ''}`,
-      ]
-      const res = await fetch('/api/inquiries', {
+      const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          listingId,
-          name: session.user.name,
-          email: session.user.email,
-          phone: (session.user as { phone?: string }).phone ?? '',
-          message: lines.join('\n'),
-          checkIn: q.range.start,
-          checkOut: q.range.end,
-        }),
+        body: JSON.stringify({ listingId, start: sel.first, end: sel.last, guests }),
       })
-      if (!res.ok) throw new Error()
-      setSent(true)
-      toast.success('Request sent. Our concierge will confirm availability shortly.')
-    } catch {
-      toast.error('Could not send your request. Please try again.')
-    } finally {
+      const data = await res.json().catch(() => ({}))
+      if (res.status === 401) {
+        router.push(`/sign-in?redirect_url=${encodeURIComponent(`${pathname}?${search.toString()}#enquire`)}`)
+        return
+      }
+      if (!res.ok) throw new Error(data.error || 'Could not start your booking. Please try again.')
+      if (data.requested) {
+        setSent(data.reference)
+        setSending(false)
+        toast.success('Request sent. The host will reply within 12 hours.')
+        return
+      }
+      if (!data.url) throw new Error('Could not start the payment. Please try again.')
+      window.location.assign(data.url)
+    } catch (err) {
+      toast.error((err as Error).message)
+      setResult(null)
       setSending(false)
     }
   }
@@ -192,7 +165,7 @@ export default function BookingPanel({ listingId, listingTitle }: { listingId: s
         </p>
       </div>
 
-      <DateRangeCalendar months={1} unit={r.unit} earliest={avail.earliestStart} latest={latest} blocked={avail.blocked} value={sel} onChange={(v) => { setSel(v); setSent(false) }} />
+      <DateRangeCalendar months={1} unit={r.unit} earliest={avail.earliestStart} latest={latest} blocked={avail.blocked} value={sel} onChange={(v) => { setSel(v); setSent(null) }} />
 
       {r.maxGuests && (
         <label className="flex items-center justify-between gap-3 text-sm" style={text}>
@@ -240,7 +213,13 @@ export default function BookingPanel({ listingId, listingTitle }: { listingId: s
 
       {sent ? (
         <p className="flex items-start gap-2 text-sm p-3" style={{ background: 'rgba(111,191,115,0.08)', color: '#b9e0bb', fontFamily: 'var(--font-inter)' }}>
-          <CalendarCheck2 size={16} className="shrink-0 mt-0.5" /> Request received. Our concierge will confirm these dates with you shortly.
+          <CalendarCheck2 size={16} className="shrink-0 mt-0.5" />
+          <span>
+            Request sent. The host replies within 12 hours and you only pay once they accept.{' '}
+            <a href={`/bookings/${sent}`} className="underline">
+              View your request
+            </a>
+          </span>
         </p>
       ) : (
         <button
@@ -251,12 +230,14 @@ export default function BookingPanel({ listingId, listingTitle }: { listingId: s
           style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
         >
           {sending && <Loader2 size={14} className="animate-spin" />}
-          {q?.ok ? (r.instantBook ? `Reserve & pay ${naira(q.dueNow)}` : 'Request these dates') : r.unit === 'night' ? 'Choose your dates' : 'Choose your days'}
+          {q?.ok ? (r.instantBook ? `Reserve & pay ${naira(q.dueNow)}` : 'Request to book') : r.unit === 'night' ? 'Choose your dates' : 'Choose your days'}
         </button>
       )}
-      {r.instantBook && q?.ok && (
+      {q?.ok && !sent && (
         <p className="text-center text-xs" style={text}>
-          Secure payment by Paystack: card, bank transfer or USSD. Instant confirmation.
+          {r.instantBook
+            ? 'Secure payment by Paystack: card, bank transfer or USSD. Instant confirmation.'
+            : 'No payment now. The host replies within 12 hours; you pay securely once they accept.'}
         </p>
       )}
 

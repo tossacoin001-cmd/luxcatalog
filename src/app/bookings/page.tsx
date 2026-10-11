@@ -15,6 +15,8 @@ const LABEL: Record<string, { text: string; color: string }> = {
   confirmed: { text: 'Confirmed', color: '#6fbf73' },
   completed: { text: 'Completed', color: '#9a8f7a' },
   pending_payment: { text: 'Awaiting payment', color: '#C9A84C' },
+  requested: { text: 'Waiting for host', color: '#C9A84C' },
+  declined: { text: 'Not available', color: '#908673' },
   cancelled: { text: 'Cancelled', color: '#e85c4c' },
   expired: { text: 'Not completed', color: '#908673' },
 }
@@ -23,7 +25,7 @@ export default async function MyBookingsPage() {
   const session = await getSession()
   if (!session) redirect('/sign-in?redirect_url=/bookings')
   const bookings = await prisma.booking.findMany({
-    where: { userId: session.user.id, OR: [{ status: { in: ['confirmed', 'completed', 'cancelled'] } }, { status: 'pending_payment', holdExpiresAt: { gt: new Date() } }] },
+    where: { userId: session.user.id, OR: [{ status: { in: ['confirmed', 'completed', 'cancelled', 'declined'] } }, { status: { in: ['pending_payment', 'requested'] }, holdExpiresAt: { gt: new Date() } }] },
     orderBy: { startDate: 'desc' },
     include: { listing: { select: { title: true, location: true } } },
   })

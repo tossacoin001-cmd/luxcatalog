@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { getAppUrl } from '@/lib/utils'
 import { lagosToday, naira, refundShare, toDate, toDay, POLICY_TEXT } from '@/lib/booking'
-import { loadForEmail, send, summary } from '@/lib/bookings-server'
+import { expireUnansweredRequests, loadForEmail, send, summary } from '@/lib/bookings-server'
 import { createRefund, toKobo } from '@/lib/paystack'
 import { addDamageCompensation, adjustPayoutForCancellation, markDuePayouts } from '@/lib/payouts-server'
 
@@ -193,7 +193,8 @@ export async function runDailyBookingJobs(now = new Date()) {
     ])
   }
   const payoutsDue = await markDuePayouts(now)
-  return { completed: completed.count, cautionQueued: due.length, payoutsDue }
+  const requestsExpired = await expireUnansweredRequests(now)
+  return { completed: completed.count, cautionQueued: due.length, payoutsDue, requestsExpired }
 }
 
 // One click from a person: send an approved refund to Paystack.

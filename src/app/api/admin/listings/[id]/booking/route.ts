@@ -35,6 +35,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
           checkOutTime: dayUnit ? '19:00' : '11:00',
           hoursPerDay: dayUnit ? 10 : null,
           advanceNoticeHours: 24,
+          requireGuestId: !dayUnit,
         },
   })
 }
@@ -96,6 +97,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     checkOutTime,
     hoursPerDay,
     advanceNoticeHours,
+    requireGuestId: b.requireGuestId !== false,
   }
   const settings = await prisma.bookingSettings.upsert({ where: { listingId: id }, create: { listingId: id, ...data }, update: data })
   await audit(found.staff.userId, 'listing.booking_settings', id, { enabled: settings.enabled, rate: Number(settings.rate), unit: settings.unit })

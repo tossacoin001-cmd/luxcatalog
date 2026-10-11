@@ -91,19 +91,25 @@ export async function inspectStoredDocument(pathname: string) {
   }
 }
 
-export async function storeDocument(applicationId: string, file: File) {
+// Store a private file under a folder (partner documents, guest IDs):
+// private Blob store when available, database otherwise.
+export async function storePrivateFile(folder: string, file: File) {
   const bytes = Buffer.from(await file.arrayBuffer())
   const fileName = safeDocName(file.name)
   if (directUploadAvailable()) {
     try {
-      const pathname = newDocPathname(applicationId, file.name)
+      const pathname = `${folder}/${randomBytes(8).toString('hex')}-${fileName}`
       const blob = await put(pathname, bytes, { access: 'private', contentType: file.type, addRandomSuffix: false, ...docsStore() })
       return { storage: 'blob' as const, blobPathname: blob.pathname, data: null as Buffer | null, fileName }
     } catch (err) {
-      console.error('Private blob upload failed, storing document in database:', err)
+      console.error('Private blob upload failed, storing file in database:', err)
     }
   }
   return { storage: 'db' as const, blobPathname: null as string | null, data: bytes, fileName }
+}
+
+export async function storeDocument(applicationId: string, file: File) {
+  return storePrivateFile(`partner-docs/${applicationId}`, file)
 }
 
 export async function readDocument(doc: { storage: string; blobPathname: string | null; data: Uint8Array | null }) {

@@ -21,6 +21,7 @@ type Settings = {
   checkOutTime: string
   hoursPerDay: number | null
   advanceNoticeHours: number
+  requireGuestId: boolean
 }
 type Block = { id: string; start: string; end: string; note: string | null; source: string }
 
@@ -223,6 +224,14 @@ export default function BookingManager({ listingId, published }: { listingId: st
               <option value={168}>1 week</option>
             </select>
           </Field>
+          {s.unit === 'night' && (
+            <Field label="Guest ID">
+              <select value={s.requireGuestId ? 'yes' : 'no'} onChange={(e) => set('requireGuestId', e.target.value === 'yes')} className={inputCls} style={inputStyle}>
+                <option value="yes">Ask guests to upload ID after booking</option>
+                <option value="no">Don’t ask for ID</option>
+              </select>
+            </Field>
+          )}
           <Field label="Booking type">
             <select value={s.instantBook ? 'instant' : 'request'} onChange={(e) => set('instantBook', e.target.value === 'instant')} className={inputCls} style={inputStyle}>
               <option value="instant">Instant: guests book and pay at once</option>

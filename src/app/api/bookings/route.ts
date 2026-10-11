@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { isDay } from '@/lib/booking'
-import { BookingError, createBookingHold } from '@/lib/bookings-server'
-import { initializeTransaction, paystackConfigured, toKobo } from '@/lib/paystack'
-import { getAppUrl } from '@/lib/utils'
+import { BookingError, createBookingHold, emailRequested, startPayment } from '@/lib/bookings-server'
+import { paystackConfigured } from '@/lib/paystack'
 
-// Start an instant booking: re-price and hold the dates, then hand the guest
-// to Paystack's secure checkout. The booking is only confirmed once Paystack
+// Start a booking: re-price and hold the dates. Instant booking hands the
+// guest to Paystack's secure checkout; on-request listings wait for the
+// partner to accept first. The booking is only confirmed once Paystack
 // confirms the payment (return page or webhook).
 export async function POST(req: Request) {
   const session = await getSession()
@@ -37,15 +37,15 @@ export async function POST(req: Request) {
     throw e
   }
 
+  // On-request listing: no payment yet; the partner has 12 hours to answer.
+  if (booking.status === 'requested') {
+    await emailRequested(booking.id).catch((e) => console.error('Request emails failed:', e))
+    return NextResponse.json({ requested: true, reference: booking.reference })
+  }
+
   try {
-    const trx = await initializeTransaction({
-      email: user.email,
-      amountKobo: toKobo(Number(booking.amountDue)),
-      reference: booking.reference,
-      callbackUrl: `${getAppUrl()}/bookings/${booking.reference}`,
-      metadata: { bookingId: booking.id, listingId, cancel_action: `${getAppUrl()}/bookings/${booking.reference}` },
-    })
-    return NextResponse.json({ url: trx.authorization_url, reference: booking.reference })
+    const url = await startPayment(booking.id)
+    return NextResponse.json({ url, reference: booking.reference })
   } catch (err) {
     // Couldn't reach Paystack: release the dates straight away.
     console.error('Paystack initialize failed:', err)

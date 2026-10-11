@@ -17,10 +17,14 @@ const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 
 const STATUS: Record<string, { text: string; color: string }> = {
   confirmed: { text: 'Confirmed', color: '#6fbf73' },
   completed: { text: 'Completed', color: '#9a8f7a' },
-  pending_payment: { text: 'Paying now', color: '#C9A84C' },
+  pending_payment: { text: 'Awaiting payment', color: '#C9A84C' },
+  requested: { text: 'Request: answer within 12h', color: '#e0b75a' },
+  declined: { text: 'Declined', color: '#908673' },
   cancelled: { text: 'Cancelled', color: '#e85c4c' },
   expired: { text: 'Not completed', color: '#908673' },
 }
+// Is a hold (e.g. a request waiting for the partner) still running?
+const stillHeld = (until: Date | null) => !!until && until.getTime() > Date.now()
 const VIEWS = { upcoming: 'Upcoming', past: 'Past', attention: 'Needs attention', all: 'All' } as const
 
 export default async function AdminBookingsPage({ searchParams }: { searchParams: Promise<{ view?: string }> }) {
@@ -33,7 +37,7 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
   const today = toDate(lagosToday())
   const scope: Prisma.BookingWhereInput = isPartner ? { listing: { ownerId: userId } } : {}
   const byView: Record<keyof typeof VIEWS, Prisma.BookingWhereInput> = {
-    upcoming: { endDate: { gt: today }, status: { in: ['confirmed', 'pending_payment'] } },
+    upcoming: { endDate: { gt: today }, status: { in: ['confirmed', 'pending_payment', 'requested'] } },
     past: { endDate: { lte: today }, status: { in: ['confirmed', 'completed'] } },
     attention: { OR: [{ needsRefund: true }, { cautionStatus: 'claimed' }] },
     all: {},
@@ -43,7 +47,7 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
       where: { ...scope, ...byView[view], ...(view === 'all' ? {} : { NOT: { status: 'expired' } }) },
       orderBy: { startDate: view === 'past' ? 'desc' : 'asc' },
       take: 200,
-      include: { listing: { select: { title: true } } },
+      include: { listing: { select: { title: true, bookingSettings: { select: { requireGuestId: true } } } } },
     }),
     isPartner ? Promise.resolve(0) : prisma.booking.count({ where: { OR: [{ needsRefund: true }, { cautionStatus: 'claimed' }] } }),
     isPartner ? Promise.resolve(0) : prisma.refund.count({ where: { status: { in: ['pending_approval', 'failed'] } } }),
@@ -122,6 +126,17 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
                       {b.guestName} · {b.guestEmail}
                       {b.guestPhone ? ` · ${b.guestPhone}` : ''} · {b.reference}
                     </p>
+                    {['confirmed', 'completed'].includes(b.status) && b.unit === 'night' && b.listing.bookingSettings?.requireGuestId && (
+                      <p className="text-xs mt-1" style={{ fontFamily: 'var(--font-inter)' }}>
+                        {b.guestIdUploadedAt ? (
+                          <a href={`/api/bookings/${b.reference}/guest-id`} target="_blank" rel="noopener" className="underline underline-offset-2" style={{ color: '#C9A84C' }}>
+                            View guest ID
+                          </a>
+                        ) : (
+                          <span style={{ color: '#e0b75a' }}>Guest ID not uploaded yet</span>
+                        )}
+                      </p>
+                    )}
                     {b.note && (
                       <p className="text-xs mt-1" style={{ color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
                         {b.note}
@@ -146,6 +161,7 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
                     <BookingActions
                       id={b.id}
                       canCancel={b.status === 'confirmed' && b.endDate > today}
+                      canRespond={b.status === 'requested' && stillHeld(b.holdExpiresAt)}
                       canClaim={isPartner && claimWindowOpen(b)}
                       canDecide={!isPartner && b.cautionStatus === 'claimed'}
                       deposit={Number(b.cautionDeposit)}

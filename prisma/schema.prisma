@@ -168,6 +168,8 @@ model BookingSettings {
   // Chauffeur hours included per day (car rental / chauffeur)
   hoursPerDay        Int?
   advanceNoticeHours Int                @default(24)
+  // Ask guests to upload ID after booking (on by default for stays)
+  requireGuestId     Boolean            @default(true)
   updatedAt          DateTime           @updatedAt
 }
 
@@ -589,6 +591,10 @@ model PartnerAgreement {
 }
 
 enum BookingStatus {
+  // On-request listings: waiting for the partner to accept (dates held until holdExpiresAt)
+  requested
+  // The partner declined the request
+  declined
   // Dates held for the guest while they pay (holdExpiresAt); expired holds free the dates.
   pending_payment
   confirmed
@@ -627,6 +633,8 @@ model Booking {
   holdExpiresAt      DateTime?
   paidAt             DateTime?
   paymentChannel     String?
+  // Paystack checkout link for this booking, so a guest who leaves can resume
+  paymentUrl         String?
   // Paid after the hold lapsed and someone else took the dates: a person
   // must refund it (shown to admins).
   needsRefund        Boolean            @default(false)
@@ -635,6 +643,16 @@ model Booking {
   cancelledAt        DateTime?
   cancelledBy        String?
   cancelReason       String?
+  // On-request listings: when the partner answered, and why if declined
+  respondedAt        DateTime?
+  declineReason      String?
+  // Guest ID (shortlets): stored privately like partner documents; only the
+  // guest, the listing's partner and the bookings team can open it.
+  guestIdStorage     String?
+  guestIdPath        String?
+  guestIdData        Bytes?
+  guestIdType        String?
+  guestIdUploadedAt  DateTime?
   // Caution deposit after check-out: held -> claimed (partner reports
   // damage within 48h) -> refund queued / kept (in part)
   cautionStatus      String             @default("held")

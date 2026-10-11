@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { audit, requireStaffApi } from '@/lib/admin-auth'
 import { RefundError, cancelByStaff, decideClaim, fileClaim } from '@/lib/refunds-server'
+import { BookingError, acceptRequest, declineRequest } from '@/lib/bookings-server'
 
 // Actions on a booking from the admin panel:
 // - cancel: partner (own listing), admin, or team with Bookings. Full refund.
@@ -22,6 +23,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       await audit(staff.userId, 'booking.cancel.staff', id, { refund, reason })
       return NextResponse.json({ cancelled: true, refund })
     }
+    if (body.action === 'accept' || body.action === 'decline') {
+      if (staff.role === 'team' && !handlesBookings) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      if (body.action === 'accept') {
+        await acceptRequest(id, staff)
+      } else {
+        const reason = String(body.reason ?? '').trim()
+        if (reason.length < 3) return NextResponse.json({ error: 'Give the guest a short reason' }, { status: 400 })
+        await declineRequest(id, staff, reason)
+      }
+      await audit(staff.userId, `booking.request.${body.action}`, id)
+      return NextResponse.json({ ok: true })
+    }
     if (body.action === 'claim') {
       if (staff.role !== 'partner') return NextResponse.json({ error: 'Only the listing’s partner can report damage' }, { status: 403 })
       await fileClaim(id, staff.userId, Number(body.amount), String(body.note ?? ''))
@@ -36,7 +49,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     }
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
   } catch (e) {
-    if (e instanceof RefundError) return NextResponse.json({ error: e.message }, { status: e.status })
+    if (e instanceof RefundError || e instanceof BookingError) return NextResponse.json({ error: e.message }, { status: e.status })
     throw e
   }
 }

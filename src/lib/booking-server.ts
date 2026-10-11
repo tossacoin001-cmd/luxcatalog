@@ -34,10 +34,10 @@ export async function bookableListing(listingId: string) {
 
 type Db = Prisma.TransactionClient | typeof prisma
 
-// A booking blocks its dates while confirmed, or while its payment hold is
-// still running. Expired holds free the dates without any clean-up job.
+// A booking blocks its dates while confirmed, or while its hold (payment,
+// or a request waiting for the partner) is still running. Expired holds free the dates without any clean-up job.
 export const activeBookingWhere = (now = new Date()): Prisma.BookingWhereInput => ({
-  OR: [{ status: 'confirmed' }, { status: 'pending_payment', holdExpiresAt: { gt: now } }],
+  OR: [{ status: 'confirmed' }, { status: { in: ['pending_payment', 'requested'] }, holdExpiresAt: { gt: now } }],
 })
 
 export async function bookedRanges(db: Db, listingId: string, from: string, to: string, exceptId?: string): Promise<Range[]> {
