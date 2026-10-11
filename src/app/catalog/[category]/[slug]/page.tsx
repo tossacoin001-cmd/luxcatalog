@@ -10,6 +10,7 @@ import InquiryModal from '@/components/InquiryModal'
 import AddToCartPanel from '@/components/AddToCartPanel'
 import PriceDisplay from '@/components/PriceDisplay'
 import BookingPanel from '@/components/booking/BookingPanel'
+import SessionBookingPanel from '@/components/booking/SessionBookingPanel'
 import { Suspense } from 'react'
 import { naira } from '@/lib/booking'
 import { categoryLabels, specLabel, splitHighlights } from '@/lib/utils'
@@ -191,7 +192,11 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
           >
             {booking ? (
               <Suspense fallback={<div className="min-h-[420px]" aria-hidden />}>
-                <BookingPanel listingId={listing.id} listingTitle={listing.title} />
+                {booking.unit === 'session' ? (
+                  <SessionBookingPanel listingId={listing.id} />
+                ) : (
+                  <BookingPanel listingId={listing.id} listingTitle={listing.title} />
+                )}
               </Suspense>
             ) : (
               <div>
@@ -283,7 +288,13 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
       <ListingActionBar
         title={listing.title}
         price={booking ? null : price}
-        priceDisplay={booking ? `${naira(Number(booking.rate))} / ${booking.unit === 'day' ? 'day' : 'night'}` : listing.priceDisplay}
+        priceDisplay={
+          booking
+            ? booking.unit === 'session'
+              ? `From ${naira(Number(booking.rate))}`
+              : `${naira(Number(booking.rate))} / ${booking.unit === 'day' ? 'day' : 'night'}`
+            : listing.priceDisplay
+        }
         primaryLabel={booking ? 'Book' : listing.category === 'decor' ? 'Buy' : 'Reserve'}
       />
     </div>

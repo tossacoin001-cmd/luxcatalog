@@ -103,6 +103,7 @@ model Listing {
   unavailableDates UnavailableDate[]
   bookingSettings  BookingSettings?
   bookings         Booking[]
+  servicePackages  ServicePackage[]
   orderItems       OrderItem[]
 }
 
@@ -171,7 +172,37 @@ model BookingSettings {
   advanceNoticeHours Int                @default(24)
   // Ask guests to upload ID after booking (on by default for stays)
   requireGuestId     Boolean            @default(true)
+  // Private Services (unit "session"): weekly hours {mon: {from, to} | null},
+  // travel time kept free between sessions, how many sessions can run at
+  // once (a team), and the Lagos areas served with a travel fee each.
+  workingHours       Json?
+  bufferMinutes      Int                @default(60)
+  capacity           Int                @default(1)
+  areas              Json?
   updatedAt          DateTime           @updatedAt
+}
+
+// What a Private Services listing sells: e.g. "Seven-course dinner, 4 hours,
+// ₦45,000 per guest (4 to 10 guests)". Removed packages are kept inactive so
+// past bookings still point at them.
+model ServicePackage {
+  id              String   @id @default(uuid())
+  listingId       String
+  listing         Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  name            String
+  description     String   @default("")
+  durationMinutes Int
+  // "fixed" (per session) or "per_guest"
+  pricing         String   @default("fixed")
+  price           Decimal  @db.Decimal(14, 2)
+  minGuests       Int      @default(1)
+  maxGuests       Int?
+  active          Boolean  @default(true)
+  sort            Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([listingId, active])
 }
 
 model SavedListing {
@@ -665,6 +696,15 @@ model Booking {
   guestIdData        Bytes?
   guestIdType        String?
   guestIdUploadedAt  DateTime?
+  // Private Services sessions (unit "session"): startDate/endDate are the
+  // exact start and end. The package is snapshotted by name; the address is
+  // shown to the partner only once the booking is paid.
+  packageId          String?
+  packageName        String?
+  address            String?
+  area               String?
+  travelFee          Decimal            @default(0) @db.Decimal(14, 2)
+  serviceNotes       String?
   // Caution deposit after check-out: held -> claimed (partner reports
   // damage within 48h) -> refund queued / kept (in part)
   cautionStatus      String             @default("held")

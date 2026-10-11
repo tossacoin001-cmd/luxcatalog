@@ -8,6 +8,7 @@ import { naira, quote, selectionToRange, toDate, toDay, unitLabel, POLICY_TEXT }
 import { bookedRanges, closedRanges, rulesFrom } from '@/lib/booking-server'
 import { initializeTransaction, toKobo, type PaystackTransaction } from '@/lib/paystack'
 import { schedulePayout } from '@/lib/payouts-server'
+import { sessionLabel, SESSION_POLICY_TEXT } from '@/lib/sessions'
 
 export const HOLD_MINUTES = 15
 // On-request listings: the partner has this long to answer, then the guest
@@ -54,6 +55,7 @@ export async function createBookingHold(input: {
     })
     const s = listing?.bookingSettings
     if (!listing || !s?.enabled) throw new BookingError('This listing is not taking online bookings', 404)
+    if (s.unit === 'session') throw new BookingError('Choose a package and a time', 400)
     if (listing.ownerId && listing.ownerId === input.userId) throw new BookingError('You can’t book your own listing', 403)
 
     const rules = rulesFrom(s)
@@ -112,8 +114,16 @@ export async function applyPayment(trx: PaystackTransaction): Promise<ConfirmRes
     }
     // The hold may have lapsed while the guest paid. If someone else has
     // taken the dates since, the money must go back.
-    const start = toDay(fresh.startDate), end = toDay(fresh.endDate)
-    const taken = [...(await closedRanges(tx, fresh.listingId, start, end)), ...(await bookedRanges(tx, fresh.listingId, start, end, fresh.id))]
+    let taken: unknown[]
+    if (fresh.unit === 'session') {
+      // Sessions clash by time (with travel buffer and team size), not by day.
+      const { sessionStillFree } = await import('@/lib/sessions-server')
+      const settings = await tx.bookingSettings.findUniqueOrThrow({ where: { listingId: fresh.listingId } })
+      taken = (await sessionStillFree(tx, fresh, settings)) ? [] : ['clash']
+    } else {
+      const start = toDay(fresh.startDate), end = toDay(fresh.endDate)
+      taken = [...(await closedRanges(tx, fresh.listingId, start, end)), ...(await bookedRanges(tx, fresh.listingId, start, end, fresh.id))]
+    }
     const paidAt = trx.paid_at ? new Date(trx.paid_at) : new Date()
     if (taken.length) {
       await tx.booking.update({
@@ -138,6 +148,9 @@ export async function applyPayment(trx: PaystackTransaction): Promise<ConfirmRes
 // Emails
 // ---------------------------------------------------------------------------
 
+const policyText = (b: { unit: string; cancellationPolicy: keyof typeof POLICY_TEXT }) =>
+  (b.unit === 'session' ? SESSION_POLICY_TEXT : POLICY_TEXT)[b.cancellationPolicy]
+
 const fmtDay = (d: Date) => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 
 export async function send(to: string, userId: string | null, kind: string, subject: string, content: { preheader: string; eyebrow: string; greeting: string; intro: string; blocks: Block[]; reason: string }) {
@@ -158,7 +171,23 @@ export async function loadForEmail(bookingId: string) {
   })
 }
 
-export function summary(b: Awaited<ReturnType<typeof loadForEmail>>): Block[] {
+// The booking in a few lines. Session addresses are included only when
+// `withAddress` (the guest, and the partner once the booking is paid).
+export function summary(b: Awaited<ReturnType<typeof loadForEmail>>, withAddress = false): Block[] {
+  if (b.unit === 'session') {
+    const items = [
+      { text: `When: ${sessionLabel(b.startDate, b.endDate)} (Lagos time)` },
+      { text: `${b.packageName ?? 'Session'}${b.guests ? `, ${b.guests} guest${b.guests === 1 ? '' : 's'}` : ''}` },
+      { text: `Where: ${withAddress && b.address ? `${b.address}${b.area && !b.address.toLowerCase().includes(b.area.toLowerCase()) ? ` (${b.area})` : ''}` : (b.area ?? 'Lagos')}` },
+      ...(withAddress && b.serviceNotes ? [{ text: `Notes: ${b.serviceNotes}` }] : []),
+      { text: `Total: ${naira(Number(b.total))}${Number(b.travelFee) > 0 ? ` (including ${naira(Number(b.travelFee))} travel)` : ''}` },
+      { text: `Reference: ${b.reference}` },
+    ]
+    return [
+      { type: 'heading', text: b.listing.title },
+      { type: 'bullets', items },
+    ]
+  }
   const night = b.unit === 'night'
   const s = b.listing.bookingSettings
   const items = [
@@ -181,13 +210,16 @@ async function emailConfirmed(bookingId: string) {
     preheader: `Your booking ${b.reference} is confirmed.`,
     eyebrow: 'Booking confirmed',
     greeting: `You're booked, ${first}`,
-    intro: `Thank you. Your payment of ${naira(Number(b.amountDue))} was received and ${b.listing.title} is reserved for you. Our concierge will send arrival details before your stay.`,
+    intro:
+      b.unit === 'session'
+        ? `Thank you. Your payment of ${naira(Number(b.amountDue))} was received and ${b.listing.title} is booked for you. Your booking page shows who is coming; our concierge is on hand if anything changes.`
+        : `Thank you. Your payment of ${naira(Number(b.amountDue))} was received and ${b.listing.title} is reserved for you. Our concierge will send arrival details before your stay.`,
     blocks: [
-      ...summary(b),
+      ...summary(b, true),
       ...(b.unit === 'night' && b.listing.bookingSettings?.requireGuestId
         ? [{ type: 'paragraph' as const, text: 'Before you arrive, please add a photo of your ID on your booking page (passport, driver’s licence or national ID). It is stored privately and only your host and our bookings team can see it.' }]
         : []),
-      { type: 'paragraph', text: `${POLICY_TEXT[b.cancellationPolicy].label} cancellation: ${POLICY_TEXT[b.cancellationPolicy].summary}` },
+      { type: 'paragraph', text: `${policyText(b).label} cancellation: ${policyText(b).summary}` },
       { type: 'cta', label: 'View your booking', url: `${getAppUrl()}/bookings/${b.reference}` },
     ],
     reason: 'You receive this because you made a booking on Lux Catalog.',
@@ -200,13 +232,18 @@ async function emailConfirmed(bookingId: string) {
   for (const u of staffAndOwner) {
     const isOwner = u.id === b.listing.ownerId
     await send(u.email, u.id, isOwner ? 'booking_new_partner' : 'booking_new_admin', `New booking: ${b.listing.title} (${b.reference})`, {
-      preheader: `${b.guestName} booked ${b.units} ${unitLabel(b.unit === 'night' ? 'night' : 'day', b.units)} from ${fmtDay(b.startDate)}.`,
+      preheader:
+        b.unit === 'session'
+          ? `${b.guestName} booked ${b.packageName ?? 'a session'} for ${sessionLabel(b.startDate, b.endDate)}.`
+          : `${b.guestName} booked ${b.units} ${unitLabel(b.unit === 'night' ? 'night' : 'day', b.units)} from ${fmtDay(b.startDate)}.`,
       eyebrow: 'New booking',
       greeting: `New booking, ${u.name.split(' ')[0] || 'there'}`,
       intro: isOwner
-        ? `${b.guestName} has booked and paid for ${b.listing.title}. The dates are now closed on your calendar.`
+        ? b.unit === 'session'
+          ? `${b.guestName} has booked and paid for ${b.listing.title}. The time is now taken on your calendar. The address and notes are below.`
+          : `${b.guestName} has booked and paid for ${b.listing.title}. The dates are now closed on your calendar.`
         : `${b.guestName} has booked and paid for ${b.listing.title}.`,
-      blocks: [...summary(b), { type: 'cta', label: isOwner ? 'Open your bookings' : 'Open bookings', url: `${getAppUrl()}/admin/bookings` }],
+      blocks: [...summary(b, true), { type: 'cta', label: isOwner ? 'Open your bookings' : 'Open bookings', url: `${getAppUrl()}/admin/bookings` }],
       reason: 'You receive this because a booking was made on Lux Catalog.',
     })
   }
@@ -265,8 +302,11 @@ export async function emailRequested(bookingId: string) {
     preheader: 'The host will reply within 12 hours. No payment has been taken.',
     eyebrow: 'Booking request',
     greeting: `Request sent, ${fname(b.guestName)}`,
-    intro: `We've sent your request for ${b.listing.title} to the host. They reply within ${REQUEST_HOURS} hours, and your dates are held until then. You only pay once they accept.`,
-    blocks: [...summary(b), { type: 'cta', label: 'View your request', url: `${getAppUrl()}/bookings/${b.reference}` }],
+    intro:
+      b.unit === 'session'
+        ? `We've sent your request for ${b.listing.title}. The professional replies within ${REQUEST_HOURS} hours, and your time is held until then. You only pay once they accept.`
+        : `We've sent your request for ${b.listing.title} to the host. They reply within ${REQUEST_HOURS} hours, and your dates are held until then. You only pay once they accept.`,
+    blocks: [...summary(b, true), { type: 'cta', label: 'View your request', url: `${getAppUrl()}/bookings/${b.reference}` }],
     reason: 'You receive this because you requested a booking on Lux Catalog.',
   })
   for (const u of await bookingStaff(b.listing.ownerId)) {

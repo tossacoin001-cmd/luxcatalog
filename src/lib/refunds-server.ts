@@ -4,6 +4,7 @@ import { lagosToday, naira, refundShare, toDate, toDay, POLICY_TEXT } from '@/li
 import { expireUnansweredRequests, loadForEmail, send, summary } from '@/lib/bookings-server'
 import { createRefund, toKobo } from '@/lib/paystack'
 import { addDamageCompensation, adjustPayoutForCancellation, markDuePayouts } from '@/lib/payouts-server'
+import { sessionRefundShare, SESSION_POLICY_TEXT } from '@/lib/sessions'
 
 // Refunds and cancellations. Money only moves when a person approves a
 // refund in the admin queue; everything else just prepares the numbers.
@@ -32,6 +33,8 @@ export class RefundError extends Error {
 
 type BookingMoney = {
   status: string
+  unit?: string
+  travelFee?: unknown
   startDate: Date
   createdAt: Date
   base: unknown
@@ -46,6 +49,15 @@ type BookingMoney = {
 // caution deposit in full.
 export function guestCancellationQuote(b: BookingMoney, now = new Date()) {
   if (b.status !== 'confirmed') return { ok: false as const, error: 'Only confirmed bookings can be cancelled' }
+  if (b.unit === 'session') {
+    // Sessions: hour-based windows; the travel fee always comes back.
+    if (b.startDate <= now) return { ok: false as const, error: 'Your session has started. Please contact the concierge.' }
+    const share = sessionRefundShare(b.cancellationPolicy, b.startDate, now)
+    const stay = money(Number(b.base) * share)
+    const travel = Number(b.travelFee ?? 0)
+    const refund = money(stay + travel)
+    return { ok: true as const, share, stay, cleaning: travel, deposit: 0, refund, kept: money(Number(b.amountDue) - refund) }
+  }
   if (toDay(b.startDate) <= lagosToday(now)) return { ok: false as const, error: 'Your stay has started. Please contact the concierge.' }
   const share = refundShare(b.cancellationPolicy, toDay(b.startDate), b.createdAt, now)
   const stay = money(Number(b.base) * share)
@@ -100,7 +112,10 @@ export async function cancelByGuest(bookingId: string, userId: string) {
           bookingId: b.id,
           kind: 'cancellation',
           amount: q.refund,
-          reason: `Guest cancelled. ${POLICY_TEXT[b.cancellationPolicy].label} policy: ${Math.round(q.share * 100)}% of the stay, plus cleaning and caution deposit.`,
+          reason:
+            b.unit === 'session'
+              ? `Guest cancelled. ${SESSION_POLICY_TEXT[b.cancellationPolicy].label} policy: ${Math.round(q.share * 100)}% of the session, plus travel.`
+              : `Guest cancelled. ${POLICY_TEXT[b.cancellationPolicy].label} policy: ${Math.round(q.share * 100)}% of the stay, plus cleaning and caution deposit.`,
           requestedById: userId,
         },
       })
@@ -119,7 +134,7 @@ export async function cancelByStaff(bookingId: string, actor: { userId: string; 
     if (!b) throw new RefundError('Booking not found', 404)
     if (actor.role === 'partner' && b.listing.ownerId !== actor.userId) throw new RefundError('Booking not found', 404)
     if (b.status !== 'confirmed') throw new RefundError('Only confirmed bookings can be cancelled')
-    if (toDay(b.endDate) <= lagosToday()) throw new RefundError('This stay has already ended')
+    if (b.unit === 'session' ? b.endDate <= new Date() : toDay(b.endDate) <= lagosToday()) throw new RefundError('This booking has already ended')
     await tx.booking.update({
       where: { id: b.id },
       data: { status: 'cancelled', cancelledAt: new Date(), cancelledBy: actor.role === 'partner' ? 'partner' : 'Lux Catalog team', cancelReason: reason.slice(0, 300), cautionStatus: 'included' },

@@ -3,6 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import AdminNavbar from '@/components/AdminNavbar'
 import BookingManager from '@/components/booking/BookingManager'
+import ServiceBookingManager from '@/components/booking/ServiceBookingManager'
 import { requireListings } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { categoryHrefs } from '@/lib/utils'
@@ -50,15 +51,7 @@ export default async function ListingBookingPage({ params }: { params: Promise<{
       </div>
       <div className="max-w-4xl mx-auto px-5 md:px-12 py-10">
         {listing.category === 'private_services' ? (
-          <div className="p-6" style={{ background: '#0f1a10', border: '1px solid rgba(201,168,76,0.35)' }}>
-            <p className="text-lg mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-              Online booking for Private Services is coming next
-            </p>
-            <p className="text-sm leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-              Clients will soon pick a date, a time and their address, and pay online. Until then your listing takes enquiries,
-              and our concierge confirms each booking with you directly.
-            </p>
-          </div>
+          <ServiceBookingManager listingId={listing.id} published={listing.published} />
         ) : (
           <BookingManager listingId={listing.id} published={listing.published} />
         )}

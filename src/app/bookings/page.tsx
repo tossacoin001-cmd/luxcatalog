@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { getSession } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
+import { sessionLabel } from '@/lib/sessions'
 import { naira } from '@/lib/booking'
 
 export const metadata: Metadata = { title: 'My bookings', robots: { index: false } }
@@ -60,7 +61,7 @@ export default async function MyBookingsPage() {
                       </span>
                     </div>
                     <p className="text-sm mt-1" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-                      {fmt(b.startDate)} → {fmt(b.unit === 'night' ? b.endDate : new Date(b.endDate.getTime() - 86_400_000))} · {naira(Number(b.total))} · {b.reference}
+                      {b.unit === 'session' ? sessionLabel(b.startDate, b.endDate) : `${fmt(b.startDate)} → ${fmt(b.unit === 'night' ? b.endDate : new Date(b.endDate.getTime() - 86_400_000))}`} · {naira(Number(b.total))} · {b.reference}
                     </p>
                   </Link>
                 </li>

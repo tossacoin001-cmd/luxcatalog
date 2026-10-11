@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import type { Metadata } from 'next'
-import { CheckCircle2, Clock, AlertTriangle, XCircle } from 'lucide-react'
+import { CheckCircle2, Clock, AlertTriangle, XCircle, ShieldCheck } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { can, getSession } from '@/lib/admin-auth'
@@ -14,6 +14,7 @@ import { guestCancellationQuote } from '@/lib/refunds-server'
 import CancelBooking from '@/components/booking/CancelBooking'
 import PayNow from '@/components/booking/PayNow'
 import GuestIdUpload from '@/components/booking/GuestIdUpload'
+import { durationLabel, sessionLabel, SESSION_POLICY_TEXT } from '@/lib/sessions'
 
 export const metadata: Metadata = { title: 'Your booking', robots: { index: false } }
 export const dynamic = 'force-dynamic'
@@ -49,7 +50,17 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
   }
 
   const b = booking
+  const isSession = b.unit === 'session'
   const night = b.unit === 'night'
+  const policy = (isSession ? SESSION_POLICY_TEXT : POLICY_TEXT)[b.cancellationPolicy]
+  // Who's coming: the vetted professional behind a Private Services booking.
+  const pro =
+    isSession && b.listing.ownerId
+      ? await Promise.all([
+          prisma.partnerProfile.findUnique({ where: { userId: b.listing.ownerId }, select: { brandName: true, logo: true } }),
+          prisma.partnerApplication.findUnique({ where: { userId: b.listing.ownerId }, select: { contactName: true } }),
+        ]).then(([profile, app]) => (profile ? { name: profile.brandName, logo: profile.logo, contact: app?.contactName ?? null } : null))
+      : null
   const s = b.listing.bookingSettings
   const lastDay = night ? b.endDate : new Date(b.endDate.getTime() - 86_400_000)
   const holdLive = b.status === 'pending_payment' && !!b.holdExpiresAt && b.holdExpiresAt > new Date()
@@ -59,7 +70,7 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
   const state = b.needsRefund
     ? { icon: <AlertTriangle size={22} style={{ color: '#e0b75a' }} />, title: 'We’ll refund this payment', body: 'Your payment came through after these dates were taken by another guest. Our team will refund you in full and help you find an alternative.' }
     : b.status === 'confirmed' || b.status === 'completed'
-      ? { icon: <CheckCircle2 size={22} style={{ color: '#6fbf73' }} />, title: 'Your booking is confirmed', body: 'A confirmation and receipt are on their way to your email. Our concierge will send arrival details before your stay.' }
+      ? { icon: <CheckCircle2 size={22} style={{ color: '#6fbf73' }} />, title: 'Your booking is confirmed', body: isSession ? 'A confirmation and receipt are on their way to your email. Your professional will arrive at the time below; our concierge is on hand if anything changes.' : 'A confirmation and receipt are on their way to your email. Our concierge will send arrival details before your stay.' }
       : b.status === 'cancelled' && b.paidAt
         ? { icon: <XCircle size={22} style={{ color: '#e85c4c' }} />, title: 'This booking is cancelled', body: b.cancelledBy === 'guest' ? 'You cancelled this booking. Any refund due is shown below.' : `This booking was cancelled by the ${b.cancelledBy ?? 'team'}. You will receive a full refund.` }
       : requestLive
@@ -73,7 +84,21 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
         : { icon: <XCircle size={22} style={{ color: '#e85c4c' }} />, title: b.status === 'cancelled' ? 'This booking was cancelled' : b.note?.includes('did not answer') || b.status === 'requested' ? 'The host didn’t reply in time' : 'This booking wasn’t completed', body: 'No payment was taken for it. You can choose your dates again on the listing.' }
 
   const listingHref = `${categoryHrefs[b.listing.category] ?? '/catalog'}/${b.listing.slug}`
-  const rows: [string, string][] = [
+  const sessionRows: [string, string][] = isSession
+    ? [
+        ['When', `${sessionLabel(b.startDate, b.endDate)} (Lagos time)`],
+        ['Package', `${b.packageName ?? 'Session'} · ${durationLabel(Math.round((b.endDate.getTime() - b.startDate.getTime()) / 60_000))}`],
+        ...(b.guests ? [['Guests', `${b.guests} guest${b.guests === 1 ? '' : 's'}`] as [string, string]] : []),
+        ['Where', `${b.address ?? ''}${b.area && !(b.address ?? '').toLowerCase().includes(b.area.toLowerCase()) ? ` (${b.area})` : ''}`],
+        ...(b.serviceNotes ? [['Notes', b.serviceNotes] as [string, string]] : []),
+        [b.guests && Number(b.base) !== Number(b.rate) ? `${naira(Number(b.rate))} × ${b.guests} guests` : 'Package', naira(Number(b.base))],
+        ...(Number(b.travelFee) > 0 ? [[`Travel (${b.area})`, naira(Number(b.travelFee))] as [string, string]] : []),
+        ['Total', naira(Number(b.total))],
+        [b.paidAt ? 'Paid' : 'Due', `${naira(Number(b.amountDue))}${b.paidAt ? ` on ${fmt(b.paidAt)}` : ''}`],
+        ['Reference', b.reference],
+      ]
+    : []
+  const rows: [string, string][] = isSession ? sessionRows : [
     [night ? 'Check-in' : 'From', `${fmt(b.startDate)}${night && s ? `, from ${s.checkInTime}` : ''}`],
     [night ? 'Check-out' : 'Until', `${fmt(lastDay)}${night && s ? `, by ${s.checkOutTime}` : ''}`],
     ['Length', `${b.units} ${unitLabel(night ? 'night' : 'day', b.units)}${b.guests ? ` · ${b.guests} guest${b.guests === 1 ? '' : 's'}` : ''}`],
@@ -127,10 +152,39 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
             ))}
           </dl>
           <p className="text-xs leading-relaxed" style={text}>
-            <strong style={{ color: '#d6cdbd', fontWeight: 500 }}>{POLICY_TEXT[b.cancellationPolicy].label} cancellation.</strong> {POLICY_TEXT[b.cancellationPolicy].summary}
+            <strong style={{ color: '#d6cdbd', fontWeight: 500 }}>{policy.label} cancellation.</strong> {policy.summary}
             {Number(b.cautionDeposit) > 0 ? ' The caution deposit is refunded within 48 hours of check-out.' : ''}
           </p>
         </section>
+
+        {pro && (
+          <section data-whos-coming className="p-5 md:p-6 flex items-start gap-4" style={{ background: '#0f1a10', border: '1px solid rgba(201,168,76,0.3)' }}>
+            {pro.logo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={pro.logo} alt="" className="w-14 h-14 object-cover shrink-0" style={{ background: '#162318' }} />
+            ) : (
+              <span className="w-14 h-14 shrink-0 flex items-center justify-center text-xl" style={{ background: '#162318', color: '#C9A84C', fontFamily: 'var(--font-playfair)' }}>
+                {pro.name.slice(0, 1)}
+              </span>
+            )}
+            <div>
+              <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                Who’s coming
+              </p>
+              <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                {pro.name}
+              </p>
+              {pro.contact && pro.contact !== pro.name && (
+                <p className="text-sm" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+                  {pro.contact}
+                </p>
+              )}
+              <p className="mt-2 flex items-center gap-1.5 text-xs" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                <ShieldCheck size={14} style={{ color: '#6fbf73' }} /> Vetted by Lux Catalog: identity and police character checked.
+              </p>
+            </div>
+          </section>
+        )}
 
         {b.refunds.length > 0 && (
           <section className="p-5 space-y-2" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
@@ -151,7 +205,7 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
 
         {(() => {
           const cq = guestCancellationQuote(b)
-          return b.userId === session.user.id && cq.ok ? <CancelBooking reference={b.reference} quote={cq} /> : null
+          return b.userId === session.user.id && cq.ok ? <CancelBooking reference={b.reference} quote={cq} session={isSession} /> : null
         })()}
 
         <div className="flex flex-col sm:flex-row gap-3">
@@ -160,7 +214,7 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
           </Link>
           {!holdLive && !requestLive && b.status !== 'confirmed' && b.status !== 'completed' && (
             <Link href={listingHref} className="inline-flex items-center justify-center min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
-              Choose dates again
+              {isSession ? 'Choose another time' : 'Choose dates again'}
             </Link>
           )}
         </div>

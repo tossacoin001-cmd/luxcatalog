@@ -9,6 +9,7 @@ import { claimWindowOpen } from '@/lib/refunds-server'
 import { requireStaff } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { lagosToday, naira, toDate } from '@/lib/booking'
+import { sessionLabel } from '@/lib/sessions'
 
 export const metadata: Metadata = { title: 'Bookings | Admin' }
 export const dynamic = 'force-dynamic'
@@ -25,6 +26,7 @@ const STATUS: Record<string, { text: string; color: string }> = {
 }
 // Is a hold (e.g. a request waiting for the partner) still running?
 const stillHeld = (until: Date | null) => !!until && until.getTime() > Date.now()
+const hasEnded = (end: Date) => end.getTime() <= Date.now()
 const VIEWS = { upcoming: 'Upcoming', past: 'Past', attention: 'Needs attention', all: 'All' } as const
 
 export default async function AdminBookingsPage({ searchParams }: { searchParams: Promise<{ view?: string }> }) {
@@ -118,10 +120,38 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
                     <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
                       {b.listing.title}
                     </p>
-                    <p className="text-sm" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
-                      {fmt(b.startDate)} → {fmt(last)} · {b.units} {b.unit === 'night' ? (b.units === 1 ? 'night' : 'nights') : b.units === 1 ? 'day' : 'days'}
-                      {b.guests ? ` · ${b.guests} guest${b.guests === 1 ? '' : 's'}` : ''}
-                    </p>
+                    {b.unit === 'session' ? (
+                      <>
+                        <p className="text-sm" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+                          {sessionLabel(b.startDate, b.endDate)} · {b.packageName}
+                          {b.guests ? ` · ${b.guests} guest${b.guests === 1 ? '' : 's'}` : ''} · {b.area}
+                        </p>
+                        {/* The address and notes reach the partner only once the booking is paid. */}
+                        {!isPartner || ['confirmed', 'completed'].includes(b.status) ? (
+                          <>
+                            {b.address && (
+                              <p className="text-sm mt-1" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                                {b.address}
+                              </p>
+                            )}
+                            {b.serviceNotes && (
+                              <p className="text-xs mt-1" style={{ color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
+                                Notes: {b.serviceNotes}
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <p className="text-xs mt-1" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                            The full address and notes appear here once the booking is paid.
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-sm" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+                        {fmt(b.startDate)} → {fmt(last)} · {b.units} {b.unit === 'night' ? (b.units === 1 ? 'night' : 'nights') : b.units === 1 ? 'day' : 'days'}
+                        {b.guests ? ` · ${b.guests} guest${b.guests === 1 ? '' : 's'}` : ''}
+                      </p>
+                    )}
                     <p className="text-xs mt-1 break-all" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                       {b.guestName} · {b.guestEmail}
                       {b.guestPhone ? ` · ${b.guestPhone}` : ''} · {b.reference}
@@ -160,7 +190,7 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
                   <div className="md:col-span-2">
                     <BookingActions
                       id={b.id}
-                      canCancel={b.status === 'confirmed' && b.endDate > today}
+                      canCancel={b.status === 'confirmed' && (b.unit === 'session' ? !hasEnded(b.endDate) : b.endDate > today)}
                       canRespond={b.status === 'requested' && stillHeld(b.holdExpiresAt)}
                       canClaim={isPartner && claimWindowOpen(b)}
                       canDecide={!isPartner && b.cautionStatus === 'claimed'}

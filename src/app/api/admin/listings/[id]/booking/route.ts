@@ -54,10 +54,9 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const { id } = await params
   const found = await manageableListing(id)
   if ('error' in found) return NextResponse.json({ error: found.error }, { status: found.status })
-  // Private Services are booked by session (date, time, address), which the
-  // next release adds. Until then they stay enquiry-only.
+  // Private Services are booked by the session: /api/admin/listings/[id]/services.
   if (found.listing.category === 'private_services') {
-    return NextResponse.json({ error: 'Online booking for Private Services opens soon. Clients can enquire in the meantime.' }, { status: 409 })
+    return NextResponse.json({ error: 'Private Services are booked by the session. Set packages, hours and areas instead.' }, { status: 409 })
   }
   const b = await req.json().catch(() => ({}))
 

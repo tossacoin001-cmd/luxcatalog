@@ -12,9 +12,12 @@ const naira = (n: number) => `₦${Math.round(n).toLocaleString('en-NG')}`
 export default function CancelBooking({
   reference,
   quote,
+  session = false,
 }: {
   reference: string
   quote: { share: number; stay: number; cleaning: number; deposit: number; refund: number; kept: number }
+  // Private Services: "Session" and "Travel" instead of "Stay" and "Cleaning".
+  session?: boolean
 }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -38,7 +41,7 @@ export default function CancelBooking({
   if (!open) {
     return (
       <button type="button" onClick={() => setOpen(true)} className="text-xs underline underline-offset-2 min-h-11" style={text}>
-        Cancel this booking
+        Cancel this booking{quote.refund > 0 ? `: ${naira(quote.refund)} back` : ''}
       </button>
     )
   }
@@ -48,8 +51,8 @@ export default function CancelBooking({
         Cancel your booking?
       </p>
       <dl className="text-sm space-y-1" style={{ fontFamily: 'var(--font-inter)' }}>
-        <Row k={`Stay (${Math.round(quote.share * 100)}% back under the policy)`} v={naira(quote.stay)} />
-        {quote.cleaning > 0 && <Row k="Cleaning" v={naira(quote.cleaning)} />}
+        <Row k={`${session ? 'Session' : 'Stay'} (${Math.round(quote.share * 100)}% back under the policy)`} v={naira(quote.stay)} />
+        {quote.cleaning > 0 && <Row k={session ? 'Travel' : 'Cleaning'} v={naira(quote.cleaning)} />}
         {quote.deposit > 0 && <Row k="Caution deposit" v={naira(quote.deposit)} />}
         <div className="pt-1" style={{ borderTop: '1px solid #1e2e1f' }}>
           <Row k="You get back" v={naira(quote.refund)} strong />

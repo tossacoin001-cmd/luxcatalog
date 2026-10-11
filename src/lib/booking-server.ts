@@ -28,7 +28,8 @@ export async function bookableListing(listingId: string) {
     where: { id: listingId, published: true },
     select: { id: true, title: true, ownerId: true, bookingSettings: true },
   })
-  if (!listing?.bookingSettings?.enabled) return null
+  // Private Services are booked by session (src/lib/sessions-server.ts).
+  if (!listing?.bookingSettings?.enabled || listing.bookingSettings.unit === 'session') return null
   return { listing, rules: rulesFrom(listing.bookingSettings) }
 }
 
