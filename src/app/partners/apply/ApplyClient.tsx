@@ -140,7 +140,9 @@ export default function ApplyClient({
           website: null,
           socialHandle: null,
           cacNumber: null,
-          collections: partnerTypeSpec(key)?.collections.slice(0, 1) ?? [],
+          // Service professionals pick their own services; nothing is pre-chosen
+          // (a barber must not be signed up as a private chef by default).
+          collections: key === 'service_professional' ? [] : (partnerTypeSpec(key)?.collections.slice(0, 1) ?? []),
           about: '',
           yearsOperating: null,
           declarations: {},

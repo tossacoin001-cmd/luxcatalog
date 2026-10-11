@@ -11,20 +11,22 @@ export default function Breadcrumbs({ trail, overlay = false }: { trail: Crumb[]
   const parent = [...trail].reverse().find((c, i) => i > 0 && c.href)
   const color = overlay ? '#e8dfcf' : '#9a8f7a'
   const shadow = overlay ? '0 1px 12px rgba(0,0,0,0.7)' : undefined
+  // Over a photo: a dark glass backing keeps the way back readable on any image.
+  const backing = overlay ? { background: 'rgba(8,12,8,0.6)', backdropFilter: 'blur(8px)', border: '1px solid rgba(232,223,207,0.18)' } : {}
 
   return (
     <nav aria-label="Breadcrumb" style={{ fontFamily: 'var(--font-inter)' }}>
       {parent && (
         <Link
           href={parent.href!}
-          className="sm:hidden inline-flex items-center gap-2 min-h-11 pr-3 text-xs tracking-[0.16em] uppercase transition-colors hover:text-lux-gold"
-          style={{ color, textShadow: shadow }}
+          className={`sm:hidden inline-flex items-center gap-2 min-h-11 text-xs tracking-[0.16em] uppercase transition-colors hover:text-lux-gold ${overlay ? 'px-3' : 'pr-3'}`}
+          style={{ color, textShadow: shadow, ...backing }}
         >
           <ArrowLeft size={15} />
           Back to {parent.label}
         </Link>
       )}
-      <ol className="hidden sm:flex flex-wrap items-center gap-x-1 text-xs tracking-[0.14em] uppercase">
+      <ol className={`hidden sm:flex flex-wrap items-center gap-x-1 text-xs tracking-[0.14em] uppercase ${overlay ? 'w-fit pl-1 pr-3 py-1' : ''}`} style={backing}>
         {parent && (
           <li className="mr-3">
             <Link

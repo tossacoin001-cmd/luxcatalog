@@ -6,6 +6,7 @@ import QuickListingForm from '@/components/QuickListingForm'
 import { prisma } from '@/lib/prisma'
 import { requireListings } from '@/lib/admin-auth'
 import { partnerMustSign } from '@/lib/agreements-server'
+import { serviceFloors } from '@/lib/services-server'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Add Listing | Admin' }
@@ -20,6 +21,12 @@ export default async function NewListingPage() {
     const profile = await prisma.partnerProfile.findUnique({ where: { userId } })
     if (!profile) redirect('/admin/profile')
   }
+  // Service Professionals list only the services they were approved for.
+  const app = isVendor
+    ? await prisma.partnerApplication.findUnique({ where: { userId }, select: { partnerType: true, status: true, collections: true } })
+    : null
+  const services = app?.partnerType === 'service_professional' && app.status === 'approved' ? app.collections : undefined
+  const floors = Object.fromEntries((await serviceFloors()).map((f) => [f.key, f.minPrice]))
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
@@ -35,7 +42,7 @@ export default async function NewListingPage() {
         </div>
       </div>
       <div className="max-w-4xl mx-auto px-6 md:px-12 py-10">
-        {isVendor ? <QuickListingForm /> : <AdminListingForm />}
+        {isVendor ? <QuickListingForm services={services} floors={floors} /> : <AdminListingForm />}
       </div>
     </div>
   )

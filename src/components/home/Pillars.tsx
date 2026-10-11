@@ -104,7 +104,7 @@ export default function Pillars() {
             Five pillars of <em style={{ color: '#C9A84C' }}>exceptional</em> living
           </h2>
         </div>
-        <p className="max-w-sm text-sm leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+        <p data-pillars-intro className="max-w-sm text-base md:text-lg font-medium leading-relaxed" style={{ color: '#e8dfcf', fontFamily: 'var(--font-inter)' }}>
           Buy outright, rent by the month or book by the night. Every asset is vetted, every partner verified.
         </p>
       </Reveal>
@@ -131,8 +131,12 @@ export default function Pillars() {
               <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 pointer-events-none">
                 <div className="flex items-end justify-between gap-4 mb-5">
                   <div>
-                    <p className="text-[11px] tracking-[0.24em] uppercase mb-2" style={{ color: '#e4c878', fontFamily: 'var(--font-inter)' }}>
-                      0{i + 1} &middot; {p.tagline}
+                    <p
+                      data-pillar-tagline
+                      className="text-[15px] md:text-base font-semibold leading-snug mb-2"
+                      style={{ color: '#f7ecd0', fontFamily: 'var(--font-inter)', textShadow: '0 1px 14px rgba(0,0,0,0.75)' }}
+                    >
+                      {p.tagline}
                     </p>
                     <h3 className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
                       {p.title}

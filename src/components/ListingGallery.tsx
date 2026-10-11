@@ -11,7 +11,7 @@ const SWIPE_THRESHOLD = 50
 interface ListingGalleryProps {
   images: string[]
   title: string
-  // Server-rendered title/location/status overlay, kept as children so the
+  // Server-rendered overlay (breadcrumbs), kept as children so the
   // detail page stays a Server Component and only the gallery hydrates.
   children?: React.ReactNode
 }
@@ -41,6 +41,7 @@ export default function ListingGallery({ images, title, children }: ListingGalle
   return (
     <>
       <div
+        data-gallery
         className="relative pt-20 h-[55vh] md:h-[70vh] overflow-hidden"
         onTouchStart={count > 1 ? onTouchStart : undefined}
         onTouchEnd={count > 1 ? onTouchEnd : undefined}
@@ -57,9 +58,12 @@ export default function ListingGallery({ images, title, children }: ListingGalle
             priority={i === 0}
           />
         ))}
+        {/* A light shade at the top only, so the menu and breadcrumbs stay
+            readable while the photo itself is shown as it is. */}
         <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: 'linear-gradient(180deg, rgba(8,12,8,0.2) 0%, rgba(8,12,8,0.85) 100%)' }}
+          data-gallery-shade
+          className="absolute inset-x-0 top-0 h-48 pointer-events-none"
+          style={{ background: 'linear-gradient(180deg, rgba(8,12,8,0.35) 0%, rgba(8,12,8,0) 100%)' }}
         />
 
         {count > 0 && (

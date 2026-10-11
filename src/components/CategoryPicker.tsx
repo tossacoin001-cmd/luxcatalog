@@ -24,16 +24,22 @@ export default function CategoryPicker({
   onChange,
   onTemplate,
   allowModeOverride = false,
+  only,
 }: {
   value: CategoryValue
   onChange: (v: CategoryValue) => void
   onTemplate?: (labels: string[]) => void
   allowModeOverride?: boolean
+  // Limit the choice to these collections (e.g. the services a Service
+  // Professional was approved for) and the categories that hold them.
+  only?: string[]
 }) {
-  const subs = subcategoriesFor(value.category)
+  const allowed = (category: string) => subcategoriesFor(category).filter((s) => !only || only.includes(s.key))
+  const subs = allowed(value.category)
+  const categories = Object.entries(categoryLabels).filter(([key]) => !only || allowed(key).length > 0)
 
   const pickCategory = (category: string) => {
-    const first = subcategoriesFor(category)[0]?.key ?? null
+    const first = allowed(category)[0]?.key ?? null
     onChange({ category, subcategory: first, mode: defaultMode(category, first) })
     onTemplate?.(specTemplate(first))
   }
@@ -50,7 +56,7 @@ export default function CategoryPicker({
           Category <span style={{ color: '#C9A84C' }}>*</span>
         </label>
         <select value={value.category} onChange={(e) => pickCategory(e.target.value)} className={fieldClass} style={inputStyle}>
-          {Object.entries(categoryLabels).map(([key, label]) => (
+          {categories.map(([key, label]) => (
             <option key={key} value={key}>
               {label}
             </option>

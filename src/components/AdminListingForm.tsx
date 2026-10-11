@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { SPEC_TEMPLATES } from '@/lib/taxonomy'
 import { useRouter } from 'next/navigation'
 import { X, Loader2, Plus } from 'lucide-react'
 import HighlightsEditor from '@/components/HighlightsEditor'
@@ -34,6 +35,8 @@ export interface AdminListingFormValues {
   hireRateDisplay: string
   specs?: Record<string, string>
 }
+
+const TEMPLATE_LABELS = new Set(Object.values(SPEC_TEMPLATES).flat())
 
 interface SpecRow {
   key: string
@@ -79,7 +82,8 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
   // anything already filled in).
   const addTemplateRows = (labels: string[]) =>
     setSpecRows((rows) => {
-      const filled = rows.filter((r) => r.key.trim() || r.value.trim())
+      // Unfilled rows from a previously chosen collection are dropped.
+      const filled = rows.filter((r) => r.value.trim() || (r.key.trim() && !TEMPLATE_LABELS.has(r.key.trim())))
       const have = new Set(filled.map((r) => r.key.trim().toLowerCase()))
       const extra = labels.filter((l) => !have.has(l.toLowerCase())).map((key) => ({ key, value: '' }))
       const next = [...filled, ...extra]
@@ -133,12 +137,13 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           body: JSON.stringify(payload),
         }
       )
-      if (!res.ok) throw new Error()
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || (isEdit ? 'Failed to update listing.' : 'Failed to create listing. Please try again.'))
       toast.success(isEdit ? 'Listing updated.' : 'Listing created successfully.')
       router.push('/admin/listings')
       router.refresh()
-    } catch {
-      toast.error(isEdit ? 'Failed to update listing.' : 'Failed to create listing. Please try again.')
+    } catch (err) {
+      toast.error((err as Error).message || (isEdit ? 'Failed to update listing.' : 'Failed to create listing. Please try again.'))
     } finally {
       setLoading(false)
     }

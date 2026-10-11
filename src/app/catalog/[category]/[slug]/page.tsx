@@ -99,40 +99,40 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
             />
           </div>
         </div>
-        {/* Title overlay */}
-        <div className="absolute bottom-0 left-0 right-0 max-w-7xl mx-auto px-6 md:px-12 pb-10">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <p className="text-xs tracking-[0.25em] uppercase mb-3" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
-                {categoryLabels[listing.category]}
-              </p>
-              <h1 className="text-3xl md:text-5xl leading-tight" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-                {listing.title}
-              </h1>
-              <div className="flex items-center gap-2 mt-3">
-                <MapPin size={13} style={{ color: '#9a8f7a' }} />
-                <span className="text-sm" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-                  {listing.location}, {listing.country}
-                </span>
-              </div>
-            </div>
-            <Badge variant={statusVariant} className="hidden md:inline-flex">
-              {listing.status === 'under_offer' ? 'Under Offer' : listing.status}
-            </Badge>
-          </div>
-        </div>
       </ListingGallery>
 
+      {/* Title: beneath the photo so the photo is seen in full. */}
+      <header className="max-w-7xl mx-auto px-6 md:px-12 pt-8 md:pt-10">
+        <p className="text-xs md:text-sm font-semibold tracking-[0.22em] uppercase mb-3" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          {service ? service.label : categoryLabels[listing.category]}
+        </p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <h1 className="text-[32px] md:text-6xl font-semibold leading-[1.1] tracking-[-0.01em] max-w-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f8f3ea' }}>
+            {listing.title}
+          </h1>
+          <Badge variant={statusVariant} className="hidden md:inline-flex shrink-0 mb-2">
+            {listing.status === 'under_offer' ? 'Under Offer' : listing.status}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-2 mt-4">
+          <MapPin size={15} style={{ color: '#C9A84C' }} />
+          <span className="text-base font-medium" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+            {listing.location}, {listing.country}
+          </span>
+        </div>
+        <div className="mt-8" style={{ height: 1, background: 'linear-gradient(90deg, rgba(201,168,76,0.45), rgba(201,168,76,0.05))' }} />
+      </header>
+
       {/* Main content */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Left: description, specs, features */}
         <div className="lg:col-span-2 space-y-10">
           {/* Description */}
           <div>
             <h2 className="text-xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-              About This Asset
+              {service ? 'About This Service' : 'About This Asset'}
             </h2>
-            <p className="text-sm leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+            <p data-listing-description className="text-base leading-relaxed" style={{ color: '#ddd5c6', fontFamily: 'var(--font-inter)' }}>
               {listing.description}
             </p>
           </div>

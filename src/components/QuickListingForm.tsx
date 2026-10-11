@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { X, Loader2, Plus } from 'lucide-react'
 import HighlightsEditor from '@/components/HighlightsEditor'
 import CategoryPicker from '@/components/CategoryPicker'
-import type { Mode } from '@/lib/taxonomy'
+import { SPEC_TEMPLATES, defaultMode, findSubcategory, specTemplate, type Mode } from '@/lib/taxonomy'
+import { floorMessage } from '@/lib/services'
 
 
 const inputStyle = {
@@ -15,6 +16,8 @@ const inputStyle = {
   color: '#f5f0e8',
   fontFamily: 'var(--font-inter)',
 }
+
+const TEMPLATE_LABELS = new Set(Object.values(SPEC_TEMPLATES).flat())
 
 interface SpecRow {
   key: string
@@ -29,15 +32,25 @@ interface SpecRow {
 // per-category fields, we don't yet know the exact fields every partner type
 // (security, chauffeur, shortlet, decor…) actually needs, so this stays
 // flexible until real usage tells us what to hard-code.
-export default function QuickListingForm() {
+export default function QuickListingForm({
+  services,
+  floors = {},
+}: {
+  // Service Professionals: the services they were approved for. The form then
+  // offers only those, under Private Services.
+  services?: string[]
+  // Private Services minimum starting prices (NGN), shown beside the price.
+  floors?: Record<string, number>
+} = {}) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const firstService = services?.[0] ?? null
   const [form, setForm] = useState({
     title: '',
-    category: 'decor',
-    subcategory: 'for_sale' as string | null,
-    mode: 'sale' as Mode,
+    category: firstService ? 'private_services' : 'decor',
+    subcategory: (firstService ?? 'for_sale') as string | null,
+    mode: (firstService ? defaultMode('private_services', firstService) : 'sale') as Mode,
     description: '',
     price: '',
     location: '',
@@ -48,12 +61,18 @@ export default function QuickListingForm() {
     hireAvailable: false,
     hireRateDisplay: '',
   })
-  const [specRows, setSpecRows] = useState<SpecRow[]>([{ key: '', value: '' }])
+  const [specRows, setSpecRows] = useState<SpecRow[]>(() => {
+    const labels = specTemplate(firstService)
+    return labels.length ? labels.map((key) => ({ key, value: '' })) : [{ key: '', value: '' }]
+  })
+  const isService = form.category === 'private_services'
+  const floor = isService && form.subcategory ? floors[form.subcategory] : undefined
 
-  // Adds the chosen collection's ready-made detail labels as empty rows.
+  // Adds the chosen collection's ready-made detail labels as empty rows,
+  // dropping unfilled rows left over from a previously chosen collection.
   const addTemplateRows = (labels: string[]) =>
     setSpecRows((rows) => {
-      const filled = rows.filter((r) => r.key.trim() || r.value.trim())
+      const filled = rows.filter((r) => r.value.trim() || (r.key.trim() && !TEMPLATE_LABELS.has(r.key.trim())))
       const have = new Set(filled.map((r) => r.key.trim().toLowerCase()))
       const next = [...filled, ...labels.filter((l) => !have.has(l.toLowerCase())).map((key) => ({ key, value: '' }))]
       return next.length ? next : [{ key: '', value: '' }]
@@ -98,6 +117,10 @@ export default function QuickListingForm() {
       toast.error('Add at least one photo before submitting.')
       return
     }
+    if (floor && Number(form.price) < floor) {
+      toast.error(floorMessage(findSubcategory(form.category, form.subcategory)?.label ?? 'this service', floor))
+      return
+    }
     setLoading(true)
     try {
       const specs = Object.fromEntries(
@@ -108,12 +131,15 @@ export default function QuickListingForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, specs }),
       })
-      if (!res.ok) throw new Error()
+      const data = await res.json().catch(() => ({}))
+      // Say exactly what to fix (minimum price, a word that isn't allowed,
+      // a service not yet approved) instead of a generic failure.
+      if (!res.ok) throw new Error(data.error || 'Failed to submit listing. Please try again.')
       toast.success('Listing submitted. It will go live once our team reviews it.')
       router.push('/admin/listings')
       router.refresh()
-    } catch {
-      toast.error('Failed to submit listing. Please try again.')
+    } catch (err) {
+      toast.error((err as Error).message || 'Failed to submit listing. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -152,22 +178,33 @@ export default function QuickListingForm() {
             value={{ category: form.category, subcategory: form.subcategory, mode: form.mode }}
             onChange={(v) => setForm((f) => ({ ...f, category: v.category, subcategory: v.subcategory, mode: v.mode }))}
             onTemplate={addTemplateRows}
+            only={services}
           />
 
           <div>
             <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Price (NGN)
+              {isService ? (
+                <>
+                  Starting price (NGN) <span style={{ color: '#C9A84C' }}>*</span>
+                </>
+              ) : (
+                'Price (NGN)'
+              )}
             </label>
             <input
               type="number"
+              name="price"
               value={form.price}
               onChange={(e) => set('price', e.target.value)}
-              placeholder="e.g. 850000"
+              placeholder={floor ? String(floor) : 'e.g. 850000'}
+              required={isService}
               className={fieldClass}
               style={inputStyle}
             />
-            <p className="mt-1.5 text-[11px]" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Leave blank if it&rsquo;s price on application.
+            <p className="mt-1.5 text-[11px]" style={{ color: isService ? '#C9A84C' : '#908673', fontFamily: 'var(--font-inter)' }}>
+              {isService
+                ? `${floor ? `Minimum ₦${floor.toLocaleString('en-NG')}` : 'Required'}${form.subcategory === 'private_chef' ? ' per guest, ingredients included' : ''}.`
+                : 'Leave blank if it’s price on application.'}
             </p>
           </div>
 
