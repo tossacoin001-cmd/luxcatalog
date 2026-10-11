@@ -54,6 +54,7 @@ export const categoryLabels: Record<string, string> = {
   lifestyle:           'Lifestyle',
   shortlet:            'Shortlets',
   executive_services:  'Chauffeur & Security',
+  private_services:    'Private Services',
 }
 
 export const categoryHrefs: Record<string, string> = {
@@ -65,6 +66,7 @@ export const categoryHrefs: Record<string, string> = {
   lifestyle:           '/catalog/lifestyle',
   shortlet:            '/catalog/shortlets',
   executive_services:  '/catalog/executive-services',
+  private_services:    '/catalog/private-services',
 }
 
 export const categoryImages: Record<string, string> = {
@@ -76,6 +78,7 @@ export const categoryImages: Record<string, string> = {
   lifestyle:           'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80',
   shortlet:            'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80',
   executive_services:  'https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&q=80',
+  private_services:    'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
 }
 
 // Spec keys are stored as typed by admins or seeds ("topSpeed", "year_built",

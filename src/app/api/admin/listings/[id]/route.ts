@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { requireListingsApi } from '@/lib/admin-auth'
 import { resolvePlacement } from '@/lib/taxonomy'
 import { revalidateCatalog } from '@/lib/revalidate'
+import { checkServiceListing } from '@/lib/services-server'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const staff = await requireListingsApi()
@@ -12,11 +13,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   try {
     const { id } = await params
 
-    if (isVendor) {
-      const existing = await prisma.listing.findUnique({ where: { id }, select: { ownerId: true } })
-      if (!existing || existing.ownerId !== staff.userId) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
-      }
+    const existing = await prisma.listing.findUnique({
+      where: { id },
+      select: { ownerId: true, category: true, subcategory: true, title: true, description: true, features: true, specs: true, price: true },
+    })
+    if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    if (isVendor && existing.ownerId !== staff.userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
     const body = await req.json()
@@ -27,6 +30,23 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     } = body
     const placement = category ? resolvePlacement(category, body.subcategory, body.mode, { allowModeOverride: !isVendor }) : null
 
+    // Private Services rules apply to the listing as it will be after this
+    // edit (fields not sent keep their current values).
+    if ((category ?? existing.category) === 'private_services') {
+      const refused = await checkServiceListing(
+        {
+          subcategory: placement?.subcategory ?? existing.subcategory,
+          title: title ?? existing.title,
+          description: description ?? existing.description,
+          features: features ?? existing.features,
+          specs: specs ?? existing.specs,
+          price: 'price' in body ? price : existing.price,
+        },
+        staff
+      )
+      if (refused) return NextResponse.json({ error: refused.error }, { status: refused.status })
+    }
+
     const listing = await prisma.listing.update({
       where: { id },
       data: {
@@ -35,7 +55,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         ...(placement ? { subcategory: placement.subcategory, mode: placement.mode } : {}),
         description,
         priceDisplay,
-        price: price ? Number(price) : null,
+        // Only touch the price when the request sends one: "Publish" sends
+        // just { published: true } and must not wipe it.
+        ...('price' in body ? { price: price ? Number(price) : null } : {}),
         location,
         country,
         images: Array.isArray(images) ? images : undefined,

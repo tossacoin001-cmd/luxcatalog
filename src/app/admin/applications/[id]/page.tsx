@@ -92,7 +92,7 @@ export default async function ApplicationDetail({ params }: { params: Promise<{ 
                     <span>
                       <span className="block text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
                         {d.label}
-                        {isDocRequired(d, app.legalForm) ? '' : ' (optional)'}
+                        {isDocRequired(d, app.legalForm, app.collections) ? '' : ' (optional)'}
                       </span>
                       {doc?.expiresAt && (
                         <span className="block text-xs" style={{ color: expired ? '#e85c4c' : '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
@@ -112,7 +112,7 @@ export default async function ApplicationDetail({ params }: { params: Promise<{ 
                         <FileText size={14} /> Open {doc.storage === 'db' ? '(db)' : ''}
                       </a>
                     ) : (
-                      <span className="text-xs" style={{ color: isDocRequired(d, app.legalForm) ? '#e85c4c' : '#908673', fontFamily: 'var(--font-inter)' }}>
+                      <span className="text-xs" style={{ color: isDocRequired(d, app.legalForm, app.collections) ? '#e85c4c' : '#908673', fontFamily: 'var(--font-inter)' }}>
                         Not uploaded
                       </span>
                     )}

@@ -55,7 +55,7 @@ export default async function AdminListingsPage() {
       <AdminNavbar role={role} />
 
       <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
-        <div className="max-w-7xl mx-auto flex items-end justify-between">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-end justify-between gap-4">
           <div>
             <Link href="/admin" className="text-[11px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               ← Admin
@@ -64,13 +64,24 @@ export default async function AdminListingsPage() {
               {isVendor ? 'My Listings' : 'All Listings'}
             </h1>
           </div>
-          <Link
-            href="/admin/listings/new"
-            className="inline-flex items-center px-7 py-3 text-xs tracking-[0.18em] uppercase"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
-          >
-            + Add Listing
-          </Link>
+          <div className="flex flex-wrap justify-end gap-2">
+            {role === 'admin' && (
+              <Link
+                href="/admin/services"
+                className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.14em] uppercase"
+                style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+              >
+                Service floors
+              </Link>
+            )}
+            <Link
+              href="/admin/listings/new"
+              className="inline-flex items-center px-7 py-3 text-xs tracking-[0.18em] uppercase"
+              style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            >
+              + Add Listing
+            </Link>
+          </div>
         </div>
       </div>
 

@@ -6,6 +6,9 @@
 // 7pm), Lagos tenancy reform. Not legal advice; reviewed with the founder's
 // lawyer as part of Step 3.
 
+import { SERVICE_KEYS } from '@/lib/taxonomy'
+import { findBannedTerms } from '@/lib/services'
+
 export type PartnerTypeKey =
   | 'property_host'
   | 'fleet_owner'
@@ -14,12 +17,15 @@ export type PartnerTypeKey =
   | 'security_company'
   | 'brand_retailer'
   | 'agent'
+  | 'service_professional'
 
 export type DocRequirement = {
   kind: string
   label: string
   help: string
   required: boolean | 'company'
+  // Also required when the partner offers any of these collections.
+  requiredFor?: string[]
   // Licences and insurance: we record the expiry and the Watchdog reminds
   // the partner before it lapses.
   expires?: boolean
@@ -210,14 +216,61 @@ export const PARTNER_TYPES: PartnerTypeSpec[] = [
       { key: 'fees', text: 'I will not charge clients agency fees above the legal limit or any fee not shown on Lux Catalog.' },
     ],
   },
+  {
+    key: 'service_professional',
+    label: 'Service professional',
+    tagline: 'Private chefs, therapists, barbers, stylists and more who come to the client',
+    collections: SERVICE_KEYS,
+    docs: [
+      ...IDENTITY,
+      { kind: 'proof_of_address', label: 'Proof of address', help: 'A utility bill or bank statement from the last 3 months.', required: true },
+      {
+        kind: 'police_clearance',
+        label: 'Police character certificate',
+        help: 'Issued by the Nigeria Police Force within the last 12 months. For teams: one for each person who will attend clients.',
+        required: true,
+      },
+      {
+        kind: 'trade_certificate',
+        label: 'Training or certification',
+        help: 'Massage therapy, culinary, food handler’s, fitness or beauty certificate. Required for massage therapists, chefs and trainers.',
+        required: false,
+        requiredFor: ['massage_spa', 'private_chef', 'personal_training'],
+      },
+      {
+        kind: 'portfolio',
+        label: 'Portfolio',
+        help: 'A PDF or photo collage of at least 5 pieces of your own work: dishes, cuts, looks, shoots or spaces.',
+        required: true,
+      },
+      {
+        kind: 'references',
+        label: 'Two references',
+        help: 'Names and phone numbers of two clients or employers we may call.',
+        required: true,
+      },
+      { kind: 'liability_insurance', label: 'Liability insurance', help: 'Optional. Insured professionals get a badge.', required: false, expires: true },
+    ],
+    declarations: [
+      ...COMMON_DECLARATIONS,
+      { key: 'conduct', text: 'I will behave professionally in every client’s home. Any sexual conduct, harassment or theft ends my partnership immediately.' },
+      { key: 'discretion', text: 'I will never photograph, record or post about clients, their guests or their homes.' },
+      { key: 'hygiene', text: 'My tools, products and equipment are clean, safe and sanitised for every client.' },
+      { key: 'in_person', text: 'Only I, or team members vetted and approved by Lux Catalog, will attend bookings.' },
+    ],
+  },
 ]
 
 export function partnerTypeSpec(key: string | null | undefined): PartnerTypeSpec | undefined {
   return PARTNER_TYPES.find((t) => t.key === key)
 }
 
-export function isDocRequired(doc: DocRequirement, legalForm: string): boolean {
-  return doc.required === true || (doc.required === 'company' && legalForm === 'company')
+export function isDocRequired(doc: DocRequirement, legalForm: string, collections: string[] = []): boolean {
+  return (
+    doc.required === true ||
+    (doc.required === 'company' && legalForm === 'company') ||
+    !!doc.requiredFor?.some((c) => collections.includes(c))
+  )
 }
 
 export const MAX_DOC_BYTES = 10 * 1024 * 1024
@@ -255,11 +308,15 @@ export function missingForSubmit(app: AppForCheck): string[] {
   if (app.legalForm === 'company' && !app.cacNumber?.trim()) missing.push('CAC registration number')
   if (!app.collections.length) missing.push('At least one collection you will list in')
   for (const doc of spec.docs) {
-    if (!isDocRequired(doc, app.legalForm)) continue
+    if (!isDocRequired(doc, app.legalForm, app.collections)) continue
     const uploaded = app.documents.find((d) => d.kind === doc.kind)
     if (!uploaded) missing.push(`Upload: ${doc.label}`)
     else if (doc.expires && !uploaded.expiresAt) missing.push(`Expiry date for ${doc.label}`)
     else if (doc.expires && uploaded.expiresAt && new Date(uploaded.expiresAt) < new Date()) missing.push(`${doc.label} has expired, upload the current one`)
+  }
+  if (spec.key === 'service_professional') {
+    const banned = findBannedTerms(app.businessName, app.about)
+    if (banned.length) missing.push(`Remove these words from your details, they are not allowed on Lux Catalog: ${banned.map((t) => `“${t}”`).join(', ')}`)
   }
   const accepted = (app.declarations ?? {}) as Record<string, string>
   for (const d of spec.declarations) if (!accepted[d.key]) missing.push(`Accept: “${d.text}”`)

@@ -6,6 +6,8 @@ import { optimizeListingDraft } from '@/lib/ai-optimize'
 import { resolvePlacement } from '@/lib/taxonomy'
 import { revalidateCatalog } from '@/lib/revalidate'
 import { partnerMustSign } from '@/lib/agreements-server'
+import { checkServiceListing } from '@/lib/services-server'
+import { bannedTermsMessage, findBannedTerms } from '@/lib/services'
 
 export async function POST(req: Request) {
   const staff = await requireListingsApi()
@@ -35,6 +37,11 @@ export async function POST(req: Request) {
     if (isVendor && (!Array.isArray(images) || images.length === 0)) {
       return NextResponse.json({ error: 'At least one photo is required' }, { status: 400 })
     }
+    const isService = category === 'private_services'
+    if (isService) {
+      const refused = await checkServiceListing({ subcategory: placement.subcategory, title, description, features, specs, price }, staff)
+      if (refused) return NextResponse.json({ error: refused.error }, { status: refused.status })
+    }
 
     const baseSlug = slugify(title)
     let slug = baseSlug
@@ -59,6 +66,11 @@ export async function POST(req: Request) {
       // The partner's own highlights win; otherwise use the outline the AI
       // extracted from their description (customers see a list, not prose).
       if (!finalFeatures.length) finalFeatures = optimized.highlights
+    }
+    // The polished copy is checked again: nothing banned may reach the page.
+    if (isService) {
+      const banned = findBannedTerms(finalDescription, finalFeatures, finalSpecs, finalPriceDisplay)
+      if (banned.length) return NextResponse.json({ error: bannedTermsMessage(banned) }, { status: 400 })
     }
 
     const listing = await prisma.listing.create({

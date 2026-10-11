@@ -435,7 +435,71 @@ const AGENT: AgreementTemplate = {
   ],
 }
 
-export const AGREEMENTS: AgreementTemplate[] = [MASTER, SHORTLET, VEHICLE, MARINE, CHAUFFEUR, SECURITY, RETAIL, AGENT]
+const SERVICES: AgreementTemplate = {
+  key: 'schedule_services',
+  title: 'Schedule H: Private Services',
+  version: '1.0',
+  reviewed: false,
+  appliesTo: ['service_professional'],
+  summary: 'Extra terms for professionals who serve clients in their homes and stays.',
+  clauses: [
+    {
+      heading: 'Who attends',
+      paragraphs: [
+        'Only you, or a team member who has been vetted and approved by Lux Catalog (identity, police character certificate and, where your trade has one, a recognised certificate), attends a booking. The client is shown the name and photo of the person coming.',
+        'You may not send a substitute who has not been vetted and approved by us in advance. If you cannot attend, tell us at once so we can inform the client.',
+      ],
+    },
+    {
+      heading: 'In the client’s home',
+      paragraphs: [
+        'You arrive on time, professionally dressed, and treat the client, their guests and their property with respect. You leave the space as you found it.',
+        'You never bring anyone who is not part of the booking, and never drink alcohol or take drugs while working. A mixologist may serve alcohol but does not drink it.',
+      ],
+    },
+    {
+      heading: 'Zero tolerance',
+      paragraphs: [
+        'Any sexual conduct, sexual comment or advance, harassment, theft or violence towards a client, guest or member of their household ends this agreement immediately. We may withhold payment for the affected booking, remove your listings and report the matter to the police.',
+        'Massage and spa treatments are strictly therapeutic. The client is properly draped at all times and may stop a treatment at any moment.',
+      ],
+    },
+    {
+      heading: 'Discretion',
+      paragraphs: [
+        'You never photograph or record clients, their guests or their homes, and never post about them on social media or share their identity, address or schedule with anyone. A photographer delivers images only to the client and may use them in a portfolio only with the client’s written consent.',
+        'These duties continue after this agreement ends.',
+      ],
+    },
+    {
+      heading: 'Hygiene and safety',
+      paragraphs: [
+        'Tools, linens and equipment are cleaned and sanitised for every client, and single-use items are never reused. Chefs follow safe food handling and respect every allergy or dietary need the client tells you about.',
+      ],
+    },
+    {
+      heading: 'Prices and payment',
+      paragraphs: [
+        'The price on your listing includes your time, ingredients, products, equipment and transport within your coverage area, plus only the travel fee shown on the listing. You do not ask clients for extra charges or tips.',
+        'Clients pay through Lux Catalog only. You never ask for or accept payment directly.',
+      ],
+    },
+    {
+      heading: 'Cancellations and no-shows',
+      paragraphs: [
+        'If you cancel within 24 hours of a booking or fail to attend (a no-show), the client receives a full refund. Repeated late cancellations or any no-show may lead to suspension.',
+      ],
+    },
+    {
+      heading: 'Damage and insurance',
+      paragraphs: [
+        'You are responsible for loss or damage you cause to the client’s property. We encourage you to hold liability insurance and show it to us; insured professionals are marked on their listings.',
+      ],
+    },
+  ],
+}
+
+export const AGREEMENTS: AgreementTemplate[] = [MASTER, SHORTLET, VEHICLE, MARINE, CHAUFFEUR, SECURITY, RETAIL, AGENT, SERVICES]
 
 export function agreementByKey(key: string) {
   return AGREEMENTS.find((a) => a.key === key)

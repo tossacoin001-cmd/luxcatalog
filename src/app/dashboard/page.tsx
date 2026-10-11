@@ -38,7 +38,7 @@ export default async function DashboardPage() {
   ])
 
   const bookings = inquiries.filter((i) => i.listing?.category === 'shortlet')
-  const serviceRequests = inquiries.filter((i) => i.listing?.category === 'executive_services')
+  const serviceRequests = inquiries.filter((i) => i.listing?.category === 'executive_services' || i.listing?.category === 'private_services')
   const reservations = inquiries.filter((i) => i.listing && RESERVATION_CATEGORIES.includes(i.listing.category))
   const generalEnquiries = inquiries.filter((i) => !i.listing || (!bookings.includes(i) && !serviceRequests.includes(i) && !reservations.includes(i)))
 
@@ -198,7 +198,7 @@ export default async function DashboardPage() {
             </div>
           )}
 
-          {/* Service Requests (Executive Services) */}
+          {/* Service Requests (Chauffeur, Security and Private Services) */}
           {serviceRequests.length > 0 && (
             <div className="p-6" style={sectionStyle}>
               <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>

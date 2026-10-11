@@ -6,7 +6,7 @@ import { whatsappLink } from '@/lib/contact'
 
 type Sub = { label: string; href: string; external?: boolean }
 
-// The four main pillars, each with the sub-collections customers actually
+// The five main pillars, each with the sub-collections customers actually
 // shop for. Rental/cruise/stay sub-collections route to the concierge until
 // online booking ships, so every tap leads somewhere useful today.
 const pillars: { title: string; tagline: string; href: string; image: string; alt: string; subs: Sub[] }[] = [
@@ -56,6 +56,19 @@ const pillars: { title: string; tagline: string; href: string; image: string; al
       { label: 'Close Protection', href: '/catalog/executive-services' },
     ],
   },
+  {
+    title: 'Private Services',
+    tagline: 'Five-star service, brought to your door',
+    href: '/catalog/private-services',
+    image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=80',
+    alt: 'A plated fine-dining course served at a candlelit table',
+    subs: [
+      { label: 'Private Dining', href: '/catalog/private-services#dining' },
+      { label: 'Wellness', href: '/catalog/private-services#wellness' },
+      { label: 'Grooming & Beauty', href: '/catalog/private-services#grooming' },
+      { label: 'Home & Hosting', href: '/catalog/private-services#hosting' },
+    ],
+  },
 ]
 
 const more = [
@@ -88,7 +101,7 @@ export default function Pillars() {
             The Collections
           </p>
           <h2 className="text-3xl md:text-5xl leading-tight" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-            Four pillars of <em style={{ color: '#C9A84C' }}>exceptional</em> living
+            Five pillars of <em style={{ color: '#C9A84C' }}>exceptional</em> living
           </h2>
         </div>
         <p className="max-w-sm text-sm leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
@@ -98,13 +111,13 @@ export default function Pillars() {
 
       <RevealGroup className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
         {pillars.map((p, i) => (
-          <RevealItem key={p.title} className={i === 0 || i === 3 ? 'md:row-span-1' : ''}>
-            <article className="group relative overflow-hidden aspect-[4/5] sm:aspect-[16/11] isolate">
+          <RevealItem key={p.title} className={i === 4 ? 'md:col-span-2' : ''}>
+            <article className={`group relative overflow-hidden aspect-[4/5] sm:aspect-[16/11] isolate ${i === 4 ? 'md:aspect-[21/8]' : ''}`}>
               <Image
                 src={p.image}
                 alt={p.alt}
                 fill
-                sizes="(max-width: 768px) 100vw, 50vw"
+                sizes={i === 4 ? '100vw' : '(max-width: 768px) 100vw, 50vw'}
                 className="object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
               />
               <div

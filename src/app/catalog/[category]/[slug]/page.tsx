@@ -13,6 +13,7 @@ import BookingPanel from '@/components/booking/BookingPanel'
 import { Suspense } from 'react'
 import { naira } from '@/lib/booking'
 import { categoryLabels, specLabel, splitHighlights } from '@/lib/utils'
+import { findSubcategory } from '@/lib/taxonomy'
 import { prisma } from '@/lib/prisma'
 import { MapPin, Check } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -26,6 +27,7 @@ const categorySlugMap: Record<string, string> = {
   'lifestyle':            'lifestyle',
   'shortlets':            'shortlet',
   'executive-services':   'executive_services',
+  'private-services':     'private_services',
 }
 
 // Cached at the edge and refreshed every 5 minutes, or immediately when an
@@ -65,6 +67,8 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
     : null
 
   const price = listing.price ? Number(listing.price) : null
+  // Private Services show a starting price and the service they offer.
+  const service = listing.category === 'private_services' ? findSubcategory('private_services', listing.subcategory) : undefined
   // Listings that take online bookings show the booking panel instead of an asking price.
   const booking = listing.bookingSettings?.enabled ? listing.bookingSettings : null
   const specs = (listing.specs ?? {}) as Record<string, string>
@@ -192,11 +196,16 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
             ) : (
               <div>
                 <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                  Asking Price
+                  {service ? 'From' : 'Asking Price'}
                 </p>
                 <p className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: !price ? 'italic' : 'normal' }}>
                   <PriceDisplay price={price} priceDisplay={listing.priceDisplay} />
                 </p>
+                {service?.key === 'private_chef' && (
+                  <p className="mt-1 text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                    per guest, ingredients included
+                  </p>
+                )}
               </div>
             )}
 
@@ -207,6 +216,12 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
                 <span style={{ color: '#908673' }}>Category</span>
                 <span style={{ color: '#9a8f7a' }}>{categoryLabels[listing.category]}</span>
               </div>
+              {service && (
+                <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <span style={{ color: '#908673' }}>Service</span>
+                  <span style={{ color: '#9a8f7a' }}>{service.label}</span>
+                </div>
+              )}
               <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
                 <span style={{ color: '#908673' }}>Location</span>
                 <span style={{ color: '#9a8f7a' }}>{listing.location}</span>

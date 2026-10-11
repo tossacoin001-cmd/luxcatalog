@@ -10,6 +10,7 @@ const footerLinks = {
     { label: 'Supercars', href: '/catalog/supercars' },
     { label: 'Yachts', href: '/catalog/yachts' },
     { label: 'Chauffeur & Security', href: '/catalog/executive-services' },
+    { label: 'Private Services', href: '/catalog/private-services' },
     { label: 'Interior Decor', href: '/catalog/decor' },
     { label: 'Commercial', href: '/catalog/commercial' },
     { label: 'Lifestyle', href: '/catalog/lifestyle' },

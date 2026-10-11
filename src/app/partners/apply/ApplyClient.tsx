@@ -363,7 +363,7 @@ export default function ApplyClient({
           </div>
           <div>
             <span className={labelCls} style={labelStyle}>
-              Where will you list? *
+              {spec.key === 'service_professional' ? 'Which services do you offer? *' : 'Where will you list? *'}
             </span>
             <div className="flex flex-wrap gap-2">
               {spec.collections.map((c) => {
@@ -408,7 +408,7 @@ export default function ApplyClient({
               <DocumentRow
                 key={d.kind}
                 requirement={d}
-                required={isDocRequired(d, app.legalForm)}
+                required={isDocRequired(d, app.legalForm, app.collections)}
                 doc={app.documents.find((x) => x.kind === d.kind)}
                 disabled={!editable}
                 onChange={(doc) =>

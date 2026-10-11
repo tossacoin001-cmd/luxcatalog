@@ -15,6 +15,7 @@ enum Category {
   lifestyle
   shortlet
   executive_services
+  private_services
 }
 
 // How a listing is transacted. Drives the call to action and, later, the
@@ -466,6 +467,16 @@ model WatchdogRun {
 // is priced: partner + subcategory > partner + category > partner >
 // subcategory > category > mode default. Every booking stores the rate it
 // was charged, so later changes never rewrite history.
+// Minimum "from" price a partner may list a Private Service at, so the
+// category stays luxury. Missing rows fall back to SERVICE_FLOOR_DEFAULTS
+// (src/lib/services.ts). Admin-only; changes are audited.
+model ServicePriceFloor {
+  subcategory String   @id
+  minPrice    Decimal  @db.Decimal(14, 2)
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+}
+
 model CommissionRule {
   id           String       @id @default(uuid())
   partnerId    String?
@@ -500,6 +511,7 @@ enum PartnerType {
   security_company
   brand_retailer
   agent
+  service_professional
 }
 
 enum ApplicationStatus {

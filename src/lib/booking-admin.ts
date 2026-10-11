@@ -11,7 +11,7 @@ export async function manageableListing(listingId: string) {
   if (!staff) return { error: 'Unauthorized' as const, status: 401 }
   const listing = await prisma.listing.findUnique({
     where: { id: listingId },
-    select: { id: true, title: true, ownerId: true, subcategory: true, mode: true, price: true, hireRatePerDay: true, bookingSettings: true },
+    select: { id: true, title: true, ownerId: true, category: true, subcategory: true, mode: true, price: true, hireRatePerDay: true, bookingSettings: true },
   })
   if (!listing || (staff.role === 'partner' && listing.ownerId !== staff.userId)) return { error: 'Not found' as const, status: 404 }
   return { staff, listing }
