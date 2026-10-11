@@ -2,11 +2,13 @@ import { NextResponse } from 'next/server'
 import { audit, requireStaffApi } from '@/lib/admin-auth'
 import { RefundError, cancelByStaff, decideClaim, fileClaim } from '@/lib/refunds-server'
 import { BookingError, acceptRequest, declineRequest } from '@/lib/bookings-server'
+import { ConcernError, resolveConcern } from '@/lib/aftercare-server'
 
 // Actions on a booking from the admin panel:
 // - cancel: partner (own listing), admin, or team with Bookings. Full refund.
 // - claim: the listing's partner reports damage after check-out.
 // - decide_claim: admin or team with Bookings decides how much to keep.
+// - resolve_concern: admin or team with Bookings closes a guest's report.
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const staff = await requireStaffApi()
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -47,9 +49,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       await audit(staff.userId, 'booking.caution.decide', id, result)
       return NextResponse.json(result)
     }
+    if (body.action === 'resolve_concern') {
+      // Guest concerns are handled by Lux Catalog only, never the partner.
+      if (!handlesBookings) return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+      await resolveConcern(id, String(body.concernId ?? ''), staff.userId, String(body.note ?? ''))
+      await audit(staff.userId, 'booking.concern_resolved', String(body.concernId), { bookingId: id })
+      return NextResponse.json({ ok: true })
+    }
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
   } catch (e) {
-    if (e instanceof RefundError || e instanceof BookingError) return NextResponse.json({ error: e.message }, { status: e.status })
+    if (e instanceof RefundError || e instanceof BookingError || e instanceof ConcernError) return NextResponse.json({ error: e.message }, { status: e.status })
     throw e
   }
 }

@@ -8,6 +8,7 @@ import { useSession } from '@/lib/auth-client'
 import { useCurrency } from '@/components/CurrencyProvider'
 import { BOOKING_WINDOW_DAYS, addDays, isDay, lagosToday, naira, toDate, toDay } from '@/lib/booking'
 import { durationLabel, sessionQuote, type AreaFee, type ServicePackage } from '@/lib/sessions'
+import { areaFromLocation, stayAddress, type StayRef } from '@/lib/aftercare'
 
 type Info = {
   packages: ServicePackage[]
@@ -77,6 +78,8 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
   const [days, setDays] = useState<{ key: string; days: Record<string, string[]> } | null>(null)
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState<string | null>(null)
+  // The guest's own Lux Catalog stays on the chosen day (for the address).
+  const [stays, setStays] = useState<{ date: string; list: StayRef[] } | null>(null)
 
   useEffect(() => {
     try {
@@ -137,6 +140,26 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
     const next = p.toString()
     if (next !== search.toString()) router.replace(`${pathname}${next ? `?${next}` : ''}#enquire`, { scroll: false })
   }, [pkgId, pkg, g, date, time, area, pathname, router, search])
+
+  const signedIn = !!session
+  useEffect(() => {
+    if (!date || !signedIn) return
+    let cancelled = false
+    fetch(`/api/bookings/stays?date=${date}`, { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : { stays: [] }))
+      .then((d: { stays: StayRef[] }) => !cancelled && setStays({ date, list: d.stays ?? [] }))
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [date, signedIn])
+  const staysToday = stays && stays.date === date ? stays.list : []
+
+  function applyStay(s: StayRef) {
+    setAddress(stayAddress(s))
+    const a = info ? areaFromLocation(s.location, info.areas.map((x) => x.area)) : null
+    if (a) setArea(a)
+  }
 
   const q = info && pkg && area ? sessionQuote({ areas: info.areas }, pkg, { guests: g, area }) : null
   const timeOk = !!(date && time && slots?.includes(time))
@@ -374,6 +397,20 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
 
           {/* 5. Where */}
           <div className="space-y-3">
+            {staysToday.map((st) => (
+              <button
+                key={st.reference}
+                type="button"
+                onClick={() => applyStay(st)}
+                className="w-full text-left p-3 text-sm"
+                style={{ background: 'rgba(201,168,76,0.08)', border: '1px dashed rgba(201,168,76,0.5)', color: '#e4c878', fontFamily: 'var(--font-inter)' }}
+              >
+                At my Lux Catalog stay: {st.title}
+                <span className="block text-xs mt-0.5" style={text}>
+                  {st.location} · fills in the address; add your flat or unit
+                </span>
+              </button>
+            ))}
             <label className="block">
               <span className={label} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 Area

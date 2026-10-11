@@ -209,7 +209,9 @@ export async function runDailyBookingJobs(now = new Date()) {
   }
   const payoutsDue = await markDuePayouts(now)
   const requestsExpired = await expireUnansweredRequests(now)
-  return { completed: completed.count, cautionQueued: due.length, payoutsDue, requestsExpired }
+  const { sendSessionReminders } = await import('@/lib/aftercare-server')
+  const remindersSent = await sendSessionReminders(now)
+  return { completed: completed.count, cautionQueued: due.length, payoutsDue, requestsExpired, remindersSent }
 }
 
 // One click from a person: send an approved refund to Paystack.

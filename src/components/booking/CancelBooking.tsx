@@ -46,7 +46,7 @@ export default function CancelBooking({
     )
   }
   return (
-    <section className="p-5 space-y-3" style={{ border: '1px solid rgba(232,92,76,0.35)', background: 'rgba(232,92,76,0.05)' }}>
+    <section className="self-stretch p-5 space-y-3" style={{ border: '1px solid rgba(232,92,76,0.35)', background: 'rgba(232,92,76,0.05)' }}>
       <p className="text-base" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
         Cancel your booking?
       </p>

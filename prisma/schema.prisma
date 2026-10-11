@@ -705,6 +705,9 @@ model Booking {
   area               String?
   travelFee          Decimal            @default(0) @db.Decimal(14, 2)
   serviceNotes       String?
+  // When the "your session is coming up" reminder went out (once).
+  remindedAt         DateTime?
+  concerns           BookingConcern[]
   // Caution deposit after check-out: held -> claimed (partner reports
   // damage within 48h) -> refund queued / kept (in part)
   cautionStatus      String             @default("held")
@@ -805,4 +808,24 @@ model Payout {
 
   @@index([status, dueAt])
   @@index([partnerId])
+}
+
+// A guest reporting a problem with a booking (safety, no-show, quality,
+// payment). Goes to admins and the bookings team only, never the partner.
+model BookingConcern {
+  id             String    @id @default(uuid())
+  bookingId      String
+  booking        Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  userId         String
+  kind           String
+  message        String
+  // open -> resolved
+  status         String    @default("open")
+  resolvedAt     DateTime?
+  resolvedById   String?
+  resolutionNote String?
+  createdAt      DateTime  @default(now())
+
+  @@index([status, createdAt])
+  @@index([bookingId])
 }

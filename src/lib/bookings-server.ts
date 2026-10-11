@@ -221,6 +221,13 @@ async function emailConfirmed(bookingId: string) {
         : []),
       { type: 'paragraph', text: `${policyText(b).label} cancellation: ${policyText(b).summary}` },
       { type: 'cta', label: 'View your booking', url: `${getAppUrl()}/bookings/${b.reference}` },
+      // Stays: offer Private Services (chef, massage, barber...) at the stay.
+      ...(b.unit === 'night'
+        ? [
+            { type: 'paragraph' as const, text: 'Make your stay effortless: a private chef for your first night, a massage after the flight, a barber or makeup artist before you go out. Vetted professionals come to you.' },
+            { type: 'cta' as const, label: 'Explore Private Services', url: `${getAppUrl()}/catalog/private-services` },
+          ]
+        : []),
     ],
     reason: 'You receive this because you made a booking on Lux Catalog.',
   })

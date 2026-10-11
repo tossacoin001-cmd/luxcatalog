@@ -14,6 +14,8 @@ import { guestCancellationQuote } from '@/lib/refunds-server'
 import CancelBooking from '@/components/booking/CancelBooking'
 import PayNow from '@/components/booking/PayNow'
 import GuestIdUpload from '@/components/booking/GuestIdUpload'
+import ReportConcern from '@/components/booking/ReportConcern'
+import { SERVICE_GROUPS } from '@/lib/taxonomy'
 import { durationLabel, sessionLabel, SESSION_POLICY_TEXT } from '@/lib/sessions'
 
 export const metadata: Metadata = { title: 'Your booking', robots: { index: false } }
@@ -186,6 +188,35 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
           </section>
         )}
 
+        {/* Make the stay effortless: Private Services for guests with a stay. */}
+        {night && b.status === 'confirmed' && b.userId === session.user.id && (
+          <section data-cross-sell className="p-5 md:p-6 space-y-4" style={{ background: '#0f1a10', border: '1px solid rgba(201,168,76,0.3)' }}>
+            <div>
+              <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                Private Services
+              </p>
+              <h2 className="text-xl md:text-2xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                Make your stay effortless
+              </h2>
+              <p className="text-sm mt-1 leading-relaxed" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+                A private chef for your first night, a massage after the flight, a barber before the party. Vetted professionals come to you.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {SERVICE_GROUPS.map((g) => (
+                <Link
+                  key={g.key}
+                  href={`/catalog/private-services#${g.key}`}
+                  className="flex items-center justify-center text-center min-h-12 px-3 text-[11px] tracking-[0.14em] uppercase transition-colors hover:bg-[rgba(201,168,76,0.08)]"
+                  style={{ border: '1px solid rgba(201,168,76,0.45)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                >
+                  {g.label}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
         {b.refunds.length > 0 && (
           <section className="p-5 space-y-2" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
             <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
@@ -203,10 +234,14 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
           </section>
         )}
 
-        {(() => {
-          const cq = guestCancellationQuote(b)
-          return b.userId === session.user.id && cq.ok ? <CancelBooking reference={b.reference} quote={cq} session={isSession} /> : null
-        })()}
+        {/* Guest actions, one per line: cancel (with the refund) and report a concern. */}
+        <div className="flex flex-col items-start gap-1">
+          {(() => {
+            const cq = guestCancellationQuote(b)
+            return b.userId === session.user.id && cq.ok ? <CancelBooking reference={b.reference} quote={cq} session={isSession} /> : null
+          })()}
+          {b.userId === session.user.id && (b.status === 'confirmed' || b.status === 'completed' || (b.status === 'cancelled' && !!b.paidAt)) && <ReportConcern reference={b.reference} />}
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href="/bookings" className="inline-flex items-center justify-center min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>

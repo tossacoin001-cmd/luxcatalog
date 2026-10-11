@@ -5,6 +5,8 @@ import type { Prisma } from '@prisma/client'
 import { AlertTriangle } from 'lucide-react'
 import AdminNavbar from '@/components/AdminNavbar'
 import BookingActions from '@/components/booking/BookingActions'
+import ConcernResolve from '@/components/booking/ConcernResolve'
+import { concernKind } from '@/lib/aftercare'
 import { claimWindowOpen } from '@/lib/refunds-server'
 import { requireStaff } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
@@ -41,18 +43,23 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
   const byView: Record<keyof typeof VIEWS, Prisma.BookingWhereInput> = {
     upcoming: { endDate: { gt: today }, status: { in: ['confirmed', 'pending_payment', 'requested'] } },
     past: { endDate: { lte: today }, status: { in: ['confirmed', 'completed'] } },
-    attention: { OR: [{ needsRefund: true }, { cautionStatus: 'claimed' }] },
+    attention: { OR: [{ needsRefund: true }, { cautionStatus: 'claimed' }, { concerns: { some: { status: 'open' } } }] },
     all: {},
   }
-  const [bookings, attention, refundsWaiting] = await Promise.all([
+  const [bookings, attention, refundsWaiting, openConcerns] = await Promise.all([
     prisma.booking.findMany({
       where: { ...scope, ...byView[view], ...(view === 'all' ? {} : { NOT: { status: 'expired' } }) },
       orderBy: { startDate: view === 'past' ? 'desc' : 'asc' },
       take: 200,
-      include: { listing: { select: { title: true, bookingSettings: { select: { requireGuestId: true } } } } },
+      include: {
+        listing: { select: { title: true, bookingSettings: { select: { requireGuestId: true } } } },
+        // Guest concerns are for Lux Catalog's team only, never the partner.
+        concerns: isPartner ? false : { orderBy: { createdAt: 'asc' } },
+      },
     }),
-    isPartner ? Promise.resolve(0) : prisma.booking.count({ where: { OR: [{ needsRefund: true }, { cautionStatus: 'claimed' }] } }),
+    isPartner ? Promise.resolve(0) : prisma.booking.count({ where: { OR: [{ needsRefund: true }, { cautionStatus: 'claimed' }, { concerns: { some: { status: 'open' } } }] } }),
     isPartner ? Promise.resolve(0) : prisma.refund.count({ where: { status: { in: ['pending_approval', 'failed'] } } }),
+    isPartner ? Promise.resolve(0) : prisma.bookingConcern.count({ where: { status: 'open' } }),
   ])
 
   return (
@@ -85,7 +92,12 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
       <div className="max-w-6xl mx-auto px-5 md:px-12 py-8 space-y-6">
         {attention > 0 && (
           <Link href="/admin/bookings?view=attention" className="flex items-center gap-2 p-4 text-sm" style={{ background: 'rgba(224,183,90,0.08)', border: '1px solid rgba(224,183,90,0.35)', color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
-            <AlertTriangle size={16} /> {attention} booking{attention === 1 ? '' : 's'} need attention (refunds or damage claims). Open them.
+            <AlertTriangle size={16} /> {attention} booking{attention === 1 ? '' : 's'} need attention (refunds, damage claims or guest concerns). Open them.
+          </Link>
+        )}
+        {openConcerns > 0 && (
+          <Link href="/admin/bookings?view=attention" className="flex items-center gap-2 p-4 text-sm" style={{ background: 'rgba(232,92,76,0.08)', border: '1px solid rgba(232,92,76,0.4)', color: '#f0c4bd', fontFamily: 'var(--font-inter)' }}>
+            <AlertTriangle size={16} /> {openConcerns} open concern{openConcerns === 1 ? '' : 's'} from guests. Open them.
           </Link>
         )}
         {refundsWaiting > 0 && (
@@ -172,6 +184,26 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
                         {b.note}
                       </p>
                     )}
+                    {!isPartner &&
+                      b.concerns?.map((c) => (
+                        <div key={c.id} data-concern={c.id} className="mt-3 p-3" style={{ background: c.status === 'open' ? 'rgba(232,92,76,0.06)' : 'transparent', border: `1px solid ${c.status === 'open' ? 'rgba(232,92,76,0.35)' : '#1e2e1f'}` }}>
+                          <p className="text-xs tracking-[0.12em] uppercase" style={{ color: c.status === 'open' ? (concernKind(c.kind)?.urgent ? '#ff8a7a' : '#e0b75a') : '#6fbf73', fontFamily: 'var(--font-inter)' }}>
+                            {c.status === 'open' ? `${concernKind(c.kind)?.urgent ? 'Urgent · ' : ''}Guest concern` : 'Resolved'} · {concernKind(c.kind)?.label ?? c.kind} · {fmt(c.createdAt)}
+                          </p>
+                          <p className="text-sm mt-1" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                            “{c.message}”
+                          </p>
+                          {c.status === 'open' ? (
+                            <ConcernResolve bookingId={b.id} concernId={c.id} />
+                          ) : (
+                            c.resolutionNote && (
+                              <p className="text-xs mt-1" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                                Resolved: {c.resolutionNote}
+                              </p>
+                            )
+                          )}
+                        </div>
+                      ))}
                   </div>
                   <div className="md:text-right">
                     <p className="text-base" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
