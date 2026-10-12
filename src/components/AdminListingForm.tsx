@@ -102,14 +102,14 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
         const body = new FormData()
         body.append('file', file)
         const res = await fetch('/api/admin/upload', { method: 'POST', body })
-        if (!res.ok) throw new Error()
-        const data = await res.json()
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok) throw new Error(data.error || 'One or more photos failed to upload. Please try again.')
         uploaded.push(data.url)
       }
       set('images', [...form.images, ...uploaded])
       toast.success(`${uploaded.length} photo${uploaded.length > 1 ? 's' : ''} uploaded.`)
-    } catch {
-      toast.error('One or more photos failed to upload. Please try again.')
+    } catch (err) {
+      toast.error((err as Error).message || 'One or more photos failed to upload. Please try again.')
     } finally {
       setUploading(false)
     }
@@ -299,7 +299,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
             </label>
             <input
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp,image/avif"
               multiple
               disabled={uploading}
               onChange={(e) => handleFiles(e.target.files)}

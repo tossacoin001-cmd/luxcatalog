@@ -48,11 +48,11 @@ export default function CheckoutPage() {
           shipping: form,
         }),
       })
-      const data = await res.json()
-      if (!res.ok || !data.url) throw new Error()
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.url) throw new Error(data.error || 'Unable to start checkout. Please try again.')
       window.location.href = data.url
-    } catch {
-      toast.error('Unable to start checkout. Please try again.')
+    } catch (err) {
+      toast.error((err as Error).message)
       setLoading(false)
     }
   }
@@ -104,13 +104,13 @@ export default function CheckoutPage() {
               <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 Full Name *
               </label>
-              <input required value={form.name} onChange={(e) => set('name', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
+              <input required name="name" value={form.name} onChange={(e) => set('name', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
             </div>
             <div>
               <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 Phone *
               </label>
-              <input required type="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
+              <input required name="phone" type="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
             </div>
           </div>
 
@@ -118,14 +118,14 @@ export default function CheckoutPage() {
             <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Email *
             </label>
-            <input required type="email" value={form.email} onChange={(e) => set('email', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
+            <input required name="email" type="email" value={form.email} onChange={(e) => set('email', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
           </div>
 
           <div>
             <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Delivery Address *
             </label>
-            <input required value={form.address} onChange={(e) => set('address', e.target.value)} placeholder="Street address" className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
+            <input required name="address" value={form.address} onChange={(e) => set('address', e.target.value)} placeholder="Street address" className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -133,13 +133,13 @@ export default function CheckoutPage() {
               <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 City *
               </label>
-              <input required value={form.city} onChange={(e) => set('city', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
+              <input required name="city" value={form.city} onChange={(e) => set('city', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
             </div>
             <div>
               <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
                 State *
               </label>
-              <input required value={form.state} onChange={(e) => set('state', e.target.value)} placeholder="e.g. Lagos" className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
+              <input required name="state" value={form.state} onChange={(e) => set('state', e.target.value)} placeholder="e.g. Lagos" className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
             </div>
           </div>
 
@@ -147,7 +147,7 @@ export default function CheckoutPage() {
             <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
               Country *
             </label>
-            <input required value={form.country} onChange={(e) => set('country', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
+            <input required name="country" value={form.country} onChange={(e) => set('country', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
           </div>
 
           {deliveryEstimate && (
@@ -165,7 +165,7 @@ export default function CheckoutPage() {
             {loading ? 'Redirecting to payment…' : 'Continue to Payment'}
           </button>
           <p className="text-[11px] text-center" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-            Secured via Stripe. Card payment processed in USD at the current exchange rate.
+            Secured by Paystack: card, bank transfer or USSD. Charged in Naira.
           </p>
         </form>
 

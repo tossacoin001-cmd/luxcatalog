@@ -21,6 +21,7 @@ export default async function AdminInquiriesPage() {
     createdAt: i.createdAt.toISOString(),
     checkIn: i.checkIn ? i.checkIn.toISOString() : null,
     checkOut: i.checkOut ? i.checkOut.toISOString() : null,
+    preferredDate: i.preferredDate ? i.preferredDate.toISOString() : null,
   }))
 
   return (

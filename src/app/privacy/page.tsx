@@ -16,7 +16,7 @@ const sections = [
   },
   {
     heading: '3. Third-Party Services',
-    body: `We rely on trusted third parties to operate the Platform: Vercel (hosting), Neon (database), Stripe (payment processing), and WhatsApp (for direct client communication). Each processes data under its own privacy terms.`,
+    body: `We rely on trusted third parties to operate the Platform: Vercel (hosting and file storage), Neon (database), Paystack (payment processing), Brevo (email delivery), and WhatsApp (for direct client communication). Each processes data under its own privacy terms.`,
   },
   {
     heading: '4. Data Retention',

@@ -3,6 +3,7 @@ import { validSignature, type PaystackTransaction } from '@/lib/paystack'
 import { applyPayment } from '@/lib/bookings-server'
 import { applyRefundEvent } from '@/lib/refunds-server'
 import { applyTransferEvent } from '@/lib/payouts-server'
+import { applyOrderPayment } from '@/lib/orders-server'
 
 // Paystack calls this after a payment. Only requests signed with our secret
 // key are accepted; the signature is Paystack's proof the event is genuine.
@@ -26,6 +27,15 @@ export async function POST(req: Request) {
     } catch (err) {
       console.error('Webhook processing failed:', err)
       // A 5xx makes Paystack retry later.
+      return NextResponse.json({ error: 'Processing failed' }, { status: 500 })
+    }
+  }
+  if (event.event === 'charge.success' && event.data?.reference?.startsWith('ORD-')) {
+    try {
+      const result = await applyOrderPayment(event.data)
+      return NextResponse.json({ received: true, outcome: result.outcome })
+    } catch (err) {
+      console.error('Order webhook failed:', err)
       return NextResponse.json({ error: 'Processing failed' }, { status: 500 })
     }
   }

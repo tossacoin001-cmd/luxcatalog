@@ -1,7 +1,9 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, after } from 'next/server'
 import { audit, getSession } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { emailAdminsNewApplication, emailApplicationReceived, missingForSubmit } from '@/lib/partners'
+
+export const maxDuration = 60
 
 export async function POST() {
   const session = await getSession()
@@ -26,8 +28,12 @@ export async function POST() {
   })
   await audit(session.user.id, resubmission ? 'partner_application.resubmit' : 'partner_application.submit', app.id)
 
-  await emailApplicationReceived(updated, session.user.email)
-  await emailAdminsNewApplication(updated)
+  // Emails go out just after the reply, so the applicant never waits on them.
+  const email = session.user.email
+  after(async () => {
+    await emailApplicationReceived(updated, email).catch((e) => console.error('Application receipt failed:', e))
+    await emailAdminsNewApplication(updated).catch((e) => console.error('Application alert failed:', e))
+  })
 
   return NextResponse.json({ success: true, status: updated.status })
 }

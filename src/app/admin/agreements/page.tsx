@@ -4,7 +4,7 @@ import AdminNavbar from '@/components/AdminNavbar'
 import { requireArea } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
 import { AGREEMENTS, COMPANY } from '@/lib/agreements'
-import { agreementStatus } from '@/lib/agreements-server'
+import { agreementOverview } from '@/lib/agreements-server'
 import { partnerTypeSpec } from '@/lib/partner-requirements'
 
 export const metadata: Metadata = { title: 'Partner Agreements | Admin' }
@@ -17,7 +17,8 @@ const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 
 export default async function AgreementsAdminPage() {
   await requireArea('partners')
   const partners = await prisma.user.findMany({ where: { role: 'partner' }, select: { id: true, name: true, email: true }, orderBy: { createdAt: 'desc' } })
-  const statuses = await Promise.all(partners.map(async (p) => ({ p, s: await agreementStatus(p.id) })))
+  const overview = await agreementOverview(partners.map((p) => p.id))
+  const statuses = partners.map((p) => ({ p, s: overview.get(p.id) }))
   const unreviewed = AGREEMENTS.filter((a) => !a.reviewed).length
 
   return (
@@ -94,10 +95,10 @@ export default async function AgreementsAdminPage() {
                 <li key={p.id} className="p-5" style={card}>
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <p style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-                      {s?.ctx.businessName ?? p.name} <span className="text-xs" style={text}>{p.email}</span>
+                      {s?.businessName ?? p.name} <span className="text-xs" style={text}>{p.email}</span>
                     </p>
                     <p className="text-xs" style={{ color: s?.allSigned ? '#6fbf73' : '#e0b75a', fontFamily: 'var(--font-inter)' }}>
-                      {s?.allSigned ? 'All signed' : `${s?.items.filter((i) => i.signed).length ?? 0} of ${s?.items.length ?? 0} signed`}
+                      {s?.allSigned ? 'All signed' : `${s?.signedCount ?? 0} of ${s?.required ?? 0} signed`}
                     </p>
                   </div>
                   {!!s?.history.length && (

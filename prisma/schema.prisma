@@ -231,6 +231,13 @@ model Inquiry {
   checkIn  DateTime?
   checkOut DateTime?
 
+  // "enquiry" or "viewing" (a request to view a property: preferred day,
+  // morning/afternoon/evening, in person or video call).
+  kind          String    @default("enquiry")
+  preferredDate DateTime?
+  preferredTime String?
+  viewingMode   String?
+
   createdAt DateTime @default(now())
 }
 

@@ -87,6 +87,29 @@ export async function agreementStatus(userId: string) {
   return { ctx: base.ctx, email: base.user.email, items, allSigned: items.every((i) => !!i.signed), history: signed }
 }
 
+// Admin overview for many partners at once: who has signed what, in three
+// queries in total (no agreement text is rendered).
+export async function agreementOverview(userIds: string[]) {
+  const [apps, profiles, signed] = await Promise.all([
+    prisma.partnerApplication.findMany({ where: { userId: { in: userIds } }, select: { userId: true, partnerType: true, businessName: true } }),
+    prisma.partnerProfile.findMany({ where: { userId: { in: userIds } }, select: { userId: true, brandName: true } }),
+    prisma.partnerAgreement.findMany({
+      where: { userId: { in: userIds } },
+      orderBy: { signedAt: 'desc' },
+      select: { id: true, userId: true, agreementKey: true, version: true, title: true, signedName: true, signedAt: true },
+    }),
+  ])
+  return new Map(
+    userIds.map((id) => {
+      const app = apps.find((a) => a.userId === id)
+      const history = signed.filter((s) => s.userId === id)
+      const required = requiredAgreements(app?.partnerType ?? null)
+      const signedCount = required.filter((t) => history.some((h) => h.agreementKey === t.key && h.version === t.version)).length
+      return [id, { businessName: app?.businessName || profiles.find((p) => p.userId === id)?.brandName || null, required: required.length, signedCount, allSigned: signedCount === required.length, history }]
+    })
+  )
+}
+
 // Gate for partner actions (adding listings). Admins are never gated.
 export async function partnerMustSign(userId: string): Promise<boolean> {
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } })

@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useSession } from '@/lib/auth-client'
-import { usePathname, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { X, ShieldCheck, Lock, CheckCircle, ArrowRight, MessageCircle } from 'lucide-react'
+import { X, CheckCircle, CalendarDays, MessageSquare, Loader2 } from 'lucide-react'
+import Turnstile from '@/components/auth/Turnstile'
 import { whatsappLink } from '@/lib/contact'
+import { VIEWING_MODES, VIEWING_TIMES, VIEWING_MAX_DAYS } from '@/lib/enquiry'
 
 interface InquiryModalProps {
   listingId: string
@@ -13,327 +14,176 @@ interface InquiryModalProps {
   listingPrice?: number | null
 }
 
-export default function InquiryModal({ listingId, listingTitle, listingPrice }: InquiryModalProps) {
-  const { data: session, isPending } = useSession()
-  const isLoaded = !isPending
-  const isSignedIn = !!session
+type Mode = 'enquiry' | 'viewing'
+
+const field = { background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
+const label = 'block text-[11px] tracking-[0.15em] uppercase mb-1.5'
+const muted = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const lagosDay = (offset: number) => new Date(Date.now() + 3_600_000 + offset * 86_400_000).toISOString().slice(0, 10)
+
+// Enquire about a listing or ask to view it. Open to everyone: guests pass a
+// quick bot check instead of creating an account. The team replies; WhatsApp
+// is offered afterwards only as an alternative.
+export default function InquiryModal({ listingId, listingTitle }: InquiryModalProps) {
+  const { data: session } = useSession()
   const user = session?.user
-  const pathname = usePathname()
-  const router = useRouter()
-
-  const [open, setOpen] = useState(false)
+  const [mode, setMode] = useState<Mode | null>(null)
   const [loading, setLoading] = useState(false)
-  const [reserveLoading, setReserveLoading] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
+  const [sent, setSent] = useState<Mode | null>(null)
+  const [captcha, setCaptcha] = useState<string | null>(null)
+  const [resetCaptcha, setResetCaptcha] = useState(0)
+  const onToken = useCallback((t: string | null) => setCaptcha(t), [])
+  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '', preferredDate: '', preferredTime: 'morning', viewingMode: 'in_person', website: '' })
+  const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }))
 
-  const prefill = () => {
-    if (user) {
-      setForm(prev => ({
-        name: prev.name || user.name,
-        email: prev.email || user.email,
-        phone: prev.phone || user.phone || '',
-        message: prev.message,
-      }))
-    }
+  function open(m: Mode) {
+    setForm((f) => ({
+      ...f,
+      name: f.name || user?.name || '',
+      email: f.email || user?.email || '',
+      phone: f.phone || (user as { phone?: string } | undefined)?.phone || '',
+      message: f.message || (m === 'viewing' ? `I would like to view ${listingTitle}.` : ''),
+    }))
+    setSent(null)
+    setMode(m)
   }
 
-  const handleOpen = () => {
-    if (!isLoaded) return
-    if (!isSignedIn) {
-      router.push(`/sign-up?redirect_url=${encodeURIComponent(pathname)}`)
-      return
-    }
-    prefill()
-    setOpen(true)
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-    setSubmitted(false)
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function submit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.name || !form.email || !form.message) {
-      toast.error('Please fill in all required fields.')
-      return
-    }
+    if (!mode) return
     setLoading(true)
     try {
       const res = await fetch('/api/inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, listingId }),
+        body: JSON.stringify({ ...form, kind: mode, listingId, captcha }),
       })
-      if (!res.ok) throw new Error()
-      setSubmitted(true)
-    } catch {
-      toast.error('Something went wrong. Please try again.')
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setResetCaptcha((n) => n + 1)
+        throw new Error(data.error || 'Something went wrong. Please try again.')
+      }
+      setSent(mode)
+    } catch (err) {
+      toast.error((err as Error).message)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleReserve = async () => {
-    setReserveLoading(true)
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listingId, listingTitle, listingPrice }),
-      })
-      const data = await res.json()
-      if (data.url) {
-        window.location.href = data.url
-      } else {
-        throw new Error()
-      }
-    } catch {
-      toast.error('Unable to initiate payment. Please try again.')
-      setReserveLoading(false)
-    }
-  }
-
-  // Deposit amount display
-  const depositAmount = listingPrice
-    ? Math.min(Math.max(Math.round(listingPrice * 0.01), 1000), 50000)
-    : null
-  const depositDisplay = depositAmount
-    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(depositAmount)
-    : null
-
   return (
     <>
-      {/* Enquire button */}
       <button
-        onClick={handleOpen}
-        className="w-full py-4 text-xs tracking-[0.2em] uppercase transition-all duration-300 hover:opacity-90 active:scale-95 flex items-center justify-center gap-2"
+        type="button"
+        onClick={() => open('enquiry')}
+        className="w-full min-h-12 py-4 text-xs tracking-[0.2em] uppercase transition-all duration-300 hover:opacity-90 flex items-center justify-center gap-2"
         style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
       >
-        {!isLoaded || isSignedIn ? null : <Lock size={12} />}
-        Enquire About This Asset
+        <MessageSquare size={14} /> Enquire About This Asset
       </button>
-
-      {/* Schedule viewing button */}
       <button
-        onClick={handleOpen}
-        className="w-full py-4 text-xs tracking-[0.2em] uppercase transition-all duration-300 flex items-center justify-center gap-2"
-        style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+        type="button"
+        onClick={() => open('viewing')}
+        className="w-full min-h-12 py-4 text-xs tracking-[0.2em] uppercase flex items-center justify-center gap-2"
+        style={{ border: '1px solid rgba(201,168,76,0.45)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
       >
-        {!isLoaded || isSignedIn ? null : <Lock size={12} />}
-        Schedule a Viewing
+        <CalendarDays size={14} /> Schedule a Viewing
       </button>
 
-      {/* Auth notice for guests */}
-      {isLoaded && !isSignedIn && (
-        <p className="text-[11px] text-center" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-          <button
-            onClick={() => router.push(`/sign-up?redirect_url=${encodeURIComponent(pathname)}`)}
-            className="inline-flex items-center min-h-11 underline cursor-pointer hover:opacity-80"
-            style={{ color: '#C9A84C' }}
-          >
-            Create a free account
-          </button>{' '}
-          to enquire or reserve this asset
-        </p>
-      )}
-
-      {/* Modal */}
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: 'rgba(8,12,8,0.9)', backdropFilter: 'blur(8px)' }}
-          onClick={handleClose}
-        >
-          <div
-            className="w-full max-w-lg"
-            style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div
-              className="flex items-center justify-between px-7 py-5"
-              style={{ borderBottom: '1px solid #1e2e1f' }}
-            >
+      {mode && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4" style={{ background: 'rgba(8,12,8,0.9)', backdropFilter: 'blur(8px)' }} onClick={() => setMode(null)}>
+          <div data-enquiry-form className="w-full sm:max-w-lg max-h-[92vh] overflow-y-auto" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={mode === 'viewing' ? 'Schedule a viewing' : 'Enquire'}>
+            <div className="flex items-start justify-between gap-3 px-6 py-5" style={{ borderBottom: '1px solid #1e2e1f' }}>
               <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
-                    {submitted ? 'Enquiry Submitted' : 'Private Enquiry'}
-                  </p>
-                  {isSignedIn && (
-                    <span
-                      className="flex items-center gap-1 px-2 py-0.5 text-[11px] tracking-widest uppercase"
-                      style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
-                    >
-                      <ShieldCheck size={9} />
-                      Verified
-                    </span>
-                  )}
-                </div>
-                <h3 className="text-base" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                <p className="text-[11px] tracking-[0.2em] uppercase mb-1" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                  {mode === 'viewing' ? 'Schedule a viewing' : 'Private enquiry'}
+                </p>
+                <h3 className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
                   {listingTitle}
                 </h3>
               </div>
-              <button
-                onClick={handleClose}
-                className="p-1 hover:opacity-60 transition-opacity"
-                style={{ color: '#908673' }}
-              >
+              <button type="button" onClick={() => setMode(null)} className="w-11 h-11 inline-flex items-center justify-center shrink-0" style={{ color: '#908673' }} aria-label="Close">
                 <X size={18} />
               </button>
             </div>
 
-            {submitted ? (
-              /* ── Success state ── */
-              <div className="px-7 py-8 space-y-6">
-                <div className="text-center space-y-3">
-                  <div
-                    className="inline-flex items-center justify-center w-12 h-12 rounded-full mx-auto"
-                    style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}
-                  >
-                    <CheckCircle size={20} style={{ color: '#C9A84C' }} />
-                  </div>
-                  <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
-                    Your enquiry has been received. A specialist will respond within 24 hours.
-                  </p>
-                </div>
-
-                <a
-                  href={whatsappLink(`Hello, I just submitted an enquiry about "${listingTitle}" on Lux Catalog.`)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3 text-xs tracking-[0.18em] uppercase transition-all duration-300 flex items-center justify-center gap-2"
-                  style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
-                >
-                  <MessageCircle size={13} />
-                  Continue on WhatsApp
-                </a>
-
-                {depositDisplay && (
-                  <>
-                    <div style={{ height: 1, background: '#1e2e1f' }} />
-
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
-                          Reserve This Asset
-                        </p>
-                        <p className="text-xs leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-                          Secure this listing with a fully refundable holding deposit of{' '}
-                          <span style={{ color: '#f5f0e8' }}>{depositDisplay}</span>.
-                          Your asset is held for 7 days while we complete due diligence.
-                        </p>
-                      </div>
-
-                      <button
-                        onClick={handleReserve}
-                        disabled={reserveLoading}
-                        className="w-full py-4 text-xs tracking-[0.2em] uppercase transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60"
-                        style={{ border: '1px solid rgba(201,168,76,0.5)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
-                      >
-                        {reserveLoading ? 'Redirecting…' : (
-                          <>
-                            Pay Holding Deposit · {depositDisplay}
-                            <ArrowRight size={12} />
-                          </>
-                        )}
-                      </button>
-
-                      <p className="text-[11px] text-center" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                        Secured via Stripe · Fully refundable · No obligation to proceed
-                      </p>
-                    </div>
-                  </>
-                )}
-
-                <button
-                  onClick={handleClose}
-                  className="w-full py-3 text-xs tracking-[0.15em] uppercase hover:opacity-70 transition-opacity"
-                  style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
-                >
+            {sent ? (
+              <div className="px-6 py-8 space-y-5 text-center">
+                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full" style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}>
+                  <CheckCircle size={20} style={{ color: '#C9A84C' }} />
+                </span>
+                <p className="text-base" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                  Thank you. {sent === 'viewing' ? 'Your viewing request has been received; a specialist will confirm the time with you shortly.' : 'Your enquiry has been received; a specialist will reply personally, usually within a few hours.'}
+                </p>
+                <p className="text-xs" style={muted}>
+                  A copy is on its way to your email. Prefer to talk now?{' '}
+                  <a href={whatsappLink(`Hello, I just sent ${sent === 'viewing' ? 'a viewing request' : 'an enquiry'} about "${listingTitle}" on Lux Catalog.`)} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: '#C9A84C' }}>
+                    Message us on WhatsApp
+                  </a>
+                  .
+                </p>
+                <button type="button" onClick={() => setMode(null)} className="w-full min-h-11 text-xs tracking-[0.15em] uppercase" style={muted}>
                   Close
                 </button>
               </div>
             ) : (
-              /* ── Enquiry form ── */
-              <form onSubmit={handleSubmit} className="px-7 py-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                      Full Name <span style={{ color: '#C9A84C' }}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="Your name"
-                      className="w-full h-10 px-4 text-sm focus:outline-none transition-colors"
-                      style={{ background: '#162318', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}
-                      onFocus={(e) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)')}
-                      onBlur={(e) => (e.currentTarget.style.borderColor = '#1e2e1f')}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                      Phone
-                    </label>
-                    <input
-                      type="tel"
-                      value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      placeholder="+1 555 000 0000"
-                      className="w-full h-10 px-4 text-sm focus:outline-none transition-colors"
-                      style={{ background: '#162318', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}
-                      onFocus={(e) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)')}
-                      onBlur={(e) => (e.currentTarget.style.borderColor = '#1e2e1f')}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                    Email <span style={{ color: '#C9A84C' }}>*</span>
+              <form onSubmit={submit} className="px-6 py-5 space-y-4">
+                {/* Bots fill this in; people never see it. */}
+                <input name="website" value={form.website} onChange={(e) => set('website', e.target.value)} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <label className="block">
+                    <span className={label} style={muted}>Name *</span>
+                    <input name="name" required value={form.name} onChange={(e) => set('name', e.target.value)} className="w-full h-11 px-3 text-base sm:text-sm" style={field} />
                   </label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="your@email.com"
-                    className="w-full h-10 px-4 text-sm focus:outline-none transition-colors"
-                    style={{ background: '#162318', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}
-                    onFocus={(e) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)')}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = '#1e2e1f')}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                    Message <span style={{ color: '#C9A84C' }}>*</span>
+                  <label className="block">
+                    <span className={label} style={muted}>Phone</span>
+                    <input name="phone" type="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} className="w-full h-11 px-3 text-base sm:text-sm" style={field} />
                   </label>
-                  <textarea
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    placeholder={`I'm interested in ${listingTitle}. Please contact me to discuss further.`}
-                    rows={4}
-                    className="w-full px-4 py-3 text-sm focus:outline-none transition-colors resize-none"
-                    style={{ background: '#162318', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}
-                    onFocus={(e) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)')}
-                    onBlur={(e) => (e.currentTarget.style.borderColor = '#1e2e1f')}
-                  />
                 </div>
-
+                <label className="block">
+                  <span className={label} style={muted}>Email *</span>
+                  <input name="email" type="email" required value={form.email} onChange={(e) => set('email', e.target.value)} className="w-full h-11 px-3 text-base sm:text-sm" style={field} />
+                </label>
+                {mode === 'viewing' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <label className="block">
+                      <span className={label} style={muted}>Day *</span>
+                      <input name="preferredDate" type="date" required min={lagosDay(1)} max={lagosDay(VIEWING_MAX_DAYS)} value={form.preferredDate} onChange={(e) => set('preferredDate', e.target.value)} className="w-full h-11 px-3 text-base sm:text-sm" style={field} />
+                    </label>
+                    <label className="block">
+                      <span className={label} style={muted}>Time *</span>
+                      <select name="preferredTime" value={form.preferredTime} onChange={(e) => set('preferredTime', e.target.value)} className="w-full h-11 px-2 text-sm" style={field}>
+                        {VIEWING_TIMES.map((t) => (
+                          <option key={t.key} value={t.key}>{t.label}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="block">
+                      <span className={label} style={muted}>How *</span>
+                      <select name="viewingMode" value={form.viewingMode} onChange={(e) => set('viewingMode', e.target.value)} className="w-full h-11 px-2 text-sm" style={field}>
+                        {VIEWING_MODES.map((m) => (
+                          <option key={m.key} value={m.key}>{m.label}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                )}
+                <label className="block">
+                  <span className={label} style={muted}>{mode === 'viewing' ? 'Anything we should know?' : 'Your message *'}</span>
+                  <textarea name="message" required rows={4} value={form.message} onChange={(e) => set('message', e.target.value)} placeholder={mode === 'viewing' ? 'e.g. I am abroad, a video walkthrough would be ideal.' : 'What would you like to know?'} className="w-full px-3 py-2 text-base sm:text-sm resize-y" style={field} />
+                </label>
+                {!session && <Turnstile onToken={onToken} resetKey={resetCaptcha} />}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 text-xs tracking-[0.2em] uppercase transition-all duration-300 disabled:opacity-60"
+                  className="w-full min-h-12 text-xs tracking-[0.2em] uppercase inline-flex items-center justify-center gap-2 disabled:opacity-60"
                   style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
                 >
-                  {loading ? 'Sending…' : 'Submit Enquiry'}
+                  {loading && <Loader2 size={14} className="animate-spin" />}
+                  {mode === 'viewing' ? 'Request viewing' : 'Send enquiry'}
                 </button>
-
-                <p className="text-[11px] text-center" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                  All enquiries are treated with absolute discretion.
+                <p className="text-[11px] text-center leading-relaxed" style={muted}>
+                  Handled with complete discretion. No account needed.
                 </p>
               </form>
             )}

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, ArrowLeft, Sparkles, RotateCcw, MessageCircle } from 'lucide-react'
+import { ArrowRight, ArrowLeft, Sparkles, RotateCcw, MessageCircle, Landmark, BedDouble, Car, Sailboat, ConciergeBell, ShieldCheck, Sofa, Building2, Plane, type LucideIcon } from 'lucide-react'
 import { categoryHrefs } from '@/lib/utils'
 import { whatsappLink } from '@/lib/contact'
 
@@ -13,12 +13,15 @@ const steps = [
     sub: 'Select all that apply.',
     type: 'multi',
     options: [
-      { key: 'real_estate', label: 'Real Estate', icon: '🏛' },
-      { key: 'supercar', label: 'Supercars', icon: '🏎' },
-      { key: 'yacht', label: 'Yachts', icon: '⛵' },
-      { key: 'decor', label: 'Interior Decor', icon: '🪑' },
-      { key: 'commercial', label: 'Commercial', icon: '🏢' },
-      { key: 'lifestyle', label: 'Lifestyle', icon: '✈' },
+      { key: 'real_estate', label: 'Real Estate', icon: Landmark },
+      { key: 'shortlet', label: 'Shortlets', icon: BedDouble },
+      { key: 'supercar', label: 'Supercars', icon: Car },
+      { key: 'yacht', label: 'Yachts', icon: Sailboat },
+      { key: 'private_services', label: 'Private Services', icon: ConciergeBell },
+      { key: 'executive_services', label: 'Chauffeur & Security', icon: ShieldCheck },
+      { key: 'decor', label: 'Interior Decor', icon: Sofa },
+      { key: 'commercial', label: 'Commercial', icon: Building2 },
+      { key: 'lifestyle', label: 'Lifestyle', icon: Plane },
     ],
   },
   {
@@ -313,9 +316,10 @@ export default function AIDiscoverClient() {
                 border: isSelected ? '1px solid rgba(201,168,76,0.5)' : '1px solid #1e2e1f',
               }}
             >
-              {'icon' in opt && (
-                <span className="text-2xl">{opt.icon as string}</span>
-              )}
+              {'icon' in opt && (() => {
+                const Icon = opt.icon as LucideIcon
+                return <Icon size={22} strokeWidth={1.5} style={{ color: isSelected ? '#C9A84C' : '#d6cdbd' }} aria-hidden />
+              })()}
               <span
                 className="text-sm"
                 style={{

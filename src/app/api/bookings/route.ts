@@ -5,6 +5,9 @@ import { isDay } from '@/lib/booking'
 import { BookingError, createBookingHold, emailRequested, startPayment } from '@/lib/bookings-server'
 import { paystackConfigured } from '@/lib/paystack'
 import { createSessionHold } from '@/lib/sessions-server'
+import { rateLimit } from '@/lib/protect'
+
+const MAX_OPEN_HOLDS = 3
 
 // Start a booking: re-price and hold the dates. Instant booking hands the
 // guest to Paystack's secure checkout; on-request listings wait for the
@@ -28,6 +31,16 @@ export async function POST(req: Request) {
   } else if (!isDay(start) || !isDay(end)) return NextResponse.json({ error: 'Choose your dates' }, { status: 400 })
   const user = await prisma.user.findUnique({ where: { id: session.user.id }, select: { name: true, email: true, phone: true } })
   if (!user) return NextResponse.json({ error: 'Sign in to book' }, { status: 401 })
+
+  // One guest can't tie up calendars: at most MAX_OPEN_HOLDS bookings waiting
+  // for payment or a reply at once, and a cap on attempts per hour.
+  const open = await prisma.booking.count({ where: { userId: session.user.id, status: { in: ['pending_payment', 'requested'] }, holdExpiresAt: { gt: new Date() } } })
+  if (open >= MAX_OPEN_HOLDS) {
+    return NextResponse.json({ error: `You have ${open} bookings waiting for payment or a reply. Please complete or let one lapse before holding more.` }, { status: 429 })
+  }
+  if (!(await rateLimit(`booking:${session.user.id}`, 30, 3_600_000))) {
+    return NextResponse.json({ error: 'Too many booking attempts in a short time. Please try again a little later.' }, { status: 429 })
+  }
 
   let booking
   try {

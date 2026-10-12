@@ -110,7 +110,7 @@ export default function PartnerProfileForm({ profile, redirectAfterSave }: { pro
             ) : (
               <input
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,image/avif"
                 disabled={uploading}
                 onChange={(e) => handleLogo(e.target.files)}
                 className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:tracking-wider file:uppercase disabled:opacity-60"

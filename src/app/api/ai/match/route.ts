@@ -1,77 +1,64 @@
 import { NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { prisma } from '@/lib/prisma'
+import { matchListings, type DiscoverPrefs } from '@/lib/discover'
+import { clientIp, rateLimit } from '@/lib/protect'
 
-export async function POST(req: Request) {
-  try {
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json({ error: 'AI Discovery is not configured in this environment' }, { status: 503 })
-    }
+// Discover: our own matching always chooses the listings (it can only pick
+// real, published ones). When an Anthropic key is configured, Claude writes
+// the summary and the "why" for those same matches; if it is unavailable
+// or fails, our own wording is used. Rate limited per visitor.
+const MODEL = 'claude-haiku-5-5'
 
-    const { preferences } = await req.json()
-
-    const listings = await prisma.listing.findMany({
-      where: { status: { not: 'sold' }, published: true },
-      select: {
-        title: true, slug: true, category: true, priceDisplay: true, location: true, country: true, description: true,
-      },
-      take: 100,
-    })
-
-    if (listings.length === 0) {
-      return NextResponse.json({
-        summary: "We're still building out the catalog, no assets are listed yet. Reach out directly and a specialist will help you find what you're after.",
-        matches: [],
-      })
-    }
-
-    const client = new Anthropic()
-
-    const prompt = `You are a luxury asset advisor for Lux Catalog, a Nigeria-based luxury marketplace (real estate, shortlets, supercars, yachts, executive chauffeur/security services, interior decor, commercial property, lifestyle) serving Lagos, Abuja, and the wider Nigerian market, with a global client base including diaspora Nigerians. Prices are in Nigerian Naira (₦) unless marked otherwise. Based on the client's preferences below, analyse our actual current catalog and return the most suitable assets for this client.
-
-CLIENT PREFERENCES:
-- Categories of interest: ${(preferences.categories ?? []).join(', ') || 'any'}
-- Budget range: ${(preferences.budget ?? ['not specified'])[0]}
-- Preferred regions: ${(preferences.location ?? []).join(', ') || 'any'}
-- Lifestyle descriptors: ${(preferences.lifestyle ?? []).join(', ') || 'not specified'}
-
-OUR CURRENT CATALOG (only recommend assets from this list, do not invent assets):
-${listings.map((a, i) => `${i + 1}. ${a.title} | Category: ${a.category} | Price: ${a.priceDisplay} | Location: ${a.location}, ${a.country} | ${a.description}`).join('\n')}
-
-Return a JSON object with this exact structure:
-{
-  "summary": "One elegant sentence summarising your recommendation approach for this client.",
-  "matches": [
-    {
-      "title": "exact title from catalog",
-      "slug": "exact slug from catalog",
-      "category": "exact category from catalog",
-      "priceDisplay": "exact priceDisplay from catalog",
-      "matchScore": 95,
-      "reason": "Two sentences explaining precisely why this asset suits this client's preferences."
-    }
-  ]
+const LABEL: Record<string, string> = {
+  real_estate: 'homes', shortlet: 'stays', supercar: 'cars', yacht: 'yachts', decor: 'pieces', commercial: 'commercial spaces', lifestyle: 'experiences', executive_services: 'chauffeur and security services', private_services: 'private services',
 }
 
-Rules:
-- Return up to 5 matches, ordered by relevance (best first). If fewer than 5 catalog items genuinely fit, return fewer rather than padding with weak matches.
-- matchScore is an integer 60-99 (no two the same)
-- reason must be specific and refer to the client's actual preferences
-- Only use slugs, titles, categories, and priceDisplays that exist verbatim in the catalog above
-- Respond with ONLY the JSON, no markdown, no explanation`
-
-    const message = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }],
-    })
-
-    const text = message.content[0].type === 'text' ? message.content[0].text : ''
-    const data = JSON.parse(text)
-
-    return NextResponse.json(data)
-  } catch (err) {
-    console.error('AI match error:', err)
-    return NextResponse.json({ error: 'Matching failed' }, { status: 500 })
+export async function POST(req: Request) {
+  if (!(await rateLimit(`discover:${clientIp(req.headers)}`, 10, 3_600_000))) {
+    return NextResponse.json({ error: 'You’ve asked for several matches in a short time. Please try again a little later.' }, { status: 429 })
   }
+  const body = await req.json().catch(() => ({}))
+  const prefs = (body.preferences ?? {}) as DiscoverPrefs
+  const listings = await prisma.listing.findMany({
+    where: { status: { not: 'sold' }, published: true },
+    select: { title: true, slug: true, category: true, priceDisplay: true, price: true, location: true, description: true },
+    take: 300,
+  })
+  if (!listings.length) {
+    return NextResponse.json({ summary: 'Our collection is being curated. Tell us what you are looking for and a specialist will find it for you.', matches: [], engine: 'lux' })
+  }
+  const ranked = matchListings(prefs, listings.map((l) => ({ ...l, price: l.price ? Number(l.price) : null })))
+  const byslug = new Map(listings.map((l) => [l.slug, l]))
+  const top = ranked.slice(0, 5)
+  let matches = top.map((m, i) => ({ title: m.title, slug: m.slug, category: m.category, priceDisplay: byslug.get(m.slug)?.priceDisplay ?? '', matchScore: Math.max(60, 97 - i * 6), reason: m.reason }))
+  const cats = Array.isArray(prefs.categories) ? prefs.categories : prefs.categories ? [prefs.categories] : []
+  let summary = matches.length
+    ? `Here are ${matches.length === 1 ? 'the' : `the ${matches.length}`} ${cats.length ? cats.map((c) => LABEL[c] ?? c).join(' and ') : 'pieces'} in our collection that best match what you told us.`
+    : 'Nothing in the collection matches those choices right now. Tell us what you are looking for and a specialist will source it for you.'
+  let engine: 'lux' | 'ai' = 'lux'
+
+  if (process.env.ANTHROPIC_API_KEY && matches.length) {
+    try {
+      const client = new Anthropic()
+      const message = await client.messages.create({
+        model: MODEL,
+        max_tokens: 700,
+        messages: [
+          {
+            role: 'user',
+            content: `You write for Lux Catalog, a luxury marketplace in Lagos. A client answered: ${JSON.stringify(prefs)}. These listings were already chosen for them (do not add or remove any):\n${matches.map((m) => `- ${m.slug}: ${m.title} | ${m.category} | ${m.priceDisplay} | ${byslug.get(m.slug)?.location}`).join('\n')}\nReply with JSON only: {"summary": "one elegant sentence", "reasons": {"<slug>": "one or two sentences on why it suits them"}}`,
+          },
+        ],
+      })
+      const text = message.content[0]?.type === 'text' ? message.content[0].text : ''
+      const data = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1)) as { summary?: string; reasons?: Record<string, string> }
+      if (typeof data.summary === 'string' && data.summary.length > 10) summary = data.summary.slice(0, 300)
+      matches = matches.map((m) => ({ ...m, reason: typeof data.reasons?.[m.slug] === 'string' ? data.reasons[m.slug].slice(0, 400) : m.reason }))
+      engine = 'ai'
+    } catch (err) {
+      console.error('Discover AI wording unavailable, using our own:', (err as Error).message)
+    }
+  }
+  return NextResponse.json({ summary, matches, engine })
 }

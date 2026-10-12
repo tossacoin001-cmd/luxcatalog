@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 // The stored NEXT_PUBLIC_APP_URL value has a stray leading byte-order-mark
 // (likely pasted from a Windows editor), which was silently corrupting every
-// URL built from it, including Stripe checkout redirect URLs. Stripping it
+// URL built from it, including Paystack checkout return URLs. Stripping it
 // here guards every call site without needing to touch the env var itself.
 const BOM = String.fromCharCode(0xfeff)
 

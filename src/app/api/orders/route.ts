@@ -1,110 +1,29 @@
 import { NextResponse } from 'next/server'
 import { getUserId } from '@/lib/admin-auth'
-import Stripe from 'stripe'
-import { prisma } from '@/lib/prisma'
-import { getNgnToUsdRate } from '@/lib/fx'
-import { getAppUrl } from '@/lib/utils'
+import { paystackConfigured } from '@/lib/paystack'
+import { validateCart } from '@/lib/orders'
+import { OrderError, createOrder, type Shipping } from '@/lib/orders-server'
 
-interface CartItemInput {
-  listingId: string
-  quantity: number
-}
-
-interface ShippingInput {
-  name: string
-  email: string
-  phone: string
-  address: string
-  city: string
-  state: string
-  country: string
-}
-
+// Décor checkout: re-price the cart from the database and hand the buyer to
+// Paystack's secure checkout (Naira). The order is marked paid only when
+// Paystack confirms (return page or signed webhook).
 export async function POST(req: Request) {
+  if (!paystackConfigured()) return NextResponse.json({ error: 'Online payment is not available right now. Please enquire instead.' }, { status: 503 })
+  const body = await req.json().catch(() => ({}))
+  const cart = validateCart(body.items)
+  if (!cart.ok) return NextResponse.json({ error: cart.error }, { status: 400 })
+  const s = (body.shipping ?? {}) as Record<string, unknown>
+  const str = (v: unknown, max = 200) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
+  const shipping: Shipping = { name: str(s.name, 120), email: str(s.email).toLowerCase(), phone: str(s.phone, 40), address: str(s.address, 300), city: str(s.city, 80), state: str(s.state, 80), country: str(s.country, 80) }
+  if (!shipping.name || !shipping.phone || !shipping.address || !shipping.city || !shipping.state || !shipping.country || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(shipping.email)) {
+    return NextResponse.json({ error: 'Please complete your delivery details' }, { status: 400 })
+  }
   try {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json({ error: 'Payments are not configured in this environment' }, { status: 503 })
-    }
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-06-24.dahlia' })
-
-    const userId = await getUserId()
-    const { items, shipping }: { items: CartItemInput[]; shipping: ShippingInput } = await req.json()
-
-    if (!items?.length) return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
-    if (!shipping?.name || !shipping?.email || !shipping?.phone || !shipping?.address || !shipping?.city || !shipping?.state || !shipping?.country) {
-      return NextResponse.json({ error: 'Missing shipping details' }, { status: 400 })
-    }
-
-    // Never trust client-submitted prices, re-fetch authoritative current
-    // price/title for every item from the database.
-    const listings = await prisma.listing.findMany({
-      where: { id: { in: items.map((i) => i.listingId) }, category: 'decor', published: true },
-    })
-    if (listings.length !== items.length) {
-      return NextResponse.json({ error: 'One or more items are no longer available' }, { status: 400 })
-    }
-
-    const rate = await getNgnToUsdRate()
-    const shippingFee = 0
-
-    let subtotalNgn = 0
-    const orderItemsData = items.map((item) => {
-      const listing = listings.find((l) => l.id === item.listingId)!
-      const priceNgn = Number(listing.price ?? 0)
-      subtotalNgn += priceNgn * item.quantity
-      return {
-        listingId: listing.id,
-        titleSnapshot: listing.title,
-        priceSnapshot: priceNgn,
-        quantity: item.quantity,
-      }
-    })
-    const totalNgn = subtotalNgn + shippingFee
-
-    const order = await prisma.order.create({
-      data: {
-        userId: userId || null,
-        email: shipping.email,
-        phone: shipping.phone,
-        currency: 'NGN',
-        subtotal: subtotalNgn,
-        shippingFee,
-        total: totalNgn,
-        shippingName: shipping.name,
-        shippingAddress: shipping.address,
-        shippingCity: shipping.city,
-        shippingState: shipping.state,
-        shippingCountry: shipping.country,
-        paymentProvider: 'stripe',
-        status: 'pending',
-        items: { create: orderItemsData },
-      },
-    })
-
-    const appUrl = getAppUrl('http://localhost:3000')
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: 'payment',
-      customer_email: shipping.email,
-      line_items: orderItemsData.map((item) => ({
-        price_data: {
-          currency: 'usd',
-          product_data: { name: item.titleSnapshot, metadata: { listingId: item.listingId } },
-          unit_amount: Math.max(50, Math.round(item.priceSnapshot * rate * 100)),
-        },
-        quantity: item.quantity,
-      })),
-      metadata: { orderId: order.id },
-      success_url: `${appUrl}/checkout/success?type=order&orderId=${order.id}&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/cart`,
-    })
-
-    await prisma.order.update({ where: { id: order.id }, data: { paymentRef: session.id } })
-
-    return NextResponse.json({ url: session.url })
-  } catch (err) {
-    console.error('Order creation error:', err)
-    return NextResponse.json({ error: 'Unable to create order' }, { status: 500 })
+    const { url } = await createOrder(cart.items, shipping, (await getUserId()) || null)
+    return NextResponse.json({ url })
+  } catch (e) {
+    if (e instanceof OrderError) return NextResponse.json({ error: e.message }, { status: e.status })
+    console.error('Order creation error:', e)
+    return NextResponse.json({ error: 'We couldn’t start the payment. Please try again in a moment.' }, { status: 502 })
   }
 }

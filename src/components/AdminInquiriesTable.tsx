@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { whatsappLink } from '@/lib/contact'
 import { MessageCircle } from 'lucide-react'
+import { viewingModeLabel, viewingTimeLabel } from '@/lib/enquiry'
 
 interface InquiryRow {
   id: string
@@ -15,6 +16,10 @@ interface InquiryRow {
   status: string
   checkIn: string | null
   checkOut: string | null
+  kind: string
+  preferredDate: string | null
+  preferredTime: string | null
+  viewingMode: string | null
   createdAt: string
   listing: { title: string; category: string } | null
 }
@@ -82,6 +87,12 @@ export default function AdminInquiriesTable({ inquiries }: { inquiries: InquiryR
                 <p className="text-xs mb-1" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
                   {inq.email} {inq.phone && `· ${inq.phone}`}
                 </p>
+                {inq.kind === 'viewing' && inq.preferredDate && (
+                  <p className="text-xs mb-2" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                    Viewing request:{' '}
+                    {new Date(inq.preferredDate).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })} · {viewingTimeLabel(inq.preferredTime)} · {viewingModeLabel(inq.viewingMode)}
+                  </p>
+                )}
                 {(inq.checkIn || inq.checkOut) && (
                   <p className="text-xs mb-2" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                     {inq.checkIn?.slice(0, 10)} &rarr; {inq.checkOut?.slice(0, 10)}

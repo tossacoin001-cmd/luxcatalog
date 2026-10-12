@@ -295,7 +295,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
               : `${naira(Number(booking.rate))} / ${booking.unit === 'day' ? 'day' : 'night'}`
             : listing.priceDisplay
         }
-        primaryLabel={booking ? 'Book' : listing.category === 'decor' ? 'Buy' : 'Reserve'}
+        primaryLabel={booking ? 'Book' : listing.category === 'decor' ? 'Buy' : 'Enquire'}
       />
     </div>
   )
