@@ -15,8 +15,25 @@ export const VIEWING_MODES = [
 
 export const VIEWING_MAX_DAYS = 90
 
+// "Tell us what you are looking for": what the visitor wants, in a few words.
+export const BRIEF_TOPICS = [
+  { key: 'home', label: 'Find a home', topic: 'A home to buy or rent' },
+  { key: 'car', label: 'A car or yacht', topic: 'A car or yacht' },
+  { key: 'stay', label: 'Plan a stay', topic: 'A luxury stay' },
+  { key: 'service', label: 'A private service', topic: 'A private service (chef, spa, beauty, hosting)' },
+  { key: 'chauffeur', label: 'Chauffeur & security', topic: 'Chauffeur or security' },
+  { key: 'other', label: 'Something else', topic: '' },
+] as const
+
+// The topic travels at the top of the message, so no extra storage is needed.
+export const briefMessage = (topic: string, message: string) => {
+  const t = topic.replace(/\s+/g, ' ').trim().slice(0, 80)
+  return t ? `Looking for: ${t}\n\n${message.trim()}` : message.trim()
+}
+export const topicFromMessage = (m: string) => m.match(/^Looking for: (.+)\n/)?.[1] ?? null
+
 export type EnquiryData = {
-  kind: 'enquiry' | 'viewing'
+  kind: 'enquiry' | 'viewing' | 'brief'
   name: string
   email: string
   phone: string | null
@@ -39,7 +56,7 @@ export function validateEnquiry(body: Record<string, unknown>, now = new Date())
   if (message.length < 5) return { ok: false, error: 'Please tell us a little about what you need' }
   if (message.length > 3000) return { ok: false, error: 'Please keep your message under 3,000 characters' }
 
-  const kind = body.kind === 'viewing' ? 'viewing' : 'enquiry'
+  const kind = body.kind === 'viewing' ? 'viewing' : body.kind === 'brief' ? 'brief' : 'enquiry'
   let preferredDate: Date | null = null, preferredTime: string | null = null, viewingMode: string | null = null
   if (kind === 'viewing') {
     const d = str(body.preferredDate)

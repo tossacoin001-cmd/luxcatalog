@@ -1,11 +1,10 @@
 import { notFound } from 'next/navigation'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import Link from 'next/link'
-import AssetCard from '@/components/AssetCard'
 import ServicesCatalog from '@/components/services/ServicesCatalog'
+import CategoryViewsFromAddress, { CategoryViews } from '@/components/CategoryViews'
+import { Suspense } from 'react'
 import Breadcrumbs from '@/components/Breadcrumbs'
-import { whatsappLink } from '@/lib/contact'
 import { categoryLabels } from '@/lib/utils'
 import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
@@ -50,11 +49,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
     orderBy: { createdAt: 'desc' },
     select: {
       id: true, title: true, slug: true, category: true, subcategory: true, location: true, country: true,
-      priceDisplay: true, price: true, images: true, status: true, featured: true,
+      priceDisplay: true, price: true, images: true, status: true, featured: true, mode: true,
     },
   })
   const isServices = categoryKey === 'private_services'
   const plainListings = listings.map((l) => ({ ...l, price: l.price ? Number(l.price) : null }))
+  const viewProps = { category: categoryKey, categorySlug, categoryLabel: categoryLabels[categoryKey], listings: plainListings.map((l) => ({ ...l, mode: String(l.mode) })) }
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
@@ -82,46 +82,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
       {isServices ? (
         <ServicesCatalog listings={plainListings} />
       ) : (
-        <div className="max-w-7xl mx-auto px-5 md:px-12 py-12">
-          {plainListings.length === 0 ? (
-            <div className="text-center py-24">
-              <p className="text-lg mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-                No {categoryLabels[categoryKey]?.toLowerCase()} listed yet
-              </p>
-              <p className="text-sm mb-8" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                New pieces arrive privately before they are listed. Ask the concierge, or explore the rest of the catalog.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a
-                  href={whatsappLink(`Hello, I'm looking for ${categoryLabels[categoryKey]?.toLowerCase()} on Lux Catalog.`)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.2em] uppercase"
-                  style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
-                >
-                  Ask the Concierge
-                </a>
-                <Link
-                  href="/catalog"
-                  className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.2em] uppercase transition-colors hover:bg-[rgba(201,168,76,0.08)]"
-                  style={{ border: '1px solid rgba(201,168,76,0.45)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
-                >
-                  Browse All Collections
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {plainListings.map((asset) => (
-                <AssetCard
-                  key={asset.id}
-                  asset={asset}
-                  href={`/catalog/${categorySlug}/${asset.slug}`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <Suspense fallback={<CategoryViews {...viewProps} view={null} />}>
+          <CategoryViewsFromAddress {...viewProps} />
+        </Suspense>
       )}
 
       <Footer />

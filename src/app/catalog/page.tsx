@@ -21,11 +21,11 @@ export default async function CatalogPage() {
     orderBy: { createdAt: 'desc' },
     select: {
       id: true, title: true, slug: true, category: true, location: true, country: true,
-      priceDisplay: true, price: true, images: true, status: true, featured: true,
+      priceDisplay: true, price: true, images: true, status: true, featured: true, subcategory: true, mode: true,
     },
   })
 
-  const plainListings = listings.map((l) => ({ ...l, price: l.price ? Number(l.price) : null }))
+  const plainListings = listings.map((l) => ({ ...l, mode: String(l.mode), price: l.price ? Number(l.price) : null }))
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>

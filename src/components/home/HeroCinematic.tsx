@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, MessageCircle } from 'lucide-react'
 import { EASE_OUT_EXPO } from '@/components/motion/Reveal'
-import { whatsappLink } from '@/lib/contact'
+import OpenConcierge from '@/components/concierge/OpenConcierge'
 
 const SLIDE_MS = 6500
 
@@ -184,16 +184,13 @@ export default function HeroCinematic() {
               Explore the Collection
               <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
-            <a
-              href={whatsappLink("Hello, I'd like help from the Lux Catalog concierge.")}
-              target="_blank"
-              rel="noopener noreferrer"
+            <OpenConcierge
               className="inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-[rgba(201,168,76,0.1)]"
               style={{ border: '1px solid rgba(201,168,76,0.55)', color: '#e4c878', fontFamily: 'var(--font-inter)', backdropFilter: 'blur(6px)' }}
             >
               <MessageCircle size={15} />
               Speak to a Concierge
-            </a>
+            </OpenConcierge>
           </div>
         </div>
 

@@ -15,6 +15,7 @@ import { Suspense } from 'react'
 import { naira } from '@/lib/booking'
 import { categoryLabels, specLabel, splitHighlights } from '@/lib/utils'
 import { findSubcategory } from '@/lib/taxonomy'
+import { priceCaption } from '@/lib/listing-views'
 import { prisma } from '@/lib/prisma'
 import { MapPin, Check } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -69,6 +70,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
   const price = listing.price ? Number(listing.price) : null
   // Private Services show a starting price and the service they offer.
+  const caption = priceCaption(listing.category, listing.subcategory, String(listing.mode))
   const service = listing.category === 'private_services' ? findSubcategory('private_services', listing.subcategory) : undefined
   // Listings that take online bookings show the booking panel instead of an asking price.
   const booking = listing.bookingSettings?.enabled ? listing.bookingSettings : null
@@ -201,10 +203,15 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
             ) : (
               <div>
                 <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                  {service ? 'From' : 'Asking Price'}
+                  {caption.label}
                 </p>
                 <p className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: !price ? 'italic' : 'normal' }}>
                   <PriceDisplay price={price} priceDisplay={listing.priceDisplay} />
+                  {caption.suffix && price ? (
+                    <span className="ml-2 text-sm not-italic" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                      {caption.suffix}
+                    </span>
+                  ) : null}
                 </p>
                 {service?.key === 'private_chef' && (
                   <p className="mt-1 text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>

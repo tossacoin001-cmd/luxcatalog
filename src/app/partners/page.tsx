@@ -6,7 +6,7 @@ import Footer from '@/components/Footer'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import Reveal, { RevealGroup, RevealItem } from '@/components/motion/Reveal'
 import { PARTNER_TYPES } from '@/lib/partner-requirements'
-import { whatsappLink } from '@/lib/contact'
+import RequestButton from '@/components/concierge/RequestButton'
 
 export const metadata: Metadata = {
   title: 'Become a Partner',
@@ -62,15 +62,14 @@ export default function PartnersPage() {
                 Apply to become a partner
                 <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
               </Link>
-              <a
-                href={whatsappLink("Hello, I'd like to know more about becoming a Lux Catalog partner.")}
-                target="_blank"
-                rel="noopener noreferrer"
+              <RequestButton
+                topic="Becoming a Lux Catalog partner"
+                label="Talk to our partner team"
                 className="inline-flex items-center justify-center min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-colors hover:bg-[rgba(201,168,76,0.08)]"
                 style={{ border: '1px solid rgba(201,168,76,0.5)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
               >
                 Talk to our partner team
-              </a>
+              </RequestButton>
             </div>
           </div>
         </div>

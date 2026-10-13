@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import { whatsappLink } from '@/lib/contact'
+import RequestButton from '@/components/concierge/RequestButton'
 
 export const metadata: Metadata = { title: 'Page Not Found' }
 
@@ -40,15 +40,14 @@ export default function NotFound() {
           >
             Browse the Catalog
           </Link>
-          <a
-            href={whatsappLink("Hello, I'm looking for something on Lux Catalog.")}
-            target="_blank"
-            rel="noopener noreferrer"
+          <RequestButton
+            topic="Something I could not find on the site"
+            label="Tell us what you were looking for"
             className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.2em] uppercase transition-colors hover:bg-[rgba(201,168,76,0.08)]"
             style={{ border: '1px solid rgba(201,168,76,0.5)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
           >
             Ask the Concierge
-          </a>
+          </RequestButton>
         </div>
         <nav aria-label="Popular collections" className="relative flex flex-wrap justify-center gap-3">
           {suggestions.map((s) => (

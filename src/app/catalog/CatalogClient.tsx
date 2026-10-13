@@ -19,6 +19,8 @@ interface Listing {
   images: string[]
   status: string
   featured: boolean
+  subcategory?: string | null
+  mode?: string
 }
 
 const categories = [

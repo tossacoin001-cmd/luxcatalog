@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, ArrowLeft, Sparkles, RotateCcw, MessageCircle, Landmark, BedDouble, Car, Sailboat, ConciergeBell, ShieldCheck, Sofa, Building2, Plane, type LucideIcon } from 'lucide-react'
 import { categoryHrefs } from '@/lib/utils'
-import { whatsappLink } from '@/lib/contact'
+import RequestButton from '@/components/concierge/RequestButton'
 
 const steps = [
   {
@@ -163,15 +163,15 @@ export default function AIDiscoverClient() {
           your answers are ready to send along.
         </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
-          <a
-            href={whatsappLink(describeAnswers(answers))}
-            target="_blank"
-            rel="noopener noreferrer"
+          <RequestButton
+            topic="Help finding the right asset"
+            label="Ask a specialist"
+            initialMessage={describeAnswers(answers)}
             className="inline-flex items-center gap-2 px-8 py-4 text-xs tracking-[0.2em] uppercase"
             style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
           >
-            <MessageCircle size={14} /> Chat on WhatsApp
-          </a>
+            <MessageCircle size={14} /> Ask a specialist
+          </RequestButton>
           <Link
             href="/contact"
             className="inline-flex items-center px-8 py-4 text-xs tracking-[0.2em] uppercase"

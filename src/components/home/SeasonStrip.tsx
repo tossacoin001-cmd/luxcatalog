@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { MessageCircle } from 'lucide-react'
 import Reveal from '@/components/motion/Reveal'
-import { whatsappLink } from '@/lib/contact'
+import OpenConcierge from '@/components/concierge/OpenConcierge'
 
 const ticker = ['Luxury Shortlets', 'Private Car Rental', 'Chauffeur Service', 'Private Guards', 'Boat Cruises', 'Aqua Homes', 'Airport Arrivals']
 
@@ -43,23 +43,20 @@ export default function SeasonStrip() {
           </p>
         </Reveal>
         <Reveal delay={0.15} className="flex flex-col sm:flex-row md:flex-col lg:flex-row gap-3">
-          <a
-            href={whatsappLink("Hello, I'd like to reserve for the festive season. My dates are: ")}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/catalog/shortlets"
             className="sheen inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-transform duration-300 active:scale-[0.98]"
             style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
           >
-            <MessageCircle size={15} />
             Reserve Your Dates
-          </a>
-          <Link
-            href="/catalog/shortlets"
-            className="inline-flex items-center justify-center min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-[rgba(201,168,76,0.08)]"
+          </Link>
+          <OpenConcierge
+            className="inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-[rgba(201,168,76,0.08)]"
             style={{ border: '1px solid rgba(201,168,76,0.45)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
           >
-            View Shortlets
-          </Link>
+            <MessageCircle size={15} />
+            Ask the Concierge
+          </OpenConcierge>
         </Reveal>
       </div>
     </section>

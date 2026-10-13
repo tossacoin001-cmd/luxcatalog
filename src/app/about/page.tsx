@@ -1,7 +1,6 @@
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
-import { whatsappLink } from '@/lib/contact'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -59,15 +58,13 @@ export default function AboutPage() {
             Have a question, or looking for something specific?
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <a
-              href={whatsappLink("Hello, I'd like to know more about Lux Catalog.")}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/catalog"
               className="inline-flex items-center px-8 py-4 text-xs tracking-[0.2em] uppercase"
               style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
             >
-              Chat on WhatsApp
-            </a>
+              Explore the collection
+            </Link>
             <Link
               href="/contact"
               className="inline-flex items-center px-8 py-4 text-xs tracking-[0.2em] uppercase"

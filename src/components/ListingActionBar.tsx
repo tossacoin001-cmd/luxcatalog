@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { MessageCircle } from 'lucide-react'
 import PriceDisplay from '@/components/PriceDisplay'
 import { EASE_OUT_EXPO } from '@/components/motion/Reveal'
-import { whatsappLink } from '@/lib/contact'
 
 // Phones/tablets only: once the visitor scrolls past the gallery, keep the
 // price and the two next steps (talk to the concierge / reserve) one thumb
@@ -59,16 +57,6 @@ export default function ListingActionBar({
                   <PriceDisplay price={price} priceDisplay={priceDisplay} />
                 </p>
               </div>
-              <a
-                href={whatsappLink(`Hello, I'm interested in "${title}" on Lux Catalog.`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Ask the concierge on WhatsApp"
-                className="flex items-center justify-center w-12 h-12 shrink-0 active:scale-95 transition-transform"
-                style={{ border: '1px solid rgba(201,168,76,0.5)', color: '#C9A84C' }}
-              >
-                <MessageCircle size={18} />
-              </a>
               <a
                 href="#enquire"
                 className="flex items-center justify-center h-12 px-5 shrink-0 text-xs tracking-[0.16em] uppercase active:scale-95 transition-transform"

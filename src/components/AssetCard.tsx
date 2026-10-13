@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { categoryLabels } from '@/lib/utils'
 import PriceDisplay from '@/components/PriceDisplay'
+import { modeBadge, priceCaption } from '@/lib/listing-views'
 
 interface Asset {
   id: string
@@ -21,6 +22,8 @@ interface Asset {
   images: string[]
   status: string
   featured?: boolean
+  subcategory?: string | null
+  mode?: string
 }
 
 interface AssetCardProps {
@@ -60,6 +63,8 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
     }
   }
 
+  const badge = modeBadge(asset.category, asset.subcategory ?? null, asset.mode ?? 'sale')
+  const suffix = priceCaption(asset.category, asset.subcategory ?? null, asset.mode ?? 'sale').suffix
   const statusVariant =
     asset.status === 'available'
       ? 'available'
@@ -141,6 +146,7 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
           style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
         >
           {categoryLabels[asset.category] ?? asset.category}
+          {badge ? ` · ${badge}` : ''}
         </p>
 
         {/* Title */}
@@ -169,6 +175,11 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
             style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: !asset.price ? 'italic' : 'normal' }}
           >
             <PriceDisplay price={asset.price} priceDisplay={asset.priceDisplay} />
+            {suffix && asset.price ? (
+              <span className="ml-1.5 text-[11px] not-italic tracking-wider" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                {suffix}
+              </span>
+            ) : null}
           </p>
         </div>
       </div>

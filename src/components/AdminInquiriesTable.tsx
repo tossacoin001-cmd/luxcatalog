@@ -87,6 +87,11 @@ export default function AdminInquiriesTable({ inquiries }: { inquiries: InquiryR
                 <p className="text-xs mb-1" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
                   {inq.email} {inq.phone && `· ${inq.phone}`}
                 </p>
+                {inq.kind === 'brief' && (
+                  <p className="text-xs mb-2" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                    Request (not tied to a listing)
+                  </p>
+                )}
                 {inq.kind === 'viewing' && inq.preferredDate && (
                   <p className="text-xs mb-2" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
                     Viewing request:{' '}

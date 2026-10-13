@@ -2,9 +2,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight, Plane } from 'lucide-react'
 import Reveal, { RevealGroup, RevealItem } from '@/components/motion/Reveal'
-import { whatsappLink } from '@/lib/contact'
+import RequestButton from '@/components/concierge/RequestButton'
 
-type Sub = { label: string; href: string; external?: boolean }
+type Sub = { label: string; href: string }
 
 // The five main pillars, each with the sub-collections customers actually
 // shop for. Rental/cruise/stay sub-collections route to the concierge until
@@ -17,8 +17,8 @@ const pillars: { title: string; tagline: string; href: string; image: string; al
     image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1400&q=80',
     alt: 'White modern villa with a pool',
     subs: [
-      { label: 'For Sale', href: '/catalog/real-estate' },
-      { label: 'For Rent', href: whatsappLink("Hello, I'm looking for a luxury property to rent."), external: true },
+      { label: 'For Sale', href: '/catalog/real-estate?view=for_sale' },
+      { label: 'For Rent', href: '/catalog/real-estate?view=for_rent' },
       { label: 'Luxury Shortlets', href: '/catalog/shortlets' },
     ],
   },
@@ -29,8 +29,8 @@ const pillars: { title: string; tagline: string; href: string; image: string; al
     image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1400&q=80',
     alt: 'Supercar in a dark studio',
     subs: [
-      { label: 'For Sale', href: '/catalog/supercars' },
-      { label: 'Private Car Rental', href: whatsappLink("Hello, I'd like to rent a car, with or without a chauffeur."), external: true },
+      { label: 'For Sale', href: '/catalog/supercars?view=for_sale' },
+      { label: 'Private Car Rental', href: '/catalog/supercars?view=car_rental' },
     ],
   },
   {
@@ -40,9 +40,9 @@ const pillars: { title: string; tagline: string; href: string; image: string; al
     image: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=1400&q=80',
     alt: 'Superyacht anchored in a turquoise bay',
     subs: [
-      { label: 'For Sale', href: '/catalog/yachts' },
-      { label: 'Boat Cruises', href: whatsappLink("Hello, I'd like to book a boat cruise."), external: true },
-      { label: 'Aqua Homes', href: whatsappLink("Hello, I'd like to stay at an Aqua Home on the water."), external: true },
+      { label: 'For Sale', href: '/catalog/yachts?view=for_sale' },
+      { label: 'Boat Cruises', href: '/catalog/yachts?view=boat_cruises' },
+      { label: 'Aqua Homes', href: '/catalog/yachts?view=aqua_homes' },
     ],
   },
   {
@@ -81,11 +81,7 @@ function SubChip({ sub }: { sub: Sub }) {
   const cls =
     'relative z-10 inline-flex items-center min-h-10 px-4 text-[11px] tracking-[0.16em] uppercase transition-colors duration-300 hover:bg-lux-gold hover:text-lux-bg'
   const style = { border: '1px solid rgba(228,200,120,0.45)', color: '#f5f0e8', background: 'rgba(8,12,8,0.45)', backdropFilter: 'blur(8px)', fontFamily: 'var(--font-inter)' }
-  return sub.external ? (
-    <a href={sub.href} target="_blank" rel="noopener noreferrer" className={cls} style={style}>
-      {sub.label}
-    </a>
-  ) : (
+  return (
     <Link href={sub.href} className={cls} style={style}>
       {sub.label}
     </Link>
@@ -175,16 +171,15 @@ export default function Pillars() {
               {m.label}
             </Link>
           ))}
-          <a
-            href={whatsappLink("Hello, I'd like to request a private jet.")}
-            target="_blank"
-            rel="noopener noreferrer"
+          <RequestButton
+            topic="A private jet charter"
+            label="Private jet, on request"
             className="inline-flex items-center gap-2 min-h-11 px-4 text-xs tracking-[0.14em] uppercase transition-colors duration-300 hover:bg-[rgba(201,168,76,0.08)]"
             style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
           >
             <Plane size={13} />
             Private Jets &middot; On Request
-          </a>
+          </RequestButton>
         </div>
       </Reveal>
     </section>

@@ -117,7 +117,7 @@ export default function InquiryModal({ listingId, listingTitle }: InquiryModalPr
                 </p>
                 <p className="text-xs" style={muted}>
                   A copy is on its way to your email. Prefer to talk now?{' '}
-                  <a href={whatsappLink(`Hello, I just sent ${sent === 'viewing' ? 'a viewing request' : 'an enquiry'} about "${listingTitle}" on Lux Catalog.`)} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: '#C9A84C' }}>
+                  <a data-wa-fallback href={whatsappLink(`Hello, I just sent ${sent === 'viewing' ? 'a viewing request' : 'an enquiry'} about "${listingTitle}" on Lux Catalog.`)} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: '#C9A84C' }}>
                     Message us on WhatsApp
                   </a>
                   .

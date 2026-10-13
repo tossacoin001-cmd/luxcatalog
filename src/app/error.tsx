@@ -35,6 +35,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
           Try Again
         </button>
         <a
+          data-wa-fallback
           href={whatsappLink(`Hello, a page on Lux Catalog didn't load${error.digest ? ` (ref ${error.digest})` : ''}.`)}
           target="_blank"
           rel="noopener noreferrer"

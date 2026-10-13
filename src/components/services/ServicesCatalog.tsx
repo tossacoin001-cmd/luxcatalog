@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { MessageCircle } from 'lucide-react'
 import AssetCard from '@/components/AssetCard'
-import { whatsappLink } from '@/lib/contact'
+import RequestButton from '@/components/concierge/RequestButton'
 import { SERVICE_GROUPS, SUBCATEGORIES } from '@/lib/taxonomy'
 
 type Card = {
@@ -67,17 +67,16 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
                       ) : (
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
                           <p className="text-sm" style={text}>
-                            Our concierge can arrange {s.label} for you today, with a vetted professional.
+                            Our concierge can arrange a vetted professional for you today.
                           </p>
-                          <a
-                            href={whatsappLink(`Hello, I'd like to book ${s.label} through Lux Catalog.`)}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <RequestButton
+                            topic={s.label}
+                            label={`Request ${s.label}`}
                             className="shrink-0 inline-flex items-center justify-center gap-2 min-h-11 px-5 text-[11px] tracking-[0.14em] uppercase"
                             style={{ border: '1px solid rgba(201,168,76,0.45)', ...gold }}
                           >
-                            <MessageCircle size={14} /> Request via concierge
-                          </a>
+                            <MessageCircle size={14} /> Request {s.label}
+                          </RequestButton>
                         </div>
                       )}
                     </div>
