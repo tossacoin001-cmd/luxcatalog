@@ -28,7 +28,7 @@ const BUDGETS: Record<string, [number, number]> = {
   '2b_plus': [2_000_000_000, Infinity],
 }
 
-const AREAS: Record<string, string[]> = {
+export const AREAS: Record<string, string[]> = {
   lagos_island: ['ikoyi', 'victoria island', ' vi', 'banana island', 'eko atlantic', 'oniru', 'lagos island'],
   lagos_lekki: ['lekki', 'ajah', 'chevron', 'ikate'],
   lagos_mainland: ['ikeja', 'gra', 'maryland', 'surulere', 'yaba', 'mainland'],
@@ -37,7 +37,7 @@ const AREAS: Record<string, string[]> = {
   global: [],
 }
 
-const LIFESTYLE: Record<string, string[]> = {
+export const LIFESTYLE: Record<string, string[]> = {
   understated: ['private', 'quiet', 'discreet', 'serene', 'gated'],
   bold: ['iconic', 'bold', 'statement', 'supercar', 'penthouse'],
   investment: ['investment', 'yield', 'lease', 'rental', 'roi', 'office'],
