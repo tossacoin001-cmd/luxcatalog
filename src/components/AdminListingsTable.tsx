@@ -152,7 +152,7 @@ export default function AdminListingsTable({
                       : { border: '1px solid #908673', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
                   }
                 >
-                  {listing.published ? 'Live' : 'Pending Review'}
+                  {listing.published ? 'Live' : canPublish ? 'Pending Review' : 'Awaiting admin approval'}
                 </span>
               </td>
               <td className="py-4 pr-6">

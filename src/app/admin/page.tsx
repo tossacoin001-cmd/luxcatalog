@@ -2,13 +2,16 @@ import Link from 'next/link'
 import AdminNavbar from '@/components/AdminNavbar'
 import AdminEmailTools from '@/components/AdminEmailTools'
 import { prisma } from '@/lib/prisma'
-import { requireStaff } from '@/lib/admin-auth'
+import { requireStaff, currentStaff } from '@/lib/admin-auth'
 import type { Area } from '@/lib/access'
 import { partnerMustSign } from '@/lib/agreements-server'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Admin' }
+export async function generateMetadata(): Promise<Metadata> {
+  const staff = await currentStaff()
+  return { title: staff?.role === 'team' ? 'Team Desk' : staff?.role === 'partner' ? 'Partner Dashboard' : 'Admin' }
+}
 export const dynamic = 'force-dynamic'
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<{ denied?: string }> }) {

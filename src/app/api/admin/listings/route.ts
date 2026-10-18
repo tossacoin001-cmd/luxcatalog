@@ -1,7 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, after } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { slugify } from '@/lib/utils'
-import { requireListingsApi } from '@/lib/admin-auth'
+import { requireListingsApi, audit } from '@/lib/admin-auth'
+import { rateLimit } from '@/lib/protect'
+import { createRules, APPROVAL_MESSAGE } from '@/lib/listing-policy'
+import { notifyListingPending } from '@/lib/listing-review'
 import { optimizeListingDraft } from '@/lib/ai-optimize'
 import { resolvePlacement } from '@/lib/taxonomy'
 import { revalidateCatalog } from '@/lib/revalidate'
@@ -13,6 +16,11 @@ export async function POST(req: Request) {
   const staff = await requireListingsApi()
   if (!staff) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   const isVendor = staff.role === 'partner'
+  const rules = createRules(staff.role)
+  // A runaway script or a stolen staff session cannot flood the review queue.
+  if (!(await rateLimit(`staff-create:${staff.userId}`, 40, 3_600_000))) {
+    return NextResponse.json({ error: 'You have added a lot of listings in a short time. Please wait a little.' }, { status: 429 })
+  }
   if (isVendor && (await partnerMustSign(staff.userId))) {
     return NextResponse.json({ error: 'Sign your partner agreement before adding listings', signUrl: '/partners/agreement' }, { status: 403 })
   }
@@ -87,21 +95,23 @@ export async function POST(req: Request) {
         country,
         images: Array.isArray(images) ? images : [],
         features: finalFeatures,
-        status: isVendor ? 'available' : (status || 'available'),
-        featured: isVendor ? false : !!featured,
-        hireAvailable: !!hireAvailable,
-        hireRatePerDay: hireRatePerDay ? Number(hireRatePerDay) : null,
-        hireRateDisplay: hireRateDisplay || null,
+        status: rules.status(status),
+        featured: rules.canPromote ? !!featured : false,
+        hireAvailable: rules.canPromote ? !!hireAvailable : false,
+        hireRatePerDay: rules.canPromote && hireRatePerDay ? Number(hireRatePerDay) : null,
+        hireRateDisplay: rules.canPromote ? hireRateDisplay || null : null,
         specs: finalSpecs,
         ownerId: isVendor ? staff.userId : null,
-        published: !isVendor,
+        published: rules.published,
         marginRequested: isVendor ? !!marginRequested : false,
         partnerRequestedPrice: isVendor && price ? Number(price) : null,
       },
     })
 
+    await audit(staff.userId, 'listing.create', listing.id, { role: staff.role, published: listing.published, title: listing.title })
+    if (rules.needsApproval) after(() => notifyListingPending(listing.id, staff.userId, 'new'))
     revalidateCatalog()
-    return NextResponse.json({ success: true, listing })
+    return NextResponse.json({ success: true, listing, needsApproval: rules.needsApproval, ...(rules.needsApproval ? { message: APPROVAL_MESSAGE } : {}) })
   } catch (err) {
     console.error('Create listing error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

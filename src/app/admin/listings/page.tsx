@@ -33,6 +33,11 @@ export default async function AdminListingsPage() {
     ? await prisma.partnerProfile.findMany({ where: { userId: { in: ownerIds } }, select: { userId: true, brandName: true } })
     : []
   const brandByOwner = Object.fromEntries(profiles.map((p) => [p.userId, p.brandName]))
+  // Who created a house-side listing (a team member or an admin), from the audit trail.
+  const houseIds = listings.filter((l) => !l.ownerId).map((l) => l.id)
+  const created = houseIds.length ? await prisma.auditLog.findMany({ where: { action: 'listing.create', target: { in: houseIds } }, select: { target: true, actorId: true } }) : []
+  const creators = created.length ? await prisma.user.findMany({ where: { id: { in: created.map((c) => c.actorId).filter((x): x is string => !!x) } }, select: { id: true, name: true, role: true } }) : []
+  const creatorOf = Object.fromEntries(created.map((c) => { const u = creators.find((x) => x.id === c.actorId); return [c.target, u ? (u.role === 'team' ? `Team: ${u.name}` : 'House') : 'House'] }))
 
   const rows = listings.map((l) => ({
     id: l.id,
@@ -43,7 +48,7 @@ export default async function AdminListingsPage() {
     featured: l.featured,
     published: l.published,
     marginRequested: l.marginRequested,
-    submittedBy: l.ownerId ? (brandByOwner[l.ownerId] ?? 'Partner') : 'House',
+    submittedBy: l.ownerId ? (brandByOwner[l.ownerId] ?? 'Partner') : (creatorOf[l.id] ?? 'House'),
     inquiryCount: l._count.inquiries,
     soldCount: l._count.orderItems,
     bookable: l.mode === 'booking',
@@ -86,7 +91,7 @@ export default async function AdminListingsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-8">
-        <AdminListingsTable listings={rows} canPublish={!isVendor} showSubmittedBy={!isVendor} />
+        <AdminListingsTable listings={rows} canPublish={role === 'admin'} showSubmittedBy={!isVendor} />
       </div>
     </div>
   )

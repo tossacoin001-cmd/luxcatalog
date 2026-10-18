@@ -34,7 +34,10 @@ export default async function AdminNavbar(_props: { role?: string | null }) {
     const areas = staff?.areas ?? []
     links = [{ label: 'Dashboard', href: '/admin' }, ...AREA_LINKS.filter((l) => areas.includes(l.area)).map(({ label, href }) => ({ label, href }))]
     if (staff?.role === 'admin') links.push({ label: 'Team', href: '/admin/team' })
-    else badge = 'Team'
+    else {
+      badge = 'Team'
+      links.push({ label: 'My Profile', href: '/admin/profile' })
+    }
   }
   return <AdminNavbarClient links={links} badge={badge} />
 }
