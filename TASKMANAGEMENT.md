@@ -35,10 +35,10 @@ Status: `idea` → `approved` → `in progress` → `in review` → `done`
 
 | ID | Task | Owner | Status | Test (acceptance) |
 |----|------|-------|--------|-------------------|
-| T-001 | Approval gate: nothing goes live without an admin (partner, team, and any edit); an edit changes only what it sends | Claude Code | **built, tests pass (64/64 e2e, 32/32 unit); awaiting full regression, commit, deploy** | `listing-policy-unit`, `listing-approval-e2e` |
-| T-002 | Team portal and team profile; role-correct names (menu link, page titles) | Claude Code | built (team profile page, "Team Desk" / "Partner Dashboard" labels); browser check still to add | `listing-approval-e2e` section 10, `portal-ui` (to write) |
-| T-003 | Finish Discover v2 (own rules engine, per-kind questions and budgets) | Claude Code | in progress, uncommitted | `discover-unit`, `discover-e2e`, `discover-ui` |
-| T-004 | Services page without the word "Private"; menu and overlays hold the page still | Claude Code | in progress, uncommitted | `polish-ui` |
+| T-001 | Approval gate: nothing goes live without an admin (partner, team, and any edit); an edit changes only what it sends | Claude Code | **done, deployed 2026-10-18** (64/64 e2e, 32/32 unit; full regression green after fixes) | `listing-policy-unit`, `listing-approval-e2e` |
+| T-002 | Team portal and team profile; role-correct names (menu link, page titles) | Claude Code | **deployed 2026-10-18** (team profile page, "Team Desk" / "Partner Dashboard" labels); a browser check of the menu label is still to add | `listing-approval-e2e` section 10, `portal-ui` (to write) |
+| T-003 | Finish Discover v2 (own rules engine, per-kind questions and budgets) | Claude Code | **done, deployed 2026-10-18** (88 unit, 42 API, 106 browser checks; a real crash found and fixed: choosing a second category) | `discover-unit`, `discover-e2e`, `discover-ui` |
+| T-004 | Services page without the word "Private"; menu and overlays hold the page still | Claude Code | **done, deployed 2026-10-18** (59 browser checks). Note: the main menu has no Private Services link; that name remains only in the browser tab title, the catalogue picker and the home page | `polish-ui` |
 | T-005 | Buy the domain and move the site to it | Founder + Claude Code | blocked: Founder buys | checklist in `docs/DOMAIN.md` |
 | T-006 | "Lux" concierge, phase C0 (Brand Brain, model layer, conversation store) | Claude Code | idea, plan approved, tests not written | to be written first |
 | T-007 | Re-categorise the live lease listing "Brand new three bedroom" (stored as for-sale) | Founder (admin page) | ready | n/a (data) |
