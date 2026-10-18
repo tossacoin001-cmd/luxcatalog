@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Test suites run on their own (qa/), not part of the app build.
+    "qa/**",
   ]),
 ]);
 

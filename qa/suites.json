@@ -1,0 +1,44 @@
+{
+  "unit": [
+    "services-unit",
+    "services-s2-unit",
+    "services-s3-unit",
+    "phase-a-unit",
+    "phase-b-unit",
+    "discover-unit",
+    "listing-policy-unit"
+  ],
+  "e2e": [
+    "phase-a-e2e",
+    "phase-b-e2e",
+    "services-s3-e2e",
+    "services-booking-e2e",
+    "services-e2e",
+    "partner-e2e",
+    "agreement-e2e",
+    "team-e2e",
+    "booking-e2e",
+    "pay-e2e",
+    "refund-e2e",
+    "request-e2e",
+    "payout-e2e",
+    "discover-e2e",
+    "listing-approval-e2e"
+  ],
+  "ui": [
+    "phase-a-ui",
+    "phase-b-ui",
+    "services-s3-ui",
+    "services-booking-ui",
+    "look-ui",
+    "services-flow-ui",
+    "services-ui",
+    "partner-ui",
+    "agreement-ui",
+    "team-ui",
+    "booking-ui",
+    "password-ui",
+    "discover-ui",
+    "polish-ui"
+  ]
+}

@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# QA run output (qa/run.sh)
+/qa/out/
+/qa/mail/
+/qa/suites/.agreements-list.generated.mjs
+/qa/out-*.txt

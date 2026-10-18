@@ -1,0 +1,5 @@
+Read AGENTS.md, TASKMANAGEMENT.md and docs/AGENT-WORKFLOW.md before doing anything.
+Work only on a task listed in TASKMANAGEMENT.md, on your own branch (cline/T-0xx-name). Never push to main.
+Reproduce first and write down what you ran. Write the test first (qa/suites). If a tool fails, say so and stop; never report findings you could not check.
+Production is read-only. No secrets in files, logs or messages. No schema, auth, payment or webhook changes without a task naming them.
+Hand over in the task's section: branch, commits, test results (pass counts), what you verified, what you assumed.
