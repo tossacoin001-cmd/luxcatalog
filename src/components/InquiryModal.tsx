@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { X, CheckCircle, CalendarDays, MessageSquare, Loader2 } from 'lucide-react'
 import Turnstile from '@/components/auth/Turnstile'
 import { whatsappLink } from '@/lib/contact'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 import { VIEWING_MODES, VIEWING_TIMES, VIEWING_MAX_DAYS } from '@/lib/enquiry'
 
 interface InquiryModalProps {
@@ -28,6 +29,7 @@ export default function InquiryModal({ listingId, listingTitle }: InquiryModalPr
   const { data: session } = useSession()
   const user = session?.user
   const [mode, setMode] = useState<Mode | null>(null)
+  useScrollLock(mode !== null)
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState<Mode | null>(null)
   const [captcha, setCaptcha] = useState<string | null>(null)

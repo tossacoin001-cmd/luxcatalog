@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import BriefForm from '@/components/concierge/BriefForm'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 
 // A button that opens a short "tell us what you are looking for" form for a
 // given topic (a category, a service, a view). Replaces WhatsApp as the way
@@ -23,6 +24,7 @@ export default function RequestButton({
   children: React.ReactNode
 }) {
   const [open, setOpen] = useState(false)
+  useScrollLock(open)
   return (
     <>
       <button type="button" data-brief-trigger onClick={() => setOpen(true)} className={className} style={style}>

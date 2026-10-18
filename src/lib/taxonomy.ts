@@ -80,6 +80,10 @@ export const SUBCATEGORIES: Record<string, Subcategory[]> = {
   decor: [{ key: 'for_sale', label: 'For Sale', mode: 'sale' }],
 }
 
+// The services page already sits under "Private Services" in the menu, so
+// its own wording drops the word (Chef, Barber, Dining) to stay clean.
+export const plainService = (label: string) => label.replace(/\bPrivate\s+/gi, '').replace(/\s+/g, ' ').trim()
+
 export const SERVICE_KEYS: string[] = SUBCATEGORIES.private_services.map((s) => s.key)
 
 export function subcategoriesFor(category: string): Subcategory[] {

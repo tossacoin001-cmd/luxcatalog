@@ -9,6 +9,7 @@ import { EASE_OUT_EXPO } from '@/components/motion/Reveal'
 import BriefForm from '@/components/concierge/BriefForm'
 import { CONCIERGE_EVENT } from '@/components/concierge/OpenConcierge'
 import { BRIEF_TOPICS } from '@/lib/enquiry'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 
 // The Lux Catalog concierge: a floating button that opens a short panel on
 // the site. The visitor says what they need and the team replies; WhatsApp
@@ -21,6 +22,7 @@ export default function ConciergeButton() {
   const [visible, setVisible] = useState(false)
   const [open, setOpen] = useState(false)
   const [topic, setTopic] = useState<string>(BRIEF_TOPICS[0].key)
+  useScrollLock(open)
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.6)

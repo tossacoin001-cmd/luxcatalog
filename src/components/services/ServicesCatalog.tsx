@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { MessageCircle } from 'lucide-react'
 import AssetCard from '@/components/AssetCard'
 import RequestButton from '@/components/concierge/RequestButton'
-import { SERVICE_GROUPS, SUBCATEGORIES } from '@/lib/taxonomy'
+import { SERVICE_GROUPS, SUBCATEGORIES, plainService } from '@/lib/taxonomy'
 
 type Card = {
   id: string; title: string; slug: string; category: string; subcategory: string | null; location: string; country: string
@@ -27,7 +27,7 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
             className="inline-flex items-center min-h-11 px-4 text-[11px] tracking-[0.16em] uppercase transition-colors hover:bg-[rgba(201,168,76,0.08)]"
             style={{ border: '1px solid rgba(201,168,76,0.45)', ...gold }}
           >
-            {g.label}
+            {plainService(g.label)}
           </a>
         ))}
       </nav>
@@ -36,7 +36,7 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
         {SERVICE_GROUPS.map((g) => (
           <section key={g.key} id={g.key} style={{ scrollMarginTop: '6rem' }}>
             <p className="text-xs tracking-[0.3em] uppercase mb-2" style={gold}>
-              {g.label}
+              {plainService(g.label)}
             </p>
             <h2 className="text-2xl md:text-3xl mb-8" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
               {g.tagline}
@@ -51,7 +51,7 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
                       <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid #1e2e1f' }}>
                         <div>
                           <h3 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-                            {s.label}
+                            {plainService(s.label)}
                           </h3>
                           <p className="text-sm leading-relaxed max-w-2xl mt-1" style={text}>
                             {s.blurb}
@@ -71,11 +71,11 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
                           </p>
                           <RequestButton
                             topic={s.label}
-                            label={`Request ${s.label}`}
+                            label={`Request ${plainService(s.label)}`}
                             className="shrink-0 inline-flex items-center justify-center gap-2 min-h-11 px-5 text-[11px] tracking-[0.14em] uppercase"
                             style={{ border: '1px solid rgba(201,168,76,0.45)', ...gold }}
                           >
-                            <MessageCircle size={14} /> Request {s.label}
+                            <MessageCircle size={14} /> Request {plainService(s.label)}
                           </RequestButton>
                         </div>
                       )}

@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { categoryLabels } from '@/lib/utils'
+import { findSubcategory, plainService } from '@/lib/taxonomy'
 import PriceDisplay from '@/components/PriceDisplay'
 import { modeBadge, priceCaption } from '@/lib/listing-views'
 
@@ -63,6 +64,10 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
     }
   }
 
+  // Services read as the service itself (Chef, Barber), not "Private Services".
+  const categoryName = asset.category === 'private_services'
+    ? plainService(findSubcategory('private_services', asset.subcategory)?.label ?? 'Services')
+    : categoryLabels[asset.category] ?? asset.category
   const badge = modeBadge(asset.category, asset.subcategory ?? null, asset.mode ?? 'sale')
   const suffix = priceCaption(asset.category, asset.subcategory ?? null, asset.mode ?? 'sale').suffix
   const statusVariant =
@@ -93,7 +98,7 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
             style={{ background: '#0f1a10' }}
           >
             <span className="text-lux-text-subtle text-xs tracking-widest uppercase">
-              {categoryLabels[asset.category] ?? asset.category}
+              {categoryName}
             </span>
           </div>
         )}
@@ -145,7 +150,7 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
           className="text-[11px] tracking-[0.2em] uppercase mb-2"
           style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
         >
-          {categoryLabels[asset.category] ?? asset.category}
+          {categoryName}
           {badge ? ` · ${badge}` : ''}
         </p>
 

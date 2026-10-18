@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useCurrency } from '@/components/CurrencyProvider'
 import { useCart } from '@/components/CartProvider'
+import { useScrollLock } from '@/lib/use-scroll-lock'
 
 const navLinks = [
   { label: 'Discover', href: '/discover' },
@@ -95,6 +96,8 @@ export default function Navbar() {
   const open = openOn === pathname
   const setOpen = (next: boolean) => setOpenOn(next ? pathname : null)
   const [scrolled, setScrolled] = useState(false)
+  // The phone menu holds the page still while it is open.
+  useScrollLock(open, 767)
   const { data: session } = useSession()
 
   // Airy over the hero, a compact frosted bar once the page moves.
