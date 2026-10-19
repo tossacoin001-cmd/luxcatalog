@@ -4,6 +4,9 @@ import { categoryHrefs, getAppUrl } from '@/lib/utils'
 
 const APP_URL = getAppUrl()
 
+// New listings appear within five minutes (and straight away after an admin change).
+export const revalidate = 300
+
 const staticPages = ['/', '/about', '/catalog', '/discover', '/contact', '/privacy', '/terms']
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

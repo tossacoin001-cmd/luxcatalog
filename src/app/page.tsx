@@ -1,4 +1,7 @@
 import Link from 'next/link'
+import { homeTitle, homeDescription, organizationLd, websiteLd } from '@/lib/seo'
+import { pageMeta } from '@/lib/seo-metadata'
+import JsonLd from '@/components/JsonLd'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
@@ -8,13 +11,15 @@ import Pillars from '@/components/home/Pillars'
 import SeasonStrip from '@/components/home/SeasonStrip'
 import HowItWorks from '@/components/home/HowItWorks'
 import Reveal, { RevealGroup, RevealItem } from '@/components/motion/Reveal'
-import { categoryHrefs } from '@/lib/utils'
+import { categoryHrefs, getAppUrl } from '@/lib/utils'
 import { prisma } from '@/lib/prisma'
 
 // Cached at the edge and refreshed every 5 minutes, or immediately when an
 // admin or partner changes a listing (revalidateCatalog). Visitors get an
 // instant page and the database isn't woken for every view.
 export const revalidate = 300
+
+export const metadata = pageMeta({ title: homeTitle(), fullTitle: homeTitle(), description: homeDescription(), path: '/' })
 
 export default async function HomePage() {
   const [featured, trustedPartners] = await Promise.all([
@@ -36,6 +41,8 @@ export default async function HomePage() {
 
   return (
     <div style={{ background: '#080c08' }}>
+      <JsonLd data={organizationLd(getAppUrl(), { sameAs: (process.env.NEXT_PUBLIC_SOCIAL_PROFILES ?? '').split(',').map((x) => x.trim()).filter(Boolean), email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || undefined })} />
+      <JsonLd data={websiteLd(getAppUrl())} />
       <Navbar />
 
       <HeroCinematic />

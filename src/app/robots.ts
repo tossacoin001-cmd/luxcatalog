@@ -8,7 +8,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin', '/dashboard', '/saved', '/cart', '/checkout', '/api/'],
+      // Private, personal and sign-in pages never belong in search results.
+      disallow: ['/admin', '/dashboard', '/saved', '/cart', '/checkout', '/api/', '/account', '/bookings', '/sign-in', '/sign-up', '/forgot-password', '/reset-password', '/invite', '/two-factor'],
     },
     sitemap: `${APP_URL}/sitemap.xml`,
   }

@@ -1,11 +1,14 @@
 import { notFound } from 'next/navigation'
+import { categoryTitle, categoryDescription, breadcrumbLd } from '@/lib/seo'
+import { pageMeta } from '@/lib/seo-metadata'
+import JsonLd from '@/components/JsonLd'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import ServicesCatalog from '@/components/services/ServicesCatalog'
 import CategoryViewsFromAddress, { CategoryViews } from '@/components/CategoryViews'
 import { Suspense } from 'react'
 import Breadcrumbs from '@/components/Breadcrumbs'
-import { categoryLabels } from '@/lib/utils'
+import { categoryLabels, getAppUrl } from '@/lib/utils'
 import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 
@@ -36,7 +39,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const { category } = await params
   const key = categorySlugMap[category]
   if (!key) return { title: 'Not Found' }
-  return { title: categoryLabels[key], description: `Browse luxury ${categoryLabels[key]?.toLowerCase()} on Lux Catalog.` }
+  return pageMeta({ title: categoryTitle(key), description: categoryDescription(key), path: `/catalog/${category}` })
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
@@ -58,6 +61,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
+      <JsonLd data={breadcrumbLd(getAppUrl(), [{ name: 'Home', path: '/' }, { name: 'Catalog', path: '/catalog' }, { name: isServices ? 'Services' : categoryLabels[categoryKey], path: `/catalog/${categorySlug}` }])} />
       <Navbar />
 
       <div className="pt-28 md:pt-32 pb-12 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>

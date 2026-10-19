@@ -1,4 +1,7 @@
 import { notFound } from 'next/navigation'
+import { listingLd, listingTitle, trimDescription, breadcrumbLd } from '@/lib/seo'
+import { pageMeta } from '@/lib/seo-metadata'
+import JsonLd from '@/components/JsonLd'
 import ListingGallery from '@/components/ListingGallery'
 import ListingActionBar from '@/components/ListingActionBar'
 import Breadcrumbs from '@/components/Breadcrumbs'
@@ -13,7 +16,7 @@ import BookingPanel from '@/components/booking/BookingPanel'
 import SessionBookingPanel from '@/components/booking/SessionBookingPanel'
 import { Suspense } from 'react'
 import { naira } from '@/lib/booking'
-import { categoryLabels, specLabel, splitHighlights } from '@/lib/utils'
+import { categoryLabels, specLabel, splitHighlights, getAppUrl, categoryHrefs } from '@/lib/utils'
 import { findSubcategory } from '@/lib/taxonomy'
 import { priceCaption } from '@/lib/listing-views'
 import { prisma } from '@/lib/prisma'
@@ -47,10 +50,12 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const { slug } = await params
   const listing = await prisma.listing.findFirst({ where: { slug, published: true } })
   if (!listing) return { title: 'Not Found' }
-  return {
-    title: listing.title,
-    description: listing.description.slice(0, 160),
-  }
+  const place = listing.location.split(',').map((x) => x.trim()).filter(Boolean).slice(0, 2).join(', ')
+  return pageMeta({
+    title: listingTitle(listing),
+    description: trimDescription(`${listing.description} Available through Lux Catalog${place ? ` in ${place}` : ''}.`, 155),
+    path: `${categoryHrefs[listing.category] ?? '/catalog'}/${listing.slug}`,
+  })
 }
 
 export default async function AssetDetailPage({ params }: { params: Promise<{ category: string; slug: string }> }) {
@@ -83,6 +88,12 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
   return (
     <div style={{ background: '#080c08', minHeight: '100vh' }}>
+      <JsonLd
+        data={[
+          listingLd(getAppUrl(), { title: listing.title, description: listing.description, slug: listing.slug, category: listing.category, subcategory: listing.subcategory, price: listing.price ? Number(listing.price) : null, images: listing.images, location: listing.location, country: listing.country, status: listing.status, brand: partner?.brandName ?? null }, `${categoryHrefs[listing.category] ?? '/catalog'}/${listing.slug}`),
+          breadcrumbLd(getAppUrl(), [{ name: 'Home', path: '/' }, { name: 'Catalog', path: '/catalog' }, { name: categoryLabels[categoryKey], path: `/catalog/${categorySlug}` }, { name: listing.title }]),
+        ]}
+      />
       <Navbar />
       <ViewTracker listingId={listing.id} />
 

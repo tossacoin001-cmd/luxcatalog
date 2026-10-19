@@ -11,6 +11,11 @@ const securityHeaders = [
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()' },
 ]
 
+// Pages and responses that must never appear in search results: accounts,
+// carts, sign-in, admin and every API response. (robots.txt asks politely;
+// this header tells search engines even when they arrive by a link.)
+const PRIVATE = '/(admin|dashboard|account|saved|cart|checkout|bookings|sign-in|sign-up|forgot-password|reset-password|invite|two-factor)(.*)'
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
@@ -27,6 +32,8 @@ const nextConfig: NextConfig = {
       // and documents are served with a strict sandbox that must not be
       // replaced).
       { source: '/((?!api/).*)', headers: [{ key: 'Content-Security-Policy', value: "frame-ancestors 'none'" }] },
+      { source: PRIVATE, headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
+      { source: '/api/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
     ]
   },
 }

@@ -1,12 +1,14 @@
 import type { Metadata } from 'next'
+import { pageMeta } from '@/lib/seo-metadata'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import AIDiscoverClient from './AIDiscoverClient'
 
-export const metadata: Metadata = {
-  title: 'Discover',
+export const metadata: Metadata = pageMeta({
+  title: 'Find Luxury Homes, Stays, Cars and Services in Lagos',
   description: 'Tell us what you are looking for. We ask only what matters, then show what is available for your dates, with a way straight into booking.',
-}
+  path: '/discover',
+})
 
 export default function DiscoverPage() {
   return (

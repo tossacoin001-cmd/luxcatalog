@@ -1,12 +1,14 @@
 import Navbar from '@/components/Navbar'
+import { pageMeta } from '@/lib/seo-metadata'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: 'About',
-  description: 'Lux Catalog is Nigeria\'s destination for luxury real estate, shortlets, supercars, yachts, executive transport and security, and bespoke interior decor.',
-}
+export const metadata: Metadata = pageMeta({
+  title: 'About Our Luxury Marketplace in Lagos',
+  description: "Lux Catalog is Nigeria's destination for luxury real estate, shortlets, supercars, yachts, executive transport and security, and bespoke interior decor.",
+  path: '/about',
+})
 
 export default function AboutPage() {
   return (

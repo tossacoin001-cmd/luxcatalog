@@ -40,6 +40,11 @@ Output for each suite is in `qa/out/<suite>.txt`.
 | booking | `booking-e2e`, `booking-ui`, `pay-e2e`, `services-booking-e2e` |
 | enquiries and requests | `phase-b-e2e`, `phase-b-ui`, `request-e2e`, `phase-a-e2e` |
 
+## Settings the payment suites need (local, never committed)
+
+- `.env.paystack.local` holds Paystack **test** keys (`PAYSTACK_SECRET_KEY=sk_test_...`).
+- `payout-e2e` also needs `TEST_RECIPIENT`, a test-mode Paystack transfer recipient code, because Paystack test mode cannot resolve real bank accounts. Without it the bank-account checks fail with "account number doesn't match the bank".
+
 ## Known quirks (not code faults)
 
 - The local database can degrade after heavy runs ("bind message supplies N

@@ -1,14 +1,16 @@
 import Navbar from '@/components/Navbar'
+import { pageMeta } from '@/lib/seo-metadata'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import Footer from '@/components/Footer'
 import CatalogClient from './CatalogClient'
 import { prisma } from '@/lib/prisma'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: 'Catalog',
+export const metadata: Metadata = pageMeta({
+  title: 'The Full Catalog: Luxury Homes, Cars, Yachts and More',
   description: 'Browse the full Lux Catalog: prime real estate, supercars, yachts, decor, commercial properties and lifestyle assets.',
-}
+  path: '/catalog',
+})
 
 // Cached at the edge and refreshed every 5 minutes, or immediately when an
 // admin or partner changes a listing (revalidateCatalog). Visitors get an

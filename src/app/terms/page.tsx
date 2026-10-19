@@ -1,9 +1,10 @@
 import Navbar from '@/components/Navbar'
+import { pageMeta } from '@/lib/seo-metadata'
 import Footer from '@/components/Footer'
 import { PHONE_DISPLAY } from '@/lib/contact'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Terms of Service' }
+export const metadata: Metadata = pageMeta({ title: "Terms of Service", description: "The terms for browsing, enquiring, booking and listing on Lux Catalog, including payments, cancellations and partner conduct.", path: '/terms' })
 
 const sections = [
   {

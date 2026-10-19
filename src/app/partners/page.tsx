@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { pageMeta } from '@/lib/seo-metadata'
 import type { Metadata } from 'next'
 import { ArrowRight, BadgeCheck, FileCheck2, PenLine, ShieldCheck, Sparkles, Wallet } from 'lucide-react'
 import Navbar from '@/components/Navbar'
@@ -8,10 +9,11 @@ import Reveal, { RevealGroup, RevealItem } from '@/components/motion/Reveal'
 import { PARTNER_TYPES } from '@/lib/partner-requirements'
 import RequestButton from '@/components/concierge/RequestButton'
 
-export const metadata: Metadata = {
-  title: 'Become a Partner',
+export const metadata: Metadata = pageMeta({
+  title: 'List Your Luxury Property, Cars or Services',
   description: 'List your luxury property, cars, yachts, services or products on Lux Catalog. Verified partners, discerning clients, Lagos to the world.',
-}
+  path: '/partners',
+})
 
 const steps = [
   { icon: PenLine, title: 'Apply', body: 'Tell us about your business and upload your documents. It takes about 10 minutes and saves as you go.' },

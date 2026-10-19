@@ -1,9 +1,10 @@
 import Navbar from '@/components/Navbar'
+import { pageMeta } from '@/lib/seo-metadata'
 import Footer from '@/components/Footer'
 import { PHONE_DISPLAY } from '@/lib/contact'
 import type { Metadata } from 'next'
 
-export const metadata: Metadata = { title: 'Privacy Policy' }
+export const metadata: Metadata = pageMeta({ title: "Privacy Policy", description: "How Lux Catalog collects, uses and protects your personal information, and the choices you have.", path: '/privacy' })
 
 const sections = [
   {

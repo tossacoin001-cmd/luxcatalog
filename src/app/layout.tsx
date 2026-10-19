@@ -4,6 +4,8 @@ import { Toaster } from 'sonner'
 import CurrencyProvider from '@/components/CurrencyProvider'
 import CartProvider from '@/components/CartProvider'
 import { MotionProvider } from '@/components/motion/Reveal'
+import { getAppUrl } from '@/lib/utils'
+import { SITE, homeTitle, homeDescription } from '@/lib/seo'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -18,18 +20,19 @@ const inter = Inter({
   display: 'swap',
 })
 
+// Search engines and link previews read these. Every address is built from
+// NEXT_PUBLIC_APP_URL, so a new domain is one environment change. Each page
+// adds its own canonical address and preview text with pageMeta().
 export const metadata: Metadata = {
-  title: {
-    default: 'Lux Catalog | The Definitive Luxury Asset Discovery Platform',
-    template: '%s | Lux Catalog',
-  },
-  description: "Discover and acquire the world's finest assets: prime real estate, supercars, superyachts, bespoke interior decor, and more.",
-  keywords: ['luxury real estate', 'supercars', 'superyachts', 'luxury assets', 'premium properties'],
-  openGraph: {
-    type: 'website',
-    siteName: 'Lux Catalog',
-    title: 'Lux Catalog | The Definitive Luxury Asset Discovery Platform',
-    description: 'Every luxury asset. One destination.',
+  metadataBase: new URL(getAppUrl()),
+  title: { default: homeTitle(), template: `%s | ${SITE.name}` },
+  description: homeDescription(),
+  applicationName: SITE.name,
+  keywords: ['luxury homes Lagos', 'luxury shortlets Lagos', 'supercar hire Lagos', 'yacht charter Lagos', 'luxury real estate Nigeria', 'Lux Catalog'],
+  // Set these two in the environment once Search Console and Bing give the codes.
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+    ...(process.env.BING_SITE_VERIFICATION ? { other: { 'msvalidate.01': process.env.BING_SITE_VERIFICATION } } : {}),
   },
 }
 
