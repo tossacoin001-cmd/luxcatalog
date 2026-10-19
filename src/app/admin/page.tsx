@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { requireStaff, currentStaff } from '@/lib/admin-auth'
 import type { Area } from '@/lib/access'
 import { partnerMustSign } from '@/lib/agreements-server'
+import { ownerEmailFromEnv } from '@/lib/owner'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
@@ -143,6 +144,11 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 space-y-10">
+        {role === 'admin' && !ownerEmailFromEnv(process.env.OWNER_EMAIL) && (
+          <p className="p-4 text-sm" style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.3)', color: '#e8d9a8', fontFamily: 'var(--font-inter)' }}>
+            Security: the OWNER_EMAIL setting is not set, so any account with the admin role is trusted. Set OWNER_EMAIL to your own address in the hosting settings so that you are the only administrator.
+          </p>
+        )}
         {denied && (
           <p className="p-4 text-sm" style={{ background: 'rgba(232,92,76,0.08)', border: '1px solid rgba(232,92,76,0.3)', color: '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
             You don&apos;t have access to that page. Ask an admin if you need it.

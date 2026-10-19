@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { AREA_KEYS, cleanAreas, type Area } from '@/lib/access'
+import { isTrustedAdmin, ownerEmailFromEnv } from '@/lib/owner'
 
 // Roles live on our own User row:
 // - 'partner': an outside brand or owner; manages only their own listings.
@@ -25,19 +26,36 @@ export async function getUserId(): Promise<string | null> {
 
 // Role and permissions are read from the database on every check rather
 // than trusted from the session payload, so changes take effect at once.
+// Only the owner (OWNER_EMAIL) is trusted as an admin; any other account that
+// holds the admin role is treated as having no access at all, and the attempt
+// is recorded once per server start.
+const reportedExtraAdmins = new Set<string>()
+async function refuseExtraAdmin(userId: string) {
+  if (reportedExtraAdmins.has(userId)) return
+  reportedExtraAdmins.add(userId)
+  try {
+    await audit(null, 'security.extra_admin_blocked', userId)
+  } catch {}
+}
+
 async function loadStaff(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { role: true, twoFactorEnabled: true, permissions: true },
+    select: { role: true, email: true, twoFactorEnabled: true, permissions: true },
   })
   if (!user || user.role === 'customer') return null
+  if (user.role === 'admin' && !isTrustedAdmin(user, ownerEmailFromEnv(process.env.OWNER_EMAIL))) {
+    await refuseExtraAdmin(userId)
+    return null
+  }
   const role = user.role as StaffRole
   const areas: Area[] = role === 'admin' ? AREA_KEYS : role === 'team' ? cleanAreas(user.permissions) : []
   return { role, areas, twoFactorEnabled: !!user.twoFactorEnabled }
 }
 
 export async function getRole(userId: string): Promise<Role> {
-  const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } })
+  const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true, email: true } })
+  if (user?.role === 'admin' && !isTrustedAdmin(user, ownerEmailFromEnv(process.env.OWNER_EMAIL))) return 'customer'
   return (user?.role as Role) ?? 'customer'
 }
 

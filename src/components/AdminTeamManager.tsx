@@ -90,7 +90,7 @@ function RoleSelect({ value, onChange }: { value: 'admin' | 'team'; onChange: (v
   return (
     <select value={value} onChange={(e) => onChange(e.target.value as 'admin' | 'team')} className="h-11 px-4 text-sm focus:outline-none" style={{ ...inputStyle, appearance: 'none' as const }}>
       <option value="team">Team member (only the areas you choose)</option>
-      <option value="admin">Admin (full access, manages the team)</option>
+      {value === 'admin' && <option value="admin">Administrator (the owner)</option>}
     </select>
   )
 }

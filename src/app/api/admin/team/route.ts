@@ -3,12 +3,14 @@ import { audit, requireAdminApi } from '@/lib/admin-auth'
 import { cleanAreas } from '@/lib/access'
 import { createStaffInvitation } from '@/lib/invitations'
 import { prisma } from '@/lib/prisma'
+import { ONLY_ONE_ADMIN } from '@/lib/owner'
 
 // Team management is admin-only. Team members get only the areas chosen
 // here (lib/access); brand partners join through the partner application,
 // not through this page.
 
-const TEAM_ROLES = ['admin', 'team'] as const
+// 'admin' is deliberately not grantable here: there is one administrator, the owner.
+const TEAM_ROLES = ['team'] as const
 type TeamRole = (typeof TEAM_ROLES)[number]
 const isTeamRole = (r: unknown): r is TeamRole => TEAM_ROLES.includes(r as TeamRole)
 
@@ -49,13 +51,15 @@ export async function POST(req: Request) {
     if (typeof resendId === 'string') {
       const old = await prisma.staffInvitation.findUnique({ where: { id: resendId } })
       if (!old || old.acceptedAt) return NextResponse.json({ error: 'Invitation not found' }, { status: 404 })
-      const newRole: TeamRole = isTeamRole(role) ? role : old.role === 'admin' ? 'admin' : 'team'
+      if (role === 'admin' || old.role === 'admin') return NextResponse.json({ error: ONLY_ONE_ADMIN }, { status: 400 })
+      const newRole: TeamRole = 'team'
       const permissions = body.permissions !== undefined ? cleanAreas(body.permissions) : old.permissions
       const { invitation, link, emailed } = await createStaffInvitation({ email: old.email, role: newRole, permissions, invitedById: admin.userId })
       await audit(admin.userId, 'team.invite.resend', invitation.email, { role: newRole, permissions, emailed })
       return NextResponse.json({ success: true, invitation: { id: invitation.id, email: invitation.email }, link, emailed })
     }
 
+    if (role === 'admin') return NextResponse.json({ error: ONLY_ONE_ADMIN }, { status: 400 })
     if (typeof email !== 'string' || !email.includes('@') || !isTeamRole(role)) {
       return NextResponse.json({ error: 'Missing email or invalid role' }, { status: 400 })
     }
@@ -80,6 +84,7 @@ export async function PATCH(req: Request) {
 
   const body = await req.json().catch(() => ({}))
   const { userId, role } = body
+  if (role === 'admin') return NextResponse.json({ error: ONLY_ONE_ADMIN }, { status: 400 })
   if (typeof userId !== 'string' || !isTeamRole(role)) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   if (userId === admin.userId) return NextResponse.json({ error: 'You cannot change your own access' }, { status: 400 })
 

@@ -13,6 +13,12 @@ export async function POST(req: Request) {
   const invitation = await findUsableInvitation(token)
   if (!invitation) return NextResponse.json({ error: 'This invitation is invalid, expired or already used' }, { status: 404 })
 
+  // Admin access is never granted by invitation (there is one administrator).
+  if (invitation.role === 'admin') {
+    await prisma.staffInvitation.update({ where: { id: invitation.id }, data: { revokedAt: new Date() } })
+    return NextResponse.json({ error: 'This invitation can no longer be used' }, { status: 403 })
+  }
+
   // The invite is bound to the address it was sent to: a forwarded or leaked
   // link can't be redeemed by a different account.
   if (invitation.email !== session.user.email.toLowerCase()) {

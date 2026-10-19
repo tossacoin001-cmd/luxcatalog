@@ -7,7 +7,8 @@
     "phase-b-unit",
     "discover-unit",
     "listing-policy-unit",
-    "seo-unit"
+    "seo-unit",
+    "owner-unit"
   ],
   "e2e": [
     "phase-a-e2e",
@@ -25,7 +26,8 @@
     "payout-e2e",
     "discover-e2e",
     "listing-approval-e2e",
-    "seo-e2e"
+    "seo-e2e",
+    "owner-e2e"
   ],
   "ui": [
     "phase-a-ui",

@@ -133,8 +133,8 @@ check('old partner link retired, new team invite live', rows.length === 2 && row
 
 console.log('7. Promote and remove')
 r = await A.req('/api/admin/team', { method: 'PATCH', body: { userId: tId, role: 'admin' } })
-check('team member promoted to admin', r.status === 200)
-check('as admin they reach the team page', (await T.req('/admin/team')).status === 200)
+check('promoting a team member to admin is refused (there is one administrator)', r.status === 400 && /one administrator/i.test(r.json?.error ?? ''), `${r.status}`)
+check('so they still cannot reach the team page', denied(await T.req('/admin/team')))
 await A.req('/api/admin/team', { method: 'PATCH', body: { userId: tId, role: 'team', permissions: ['orders'] } })
 check('demoted again: team page blocked', denied(await T.req('/admin/team')))
 r = await A.req('/api/admin/team', { method: 'DELETE', body: { type: 'member', id: tId } })
