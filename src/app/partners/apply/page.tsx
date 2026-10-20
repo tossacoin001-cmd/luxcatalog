@@ -6,14 +6,18 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 import ApplyClient from './ApplyClient'
 import { getSession } from '@/lib/admin-auth'
 import { prisma } from '@/lib/prisma'
-import { APPLICANT_APPLICATION_SELECT } from '@/lib/partner-requirements'
+import { APPLICANT_APPLICATION_SELECT, PARTNER_TYPES, type PartnerTypeKey } from '@/lib/partner-requirements'
 
 export const metadata: Metadata = { title: 'Partner Application', robots: { index: false } }
 export const dynamic = 'force-dynamic'
 
-export default async function ApplyPage() {
+// Only a real kind of partner is honoured; anything else is ignored.
+const asType = (v: unknown): PartnerTypeKey | undefined => (typeof v === 'string' ? PARTNER_TYPES.find((t) => t.key === v)?.key : undefined)
+
+export default async function ApplyPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
+  const preselect = asType((await searchParams).type)
   const session = await getSession()
-  if (!session) redirect('/sign-up?redirect_url=/partners/apply')
+  if (!session) redirect(`/sign-up?redirect_url=${encodeURIComponent(preselect ? `/partners/apply?type=${preselect}` : '/partners/apply')}`)
 
   const [user, application] = await Promise.all([
     prisma.user.findUnique({ where: { id: session.user.id }, select: { name: true, email: true, phone: true, role: true } }),
@@ -42,6 +46,7 @@ export default async function ApplyPage() {
           userRole={user.role}
           defaults={{ contactName: user.name, phone: user.phone ?? '' }}
           initial={application ? JSON.parse(JSON.stringify(application)) : null}
+          preselect={preselect}
         />
       </div>
       <Footer />

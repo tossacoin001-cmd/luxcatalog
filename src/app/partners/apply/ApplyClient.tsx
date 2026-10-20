@@ -70,11 +70,11 @@ function Field({ label, children, hint }: { label: string; children: React.React
 export default function ApplyClient({
   userRole,
   defaults,
-  initial,
-}: {
+  initial, preselect }: {
   userRole: string
   defaults: { contactName: string; phone: string }
   initial: App | null
+  preselect?: PartnerTypeKey
 }) {
   const [app, setApp] = useState<App | null>(initial)
   const [step, setStep] = useState(initial ? 1 : 0)
@@ -123,6 +123,15 @@ export default function ApplyClient({
   useEffect(() => {
     stepStrip.current?.querySelector('[aria-current="step"]')?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' })
   }, [step])
+
+  // A kind chosen on the public page opens its own requirements at once, once.
+  const preselected = useRef(false)
+  useEffect(() => {
+    if (preselected.current || !preselect || initial) return
+    preselected.current = true
+    void chooseType(preselect)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function chooseType(key: PartnerTypeKey) {
     const fresh: App = app

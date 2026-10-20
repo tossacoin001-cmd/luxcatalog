@@ -96,20 +96,9 @@ export default function PartnersPage() {
                 <p className="text-sm mb-4" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
                   {t.tagline}
                 </p>
-                <p className="text-[11px] tracking-[0.16em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-                  You&apos;ll need
-                </p>
-                <ul className="space-y-1.5">
-                  {t.docs
-                    .filter((d) => d.required)
-                    .map((d) => (
-                      <li key={d.kind} className="flex items-start gap-2 text-sm" style={{ color: '#c9bfae', fontFamily: 'var(--font-inter)' }}>
-                        <span className="mt-2 w-1 h-1 shrink-0 rotate-45" style={{ background: '#C9A84C' }} />
-                        {d.label}
-                        {d.required === 'company' ? ' (companies)' : ''}
-                      </li>
-                    ))}
-                </ul>
+                <Link href={`/partners/apply?type=${t.key}`} className="inline-flex items-center gap-2 min-h-11 text-xs tracking-[0.16em] uppercase" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                  Apply as {t.label.toLowerCase()} <ArrowRight size={13} />
+                </Link>
               </div>
             </RevealItem>
           ))}
@@ -169,7 +158,7 @@ export default function PartnersPage() {
             Ready when you are
           </h2>
           <p className="text-sm mb-8" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-            Have your ID and the documents above to hand. You can save and finish later.
+            Choose your kind of business and we will show you exactly what is needed. Requirements are shown to applicants only, and you can save and finish later.
           </p>
           <Link
             href="/partners/apply"

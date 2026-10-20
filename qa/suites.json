@@ -27,7 +27,8 @@
     "discover-e2e",
     "listing-approval-e2e",
     "seo-e2e",
-    "owner-e2e"
+    "owner-e2e",
+    "partner-privacy-e2e"
   ],
   "ui": [
     "phase-a-ui",
@@ -43,6 +44,8 @@
     "booking-ui",
     "password-ui",
     "discover-ui",
-    "polish-ui"
+    "polish-ui",
+    "site-audit-ui",
+    "design-ui"
   ]
 }
