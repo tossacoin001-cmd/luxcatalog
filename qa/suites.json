@@ -28,7 +28,8 @@
     "listing-approval-e2e",
     "seo-e2e",
     "owner-e2e",
-    "partner-privacy-e2e"
+    "partner-privacy-e2e",
+    "turnstile-e2e"
   ],
   "ui": [
     "phase-a-ui",
