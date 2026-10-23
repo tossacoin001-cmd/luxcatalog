@@ -12,7 +12,7 @@ type Prefs = {
   marketingConsent: boolean
 }
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 
 async function save(patch: Partial<Prefs>) {
   const res = await fetch('/api/account/notifications', {
@@ -25,9 +25,9 @@ async function save(patch: Partial<Prefs>) {
 
 function Row({ title, body, children }: { title: string; body: string; children: React.ReactNode }) {
   return (
-    <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+    <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
       <div className="max-w-md">
-        <p className="text-lg mb-1" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+        <p className="text-lg mb-1" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
           {title}
         </p>
         <p className="text-sm leading-relaxed" style={text}>
@@ -49,10 +49,10 @@ function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) =
       onClick={() => onChange(!on)}
       className="relative inline-flex items-center w-14 h-11"
     >
-      <span className="absolute inset-x-0 h-7 rounded-full transition-colors duration-300" style={{ background: on ? '#C9A84C' : '#1e2e1f' }} />
+      <span className="absolute inset-x-0 h-7 rounded-full transition-colors duration-300" style={{ background: on ? '#14130f' : '#ece6d9' }} />
       <span
         className="relative w-5 h-5 rounded-full transition-transform duration-300"
-        style={{ background: on ? '#080c08' : '#908673', transform: `translateX(${on ? 30 : 6}px)` }}
+        style={{ background: on ? '#f4f0e8' : '#908673', transform: `translateX(${on ? 30 : 6}px)` }}
       />
     </button>
   )
@@ -82,7 +82,7 @@ export default function NotificationsClient({ role, initial }: { role: string; i
         title="The Lux Edit"
         body="Hand-picked new listings in the collections you browse, price drops on what you've saved, and seasonal offers. Only sent when there's something new for you."
       >
-        <div className="flex" role="radiogroup" aria-label="Lux Edit frequency" style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
+        <div className="flex" role="radiogroup" aria-label="Lux Edit frequency" style={{ border: '1px solid rgba(20,19,15,0.15)' }}>
           {(['daily', 'weekly', 'off'] as const).map((f) => (
             <button
               key={f}
@@ -97,8 +97,8 @@ export default function NotificationsClient({ role, initial }: { role: string; i
               }
               className="min-h-11 px-4 text-xs tracking-[0.14em] uppercase transition-colors"
               style={{
-                background: editValue === f ? '#C9A84C' : 'transparent',
-                color: editValue === f ? '#080c08' : '#9a8f7a',
+                background: editValue === f ? '#14130f' : 'transparent',
+                color: editValue === f ? '#f4f0e8' : '#5e584c',
                 fontFamily: 'var(--font-inter)',
               }}
             >

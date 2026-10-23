@@ -17,9 +17,9 @@ interface InquiryModalProps {
 
 type Mode = 'enquiry' | 'viewing'
 
-const field = { background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
+const field = { background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }
 const label = 'block text-[11px] tracking-[0.15em] uppercase mb-1.5'
-const muted = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const muted = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 const lagosDay = (offset: number) => new Date(Date.now() + 3_600_000 + offset * 86_400_000).toISOString().slice(0, 10)
 
 // Enquire about a listing or ask to view it. Open to everyone: guests pass a
@@ -79,7 +79,7 @@ export default function InquiryModal({ listingId, listingTitle }: InquiryModalPr
         type="button"
         onClick={() => open('enquiry')}
         className="w-full min-h-12 py-4 text-xs tracking-[0.2em] uppercase transition-all duration-300 hover:opacity-90 flex items-center justify-center gap-2"
-        style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+        style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
       >
         <MessageSquare size={14} /> Enquire About This Asset
       </button>
@@ -87,39 +87,39 @@ export default function InquiryModal({ listingId, listingTitle }: InquiryModalPr
         type="button"
         onClick={() => open('viewing')}
         className="w-full min-h-12 py-4 text-xs tracking-[0.2em] uppercase flex items-center justify-center gap-2"
-        style={{ border: '1px solid rgba(201,168,76,0.45)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+        style={{ border: '1px solid rgba(20,19,15,0.23)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
       >
         <CalendarDays size={14} /> Schedule a Viewing
       </button>
 
       {mode && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4" style={{ background: 'rgba(8,12,8,0.9)', backdropFilter: 'blur(8px)' }} onClick={() => setMode(null)}>
-          <div data-enquiry-form className="w-full sm:max-w-lg max-h-[92vh] overflow-y-auto" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={mode === 'viewing' ? 'Schedule a viewing' : 'Enquire'}>
-            <div className="flex items-start justify-between gap-3 px-6 py-5" style={{ borderBottom: '1px solid #1e2e1f' }}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4" style={{ background: 'rgba(20,19,15,0.5)' }} onClick={() => setMode(null)}>
+          <div data-enquiry-form className="w-full sm:max-w-lg max-h-[92vh] overflow-y-auto" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={mode === 'viewing' ? 'Schedule a viewing' : 'Enquire'}>
+            <div className="flex items-start justify-between gap-3 px-6 py-5" style={{ borderBottom: '1px solid #d6cfbf' }}>
               <div>
-                <p className="text-[11px] tracking-[0.2em] uppercase mb-1" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] tracking-[0.2em] uppercase mb-1" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                   {mode === 'viewing' ? 'Schedule a viewing' : 'Private enquiry'}
                 </p>
-                <h3 className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                <h3 className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                   {listingTitle}
                 </h3>
               </div>
-              <button type="button" onClick={() => setMode(null)} className="w-11 h-11 inline-flex items-center justify-center shrink-0" style={{ color: '#908673' }} aria-label="Close">
+              <button type="button" onClick={() => setMode(null)} className="w-11 h-11 inline-flex items-center justify-center shrink-0" style={{ color: '#5e584c' }} aria-label="Close">
                 <X size={18} />
               </button>
             </div>
 
             {sent ? (
               <div className="px-6 py-8 space-y-5 text-center">
-                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full" style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}>
-                  <CheckCircle size={20} style={{ color: '#C9A84C' }} />
+                <span className="inline-flex items-center justify-center w-12 h-12 rounded-full" style={{ background: 'rgba(122,92,36,0.06)', border: '1px solid rgba(20,19,15,0.14)' }}>
+                  <CheckCircle size={20} style={{ color: '#7a5c24' }} />
                 </span>
-                <p className="text-base" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-base" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                   Thank you. {sent === 'viewing' ? 'Your viewing request has been received; a specialist will confirm the time with you shortly.' : 'Your enquiry has been received; a specialist will reply personally, usually within a few hours.'}
                 </p>
                 <p className="text-xs" style={muted}>
                   A copy is on its way to your email. Prefer to talk now?{' '}
-                  <a data-wa-fallback href={whatsappLink(`Hello, I just sent ${sent === 'viewing' ? 'a viewing request' : 'an enquiry'} about "${listingTitle}" on Lux Catalog.`)} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: '#C9A84C' }}>
+                  <a data-wa-fallback href={whatsappLink(`Hello, I just sent ${sent === 'viewing' ? 'a viewing request' : 'an enquiry'} about "${listingTitle}" on Lux Catalog.`)} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: '#7a5c24' }}>
                     Message us on WhatsApp
                   </a>
                   .
@@ -179,7 +179,7 @@ export default function InquiryModal({ listingId, listingTitle }: InquiryModalPr
                   type="submit"
                   disabled={loading}
                   className="w-full min-h-12 text-xs tracking-[0.2em] uppercase inline-flex items-center justify-center gap-2 disabled:opacity-60"
-                  style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+                  style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
                 >
                   {loading && <Loader2 size={14} className="animate-spin" />}
                   {mode === 'viewing' ? 'Request viewing' : 'Send enquiry'}

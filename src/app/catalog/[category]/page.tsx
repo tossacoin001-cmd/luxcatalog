@@ -60,22 +60,22 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   const viewProps = { category: categoryKey, categorySlug, categoryLabel: categoryLabels[categoryKey], listings: plainListings.map((l) => ({ ...l, mode: String(l.mode) })) }
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <JsonLd data={breadcrumbLd(getAppUrl(), [{ name: 'Home', path: '/' }, { name: 'Catalog', path: '/catalog' }, { name: isServices ? 'Services' : categoryLabels[categoryKey], path: `/catalog/${categorySlug}` }])} />
       <Navbar />
 
-      <div className="pt-28 md:pt-32 pb-12 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-28 md:pt-32 pb-12 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-7xl mx-auto">
           <div className="mb-6">
             <Breadcrumbs trail={[{ label: 'Home', href: '/' }, { label: 'Catalog', href: '/catalog' }, { label: isServices ? 'Services' : categoryLabels[categoryKey] }]} />
           </div>
-          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             {isServices ? 'Brought to you' : 'Asset Category'}
           </p>
-          <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             {isServices ? 'Services' : categoryLabels[categoryKey]}
           </h1>
-          <p className="mt-2 text-sm max-w-2xl" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <p className="mt-2 text-sm max-w-2xl" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             {isServices
               ? 'Vetted chefs, therapists, stylists and more, who come to your home or your stay. Every professional is identity- and police-checked.'
               : `${plainListings.length} asset${plainListings.length !== 1 ? 's' : ''} available`}

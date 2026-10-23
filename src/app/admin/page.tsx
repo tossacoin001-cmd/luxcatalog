@@ -41,23 +41,23 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     ]
 
     return (
-      <div style={{ background: '#080c08', minHeight: '100vh' }}>
+      <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
         <AdminNavbar role={role} />
 
-        <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+        <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
           <div className="max-w-7xl mx-auto flex items-end justify-between">
             <div>
-              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                 Partner Dashboard
               </p>
-              <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+              <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                 Welcome Back
               </h1>
             </div>
             <Link
               href="/admin/listings/new"
               className="hidden md:inline-flex items-center px-7 py-3 text-xs tracking-[0.18em] uppercase"
-              style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+              style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
             >
               + Add Listing
             </Link>
@@ -68,17 +68,17 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
             {statCards.map((s) => (
               <Link key={s.label} href={s.href} className="p-6 lux-card block group">
-                <p className="text-3xl mb-1 group-hover:text-lux-gold transition-colors" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C' }}>
+                <p className="text-3xl mb-1 group-hover:text-lux-gold transition-colors" style={{ fontFamily: 'var(--font-playfair)', color: '#7a5c24' }}>
                   {s.value}
                 </p>
-                <p className="text-[11px] tracking-[0.15em] uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] tracking-[0.15em] uppercase" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   {s.label}
                 </p>
               </Link>
             ))}
           </div>
 
-          <p className="text-sm leading-relaxed max-w-2xl" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-sm leading-relaxed max-w-2xl" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             Submit a listing in your own words, our team reviews and polishes it before it goes live on the public store.
             Items sold and enquiries received are counted against your listings, if something&rsquo;s no longer available,
             edit it and update the status yourself.
@@ -120,23 +120,23 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   if (role === 'admin') quickActions.push({ label: 'Manage Team', href: '/admin/team', primary: false, area: 'listings' })
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <AdminNavbar role={role} />
 
-      <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-7xl mx-auto flex items-end justify-between">
           <div>
-            <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
               {role === 'team' ? 'Lux Catalog team' : 'Administration'}
             </p>
-            <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               {role === 'team' ? 'Team Dashboard' : 'Admin Dashboard'}
             </h1>
           </div>
           {has('listings') && <Link
             href="/admin/listings/new"
             className="hidden md:inline-flex items-center px-7 py-3 text-xs tracking-[0.18em] uppercase"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             + Add Listing
           </Link>}
@@ -145,17 +145,17 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 space-y-10">
         {role === 'admin' && !ownerEmailFromEnv(process.env.OWNER_EMAIL) && (
-          <p className="p-4 text-sm" style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.3)', color: '#e8d9a8', fontFamily: 'var(--font-inter)' }}>
+          <p className="p-4 text-sm" style={{ background: 'rgba(122,92,36,0.05)', border: '1px solid rgba(20,19,15,0.15)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Security: the OWNER_EMAIL setting is not set, so any account with the admin role is trusted. Set OWNER_EMAIL to your own address in the hosting settings so that you are the only administrator.
           </p>
         )}
         {denied && (
-          <p className="p-4 text-sm" style={{ background: 'rgba(232,92,76,0.08)', border: '1px solid rgba(232,92,76,0.3)', color: '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
+          <p className="p-4 text-sm" style={{ background: 'rgba(138,59,46,0.08)', border: '1px solid rgba(138,59,46,0.3)', color: '#8a3b2e', fontFamily: 'var(--font-inter)' }}>
             You don&apos;t have access to that page. Ask an admin if you need it.
           </p>
         )}
         {role === 'team' && areas.length === 0 && (
-          <p className="p-4 text-sm" style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <p className="p-4 text-sm" style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             Your account is set up. An admin will give you access to the areas you work on.
           </p>
         )}
@@ -167,10 +167,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
               href={s.href}
               className="p-6 lux-card block group"
             >
-              <p className="text-3xl mb-1 group-hover:text-lux-gold transition-colors" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C' }}>
+              <p className="text-3xl mb-1 group-hover:text-lux-gold transition-colors" style={{ fontFamily: 'var(--font-playfair)', color: '#7a5c24' }}>
                 {s.value}
               </p>
-              <p className="text-[11px] tracking-[0.15em] uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.15em] uppercase" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 {s.label}
               </p>
             </Link>
@@ -179,7 +179,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
 
         {/* Quick actions */}
         <div>
-          <p className="text-[11px] tracking-[0.2em] uppercase mb-5" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-5" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Quick Actions
           </p>
           <div className="flex flex-wrap gap-4">
@@ -190,8 +190,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                 className="inline-flex items-center px-7 py-3 text-xs tracking-[0.18em] uppercase transition-all"
                 style={
                   a.primary
-                    ? { background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }
-                    : { border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+                    ? { background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }
+                    : { border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }
                 }
               >
                 {a.label}

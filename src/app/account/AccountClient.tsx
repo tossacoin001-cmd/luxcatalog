@@ -20,8 +20,8 @@ interface AccountUser {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="p-6 md:p-8 space-y-5" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-      <h2 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+    <section className="p-6 md:p-8 space-y-5" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+      <h2 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
         {title}
       </h2>
       {children}
@@ -29,7 +29,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 
 export default function AccountClient({ user, requireTwoFactor }: { user: AccountUser; requireTwoFactor: boolean }) {
   const router = useRouter()
@@ -44,13 +44,13 @@ export default function AccountClient({ user, requireTwoFactor }: { user: Accoun
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm" style={text}>
           <div>
             <dt className="text-[11px] tracking-[0.15em] uppercase mb-1">Name</dt>
-            <dd style={{ color: '#f5f0e8' }}>{user.name}</dd>
+            <dd style={{ color: '#14130f' }}>{user.name}</dd>
           </div>
           <div>
             <dt className="text-[11px] tracking-[0.15em] uppercase mb-1">Email</dt>
-            <dd style={{ color: '#f5f0e8' }}>
+            <dd style={{ color: '#14130f' }}>
               {user.email}{' '}
-              <span className="text-[11px] uppercase ml-1" style={{ color: user.emailVerified ? '#6fbf73' : '#C9A84C' }}>
+              <span className="text-[11px] uppercase ml-1" style={{ color: user.emailVerified ? '#2f6b45' : '#7a5c24' }}>
                 {user.emailVerified ? 'Verified' : 'Unverified'}
               </span>
             </dd>
@@ -58,7 +58,7 @@ export default function AccountClient({ user, requireTwoFactor }: { user: Accoun
           {user.phone && (
             <div>
               <dt className="text-[11px] tracking-[0.15em] uppercase mb-1">Phone</dt>
-              <dd style={{ color: '#f5f0e8' }}>{user.phone}</dd>
+              <dd style={{ color: '#14130f' }}>{user.phone}</dd>
             </div>
           )}
         </dl>
@@ -68,16 +68,16 @@ export default function AccountClient({ user, requireTwoFactor }: { user: Accoun
       <Link
         href="/account/notifications"
         className="group flex items-center justify-between gap-4 p-6 md:p-8 transition-colors hover:border-lux-gold-muted"
-        style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}
+        style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}
       >
         <span className="flex items-center gap-4">
-          <Mail size={18} style={{ color: '#C9A84C' }} />
+          <Mail size={18} style={{ color: '#7a5c24' }} />
           <span>
-            <span className="block text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>Email preferences</span>
+            <span className="block text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>Email preferences</span>
             <span className="block text-sm" style={text}>Choose how often we write, and about what.</span>
           </span>
         </span>
-        <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" style={{ color: '#C9A84C' }} />
+        <ChevronRight size={18} className="transition-transform group-hover:translate-x-1" style={{ color: '#7a5c24' }} />
       </Link>
 
       <TwoFactorSection enabled={user.twoFactorEnabled} onChange={() => router.refresh()} />
@@ -172,7 +172,7 @@ function TwoFactorSection({ enabled, onChange }: { enabled: boolean; onChange: (
 
   return (
     <Section title="Two-Step Verification">
-      <p className="flex items-center gap-2 text-sm" style={{ ...text, color: enabled || savedCodes ? '#6fbf73' : '#C9A84C' }}>
+      <p className="flex items-center gap-2 text-sm" style={{ ...text, color: enabled || savedCodes ? '#2f6b45' : '#7a5c24' }}>
         {enabled || savedCodes ? <ShieldCheck size={16} /> : <ShieldAlert size={16} />}
         {enabled || savedCodes ? 'On: sign-in also asks for a code from your authenticator app.' : 'Off: anyone with your password can sign in.'}
       </p>
@@ -181,7 +181,7 @@ function TwoFactorSection({ enabled, onChange }: { enabled: boolean; onChange: (
       {savedCodes ? (
         <div className="space-y-4">
           <AuthNotice message="Save these backup codes somewhere safe (not on this phone). Each one works once if you lose your authenticator. They will not be shown again." />
-          <pre className="grid grid-cols-2 gap-2 p-4 text-sm" style={{ background: '#162318', color: '#f5f0e8' }}>
+          <pre className="grid grid-cols-2 gap-2 p-4 text-sm" style={{ background: '#ece6d9', color: '#14130f' }}>
             {savedCodes.map((c) => (
               <span key={c}>{c}</span>
             ))}
@@ -193,7 +193,7 @@ function TwoFactorSection({ enabled, onChange }: { enabled: boolean; onChange: (
               onChange()
             }}
             className="h-11 px-8 text-xs tracking-[0.18em] uppercase"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             I have saved them
           </button>
@@ -206,7 +206,7 @@ function TwoFactorSection({ enabled, onChange }: { enabled: boolean; onChange: (
           {qrSvg && <div className="w-48 h-48 bg-white p-2" dangerouslySetInnerHTML={{ __html: qrSvg }} />}
           {secret && (
             <p className="text-xs break-all" style={text}>
-              Can&apos;t scan? Enter this key manually: <span style={{ color: '#f5f0e8' }}>{secret}</span>
+              Can&apos;t scan? Enter this key manually: <span style={{ color: '#14130f' }}>{secret}</span>
             </p>
           )}
           <AuthField label="6-digit code" inputMode="numeric" autoComplete="one-time-code" required value={code} onChange={(e) => setCode(e.target.value)} />
@@ -219,7 +219,7 @@ function TwoFactorSection({ enabled, onChange }: { enabled: boolean; onChange: (
             type="submit"
             disabled={loading}
             className="h-11 px-8 text-xs tracking-[0.18em] uppercase disabled:opacity-60"
-            style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+            style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}
           >
             Turn Off
           </button>

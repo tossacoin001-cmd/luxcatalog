@@ -5,9 +5,9 @@ import { ArrowDown, ArrowUp, Plus, X } from 'lucide-react'
 import { splitHighlights } from '@/lib/utils'
 
 const inputStyle = {
-  background: '#0f1a10',
-  border: '1px solid #1e2e1f',
-  color: '#f5f0e8',
+  background: '#fbf9f4',
+  border: '1px solid #d6cfbf',
+  color: '#14130f',
   fontFamily: 'var(--font-inter)',
 }
 
@@ -56,7 +56,7 @@ export default function HighlightsEditor({
         <ol className="space-y-2">
           {value.map((h, i) => (
             <li key={`${h}-${i}`} className="flex items-center gap-2">
-              <span className="w-6 text-xs text-right shrink-0" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <span className="w-6 text-xs text-right shrink-0" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 {i + 1}.
               </span>
               <input
@@ -66,13 +66,13 @@ export default function HighlightsEditor({
                 style={inputStyle}
                 aria-label={`Highlight ${i + 1}`}
               />
-              <button type="button" onClick={() => move(i, -1)} disabled={i === 0} aria-label="Move up" className="flex items-center justify-center w-9 h-11 disabled:opacity-30" style={{ color: '#908673' }}>
+              <button type="button" onClick={() => move(i, -1)} disabled={i === 0} aria-label="Move up" className="flex items-center justify-center w-9 h-11 disabled:opacity-30" style={{ color: '#5e584c' }}>
                 <ArrowUp size={14} />
               </button>
-              <button type="button" onClick={() => move(i, 1)} disabled={i === value.length - 1} aria-label="Move down" className="flex items-center justify-center w-9 h-11 disabled:opacity-30" style={{ color: '#908673' }}>
+              <button type="button" onClick={() => move(i, 1)} disabled={i === value.length - 1} aria-label="Move down" className="flex items-center justify-center w-9 h-11 disabled:opacity-30" style={{ color: '#5e584c' }}>
                 <ArrowDown size={14} />
               </button>
-              <button type="button" onClick={() => onChange(value.filter((_, idx) => idx !== i))} aria-label="Remove highlight" className="flex items-center justify-center w-9 h-11 hover:text-lux-sold" style={{ color: '#908673' }}>
+              <button type="button" onClick={() => onChange(value.filter((_, idx) => idx !== i))} aria-label="Remove highlight" className="flex items-center justify-center w-9 h-11 hover:text-lux-sold" style={{ color: '#5e584c' }}>
                 <X size={14} />
               </button>
             </li>
@@ -108,13 +108,13 @@ export default function HighlightsEditor({
             type="button"
             onClick={commitDraft}
             className="inline-flex items-center gap-1.5 h-11 px-4 text-xs tracking-[0.14em] uppercase"
-            style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+            style={{ border: '1px solid rgba(20,19,15,0.20)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
           >
             <Plus size={13} /> Add
           </button>
         </div>
       )}
-      <p className="text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+      <p className="text-xs" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
         One point per line, short and specific. Tip: paste a whole list or paragraph and it splits into points automatically.
       </p>
     </div>

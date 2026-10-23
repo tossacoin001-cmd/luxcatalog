@@ -35,18 +35,18 @@ export default async function AdminTeamPage() {
   const plainInvitedPartners = invitedPartners.filter((p) => !applied.has(p.id))
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <AdminNavbar role="admin" />
 
-      <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-3xl mx-auto">
-          <Link href="/admin" className="text-[11px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+          <Link href="/admin" className="text-[11px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             ← Admin
           </Link>
-          <h1 className="text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Team &amp; Access
           </h1>
-          <p className="mt-2 text-sm" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <p className="mt-2 text-sm" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             Invite your team and choose exactly what each person can access. Brand partners join through the partner application instead.
           </p>
         </div>

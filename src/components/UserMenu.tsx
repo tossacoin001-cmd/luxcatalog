@@ -54,17 +54,17 @@ export default function UserMenu({ showStaffLink = true }: { showStaffLink?: boo
         aria-label="Account menu"
         aria-expanded={open}
         className="w-8 h-8 rounded-full flex items-center justify-center text-xs"
-        style={{ background: '#5b3a29', color: '#f5f0e8', boxShadow: '0 0 0 1px rgba(201,168,76,0.4)', fontFamily: 'var(--font-inter)' }}
+        style={{ background: '#5b3a29', color: '#14130f', boxShadow: '0 0 0 1px rgba(20,19,15,0.12)', fontFamily: 'var(--font-inter)' }}
       >
         {initials}
       </button>
       {open && (
         <div
           className="absolute right-0 mt-3 w-60 z-50 py-2"
-          style={{ background: '#0f1a10', border: '1px solid #1e2e1f', fontFamily: 'var(--font-inter)', color: '#9a8f7a' }}
+          style={{ background: '#fbf9f4', border: '1px solid #d6cfbf', fontFamily: 'var(--font-inter)', color: '#5e584c' }}
         >
-          <div className="px-4 pb-3 mb-1" style={{ borderBottom: '1px solid #1e2e1f' }}>
-            <p className="text-sm truncate" style={{ color: '#f5f0e8' }}>{user.name}</p>
+          <div className="px-4 pb-3 mb-1" style={{ borderBottom: '1px solid #d6cfbf' }}>
+            <p className="text-sm truncate" style={{ color: '#14130f' }}>{user.name}</p>
             <p className="text-xs truncate">{user.email}</p>
           </div>
           <Link href="/dashboard" className={item} onClick={() => setOpen(false)}>Dashboard</Link>

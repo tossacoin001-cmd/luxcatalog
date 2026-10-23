@@ -5,8 +5,8 @@ import { toast } from 'sonner'
 import { CheckCircle2, Loader2, MessageSquareWarning } from 'lucide-react'
 import { CONCERN_KINDS } from '@/lib/aftercare'
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
-const field = { background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
+const field = { background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }
 
 // Guest: tell Lux Catalog something went wrong. Reaches our team only.
 export default function ReportConcern({ reference }: { reference: string }) {
@@ -32,7 +32,7 @@ export default function ReportConcern({ reference }: { reference: string }) {
 
   if (done) {
     return (
-      <p className="self-stretch flex items-start gap-2 p-4 text-sm" role="status" style={{ background: 'rgba(111,191,115,0.08)', color: '#b9e0bb', fontFamily: 'var(--font-inter)' }}>
+      <p className="self-stretch flex items-start gap-2 p-4 text-sm" role="status" style={{ background: 'rgba(47,107,69,0.08)', color: '#2f6b45', fontFamily: 'var(--font-inter)' }}>
         <CheckCircle2 size={16} className="shrink-0 mt-0.5" />
         <span>Thank you. We’ve received your report and our team will contact you shortly.</span>
       </p>
@@ -46,8 +46,8 @@ export default function ReportConcern({ reference }: { reference: string }) {
     )
   }
   return (
-    <section className="self-stretch p-5 space-y-3" style={{ background: '#0f1a10', border: '1px solid rgba(224,183,90,0.35)' }}>
-      <p className="text-base" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+    <section className="self-stretch p-5 space-y-3" style={{ background: '#fbf9f4', border: '1px solid rgba(122,92,36,0.35)' }}>
+      <p className="text-base" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
         Report a concern
       </p>
       <p className="text-xs leading-relaxed" style={text}>
@@ -68,11 +68,11 @@ export default function ReportConcern({ reference }: { reference: string }) {
           onClick={submit}
           disabled={busy || !kind || message.trim().length < 10}
           className="inline-flex items-center justify-center gap-2 min-h-11 px-5 text-xs tracking-[0.14em] uppercase disabled:opacity-50"
-          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
         >
           {busy && <Loader2 size={14} className="animate-spin" />} Send report
         </button>
-        <button type="button" onClick={() => setOpen(false)} className="min-h-11 px-5 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid #1e2e1f', ...text }}>
+        <button type="button" onClick={() => setOpen(false)} className="min-h-11 px-5 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid #d6cfbf', ...text }}>
           Cancel
         </button>
       </div>

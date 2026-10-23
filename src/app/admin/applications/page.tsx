@@ -9,11 +9,11 @@ export const metadata: Metadata = { title: 'Partner Applications | Admin' }
 export const dynamic = 'force-dynamic'
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
-  submitted: { label: 'Awaiting review', color: '#C9A84C' },
-  info_requested: { label: 'Info requested', color: '#e8a84c' },
-  approved: { label: 'Approved', color: '#6fbf73' },
-  rejected: { label: 'Rejected', color: '#e85c4c' },
-  draft: { label: 'Draft', color: '#908673' },
+  submitted: { label: 'Awaiting review', color: '#7a5c24' },
+  info_requested: { label: 'Info requested', color: '#7a5c24' },
+  approved: { label: 'Approved', color: '#2f6b45' },
+  rejected: { label: 'Rejected', color: '#8a3b2e' },
+  draft: { label: 'Draft', color: '#5e584c' },
 }
 
 export default async function ApplicationsPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
@@ -32,14 +32,14 @@ export default async function ApplicationsPage({ searchParams }: { searchParams:
   const countOf = (s: string) => counts.find((c) => c.status === s)?._count._all ?? 0
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <AdminNavbar role="admin" />
-      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Partner programme
           </p>
-          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Applications
           </h1>
         </div>
@@ -52,18 +52,18 @@ export default async function ApplicationsPage({ searchParams }: { searchParams:
               href={`/admin/applications?status=${s}`}
               className="inline-flex items-center gap-2 min-h-11 px-4 text-xs tracking-[0.12em] uppercase"
               style={{
-                border: `1px solid ${filter === s ? '#C9A84C' : '#1e2e1f'}`,
-                color: filter === s ? '#e4c878' : '#9a8f7a',
+                border: `1px solid ${filter === s ? '#14130f' : '#d6cfbf'}`,
+                color: filter === s ? '#7a5c24' : '#5e584c',
                 fontFamily: 'var(--font-inter)',
               }}
             >
-              {STATUS_LABEL[s].label} <span style={{ color: '#908673' }}>{countOf(s)}</span>
+              {STATUS_LABEL[s].label} <span style={{ color: '#5e584c' }}>{countOf(s)}</span>
             </Link>
           ))}
         </nav>
 
         {apps.length === 0 ? (
-          <p className="py-16 text-center text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+          <p className="py-16 text-center text-sm" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             Nothing here.
           </p>
         ) : (
@@ -75,10 +75,10 @@ export default async function ApplicationsPage({ searchParams }: { searchParams:
                   className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-5 lux-card"
                 >
                   <span>
-                    <span className="block text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                    <span className="block text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                       {a.businessName || '(no name yet)'}
                     </span>
-                    <span className="block text-sm" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                    <span className="block text-sm" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                       {partnerTypeSpec(a.partnerType)?.label} · {a.city || 'city not set'} · {a._count.documents} document
                       {a._count.documents === 1 ? '' : 's'}
                     </span>

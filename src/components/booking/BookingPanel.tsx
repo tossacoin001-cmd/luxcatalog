@@ -11,7 +11,7 @@ import { BOOKING_WINDOW_DAYS, POLICY_TEXT, addDays, isDay, lagosToday, naira, to
 
 type Availability = { rules: BookingRules; earliestStart: string; blocked: Range[] }
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 const fmt = (day: string) => toDate(day).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 
 // The booking side panel for listings that take online bookings. Guests pick
@@ -127,7 +127,7 @@ export default function BookingPanel({ listingId }: { listingId: string; listing
     return (
       <p className="text-sm" style={text}>
         Availability couldn&apos;t load.{' '}
-        <button type="button" onClick={retry} className="underline" style={{ color: '#C9A84C' }}>
+        <button type="button" onClick={retry} className="underline" style={{ color: '#7a5c24' }}>
           Try again
         </button>
       </p>
@@ -146,10 +146,10 @@ export default function BookingPanel({ listingId }: { listingId: string; listing
   return (
     <div className="space-y-5">
       <div>
-        <p className="text-[11px] tracking-[0.2em] uppercase mb-1" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+        <p className="text-[11px] tracking-[0.2em] uppercase mb-1" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
           From
         </p>
-        <p className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C' }}>
+        <p className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#7a5c24' }}>
           {naira(r.rate)} <span className="text-sm" style={text}>/ {per}</span>
         </p>
         {usd(r.rate) && (
@@ -174,7 +174,7 @@ export default function BookingPanel({ listingId }: { listingId: string; listing
             value={guests}
             onChange={(e) => setGuests(Number(e.target.value))}
             className="h-11 px-3 text-sm"
-            style={{ background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8' }}
+            style={{ background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f' }}
           >
             {Array.from({ length: r.maxGuests }, (_, i) => i + 1).map((n) => (
               <option key={n} value={n}>
@@ -192,7 +192,7 @@ export default function BookingPanel({ listingId }: { listingId: string; listing
           </p>
         )}
         {!quoting && q && !q.ok && (
-          <p className="text-sm p-3" style={{ background: 'rgba(232,92,76,0.08)', color: '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-sm p-3" style={{ background: 'rgba(138,59,46,0.08)', color: '#8a3b2e', fontFamily: 'var(--font-inter)' }}>
             {q.error}
           </p>
         )}
@@ -203,7 +203,7 @@ export default function BookingPanel({ listingId }: { listingId: string; listing
             </p>
             <Row label={`${naira(q.rate)} × ${q.units} ${unitLabel(q.unit, q.units)}`} value={naira(q.base)} />
             {q.cleaningFee > 0 && <Row label="Cleaning" value={naira(q.cleaningFee)} />}
-            <div style={{ height: 1, background: '#1e2e1f' }} />
+            <div style={{ height: 1, background: '#ece6d9' }} />
             <Row label="Total" value={naira(q.total)} strong />
             {usd(q.total) && <p className="text-right text-xs" style={text}>{usd(q.total)} · charged in Naira</p>}
             {q.cautionDeposit > 0 && <Row label="Refundable caution deposit" value={naira(q.cautionDeposit)} muted />}
@@ -212,7 +212,7 @@ export default function BookingPanel({ listingId }: { listingId: string; listing
       </div>
 
       {sent ? (
-        <p className="flex items-start gap-2 text-sm p-3" style={{ background: 'rgba(111,191,115,0.08)', color: '#b9e0bb', fontFamily: 'var(--font-inter)' }}>
+        <p className="flex items-start gap-2 text-sm p-3" style={{ background: 'rgba(47,107,69,0.08)', color: '#2f6b45', fontFamily: 'var(--font-inter)' }}>
           <CalendarCheck2 size={16} className="shrink-0 mt-0.5" />
           <span>
             Request sent. The host replies within 12 hours and you only pay once they accept.{' '}
@@ -227,7 +227,7 @@ export default function BookingPanel({ listingId }: { listingId: string; listing
           onClick={request}
           disabled={!q?.ok || sending || sessionPending}
           className="sheen w-full inline-flex items-center justify-center gap-2 min-h-[52px] text-xs tracking-[0.2em] uppercase disabled:opacity-50"
-          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
         >
           {sending && <Loader2 size={14} className="animate-spin" />}
           {q?.ok ? (r.instantBook ? `Reserve & pay ${naira(q.dueNow)}` : 'Request to book') : r.unit === 'night' ? 'Choose your dates' : 'Choose your days'}
@@ -242,9 +242,9 @@ export default function BookingPanel({ listingId }: { listingId: string; listing
       )}
 
       <p className="flex items-start gap-2 text-xs leading-relaxed" style={text}>
-        <ShieldCheck size={14} className="shrink-0 mt-0.5" style={{ color: '#C9A84C' }} />
+        <ShieldCheck size={14} className="shrink-0 mt-0.5" style={{ color: '#7a5c24' }} />
         <span>
-          <strong style={{ color: '#d6cdbd', fontWeight: 500 }}>{POLICY_TEXT[r.cancellationPolicy].label} cancellation.</strong> {POLICY_TEXT[r.cancellationPolicy].summary}
+          <strong style={{ color: '#3a362d', fontWeight: 500 }}>{POLICY_TEXT[r.cancellationPolicy].label} cancellation.</strong> {POLICY_TEXT[r.cancellationPolicy].summary}
           {r.cautionDeposit > 0 ? ' The caution deposit is refunded within 48 hours of check-out.' : ''}
         </span>
       </p>
@@ -255,8 +255,8 @@ export default function BookingPanel({ listingId }: { listingId: string; listing
 function Row({ label, value, strong, muted }: { label: string; value: string; strong?: boolean; muted?: boolean }) {
   return (
     <div className="flex justify-between gap-3">
-      <span style={{ color: muted ? '#908673' : '#d6cdbd' }}>{label}</span>
-      <span style={{ color: strong ? '#f5f0e8' : muted ? '#908673' : '#d6cdbd', fontWeight: strong ? 600 : 400 }}>{value}</span>
+      <span style={{ color: muted ? '#5e584c' : '#3a362d' }}>{label}</span>
+      <span style={{ color: strong ? '#14130f' : muted ? '#5e584c' : '#3a362d', fontWeight: strong ? 600 : 400 }}>{value}</span>
     </div>
   )
 }

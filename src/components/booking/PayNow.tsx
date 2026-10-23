@@ -25,7 +25,7 @@ export default function PayNow({ reference, label }: { reference: string; label:
       onClick={pay}
       disabled={busy}
       className="sheen inline-flex items-center justify-center gap-2 min-h-12 px-8 w-full sm:w-auto text-xs tracking-[0.18em] uppercase disabled:opacity-50"
-      style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+      style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
     >
       {busy && <Loader2 size={14} className="animate-spin" />} {label}
     </button>

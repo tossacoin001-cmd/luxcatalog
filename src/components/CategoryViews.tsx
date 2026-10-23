@@ -22,9 +22,9 @@ export function CategoryViews({ category, categorySlug, categoryLabel, listings,
   const shown = inView(listings, view)
   const viewLabel = views.find((v) => v.key === view)?.label
   const tab = (active: boolean) => ({
-    border: `1px solid ${active ? '#C9A84C' : '#1e2e1f'}`,
-    background: active ? 'rgba(201,168,76,0.12)' : 'transparent',
-    color: active ? '#e4c878' : '#9a8f7a',
+    border: `1px solid ${active ? '#14130f' : '#d6cfbf'}`,
+    background: active ? 'rgba(122,92,36,0.07)' : 'transparent',
+    color: active ? '#7a5c24' : '#5e584c',
     fontFamily: 'var(--font-inter)',
   })
   const topic = viewLabel ? `${categoryLabel}: ${viewLabel}` : categoryLabel
@@ -45,17 +45,17 @@ export function CategoryViews({ category, categorySlug, categoryLabel, listings,
       )}
       {shown.length === 0 ? (
         <div className="text-center py-20">
-          <p className="text-lg mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <p className="text-lg mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             {viewLabel ? `No ${viewLabel.toLowerCase()} listed yet` : `No ${categoryLabel.toLowerCase()} listed yet`}
           </p>
-          <p className="text-sm mb-8 max-w-md mx-auto" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-sm mb-8 max-w-md mx-auto" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             New pieces arrive privately before they are listed. Tell us what you are looking for and a specialist will find it for you.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <RequestButton topic={topic} label={`Find ${topic.toLowerCase()} for me`} className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.2em] uppercase" style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+            <RequestButton topic={topic} label={`Find ${topic.toLowerCase()} for me`} className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.2em] uppercase" style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
               Tell us what you want
             </RequestButton>
-            <Link href="/catalog" className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.2em] uppercase transition-colors hover:bg-[rgba(201,168,76,0.08)]" style={{ border: '1px solid rgba(201,168,76,0.45)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+            <Link href="/catalog" className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.2em] uppercase transition-colors hover:bg-[rgba(122,92,36,0.05)]" style={{ border: '1px solid rgba(20,19,15,0.23)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
               Browse all collections
             </Link>
           </div>

@@ -17,16 +17,16 @@ type Item = {
   previousVersion: string | null
 }
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 
 function AgreementText({ item }: { item: Item }) {
   return (
-    <div className="space-y-5 text-[15px] leading-relaxed" style={{ color: '#d8d0c0', fontFamily: 'var(--font-inter)' }}>
+    <div className="space-y-5 text-[15px] leading-relaxed" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
       {item.clauses.map((c, i) => (
         <section key={c.heading}>
-          <h3 className="text-base mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h3 className="text-base mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             {i + 1}. {c.heading}
           </h3>
           {c.paragraphs.map((p, j) => (
@@ -69,19 +69,19 @@ function SignCard({ item, defaultName }: { item: Item; defaultName: string }) {
   const nameOk = name.trim().split(/\s+/).length >= 2 && name.trim().length >= 5
 
   return (
-    <article style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-      <header className="p-5 md:p-6" style={{ borderBottom: '1px solid #1e2e1f' }}>
-        <p className="text-[11px] tracking-[0.18em] uppercase mb-1" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+    <article style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+      <header className="p-5 md:p-6" style={{ borderBottom: '1px solid #d6cfbf' }}>
+        <p className="text-[11px] tracking-[0.18em] uppercase mb-1" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
           To sign · Version {item.version}
         </p>
-        <h2 className="text-xl md:text-2xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+        <h2 className="text-xl md:text-2xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
           {item.title}
         </h2>
         <p className="mt-1 text-sm" style={text}>
           {item.summary}
         </p>
         {item.previousVersion && (
-          <p className="mt-3 text-sm p-3" style={{ background: 'rgba(201,168,76,0.08)', color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
+          <p className="mt-3 text-sm p-3" style={{ background: 'rgba(122,92,36,0.05)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             We have updated this agreement since you signed version {item.previousVersion}. Please read and sign the new version to keep adding listings.
           </p>
         )}
@@ -89,9 +89,9 @@ function SignCard({ item, defaultName }: { item: Item; defaultName: string }) {
       <div className="p-5 md:p-6 max-h-[60vh] overflow-y-auto" tabIndex={0} aria-label={`${item.title} full text`}>
         <AgreementText item={item} />
       </div>
-      <footer className="p-5 md:p-6 space-y-4" style={{ borderTop: '1px solid #1e2e1f' }}>
-        <label className="flex items-start gap-3 cursor-pointer text-sm" style={{ color: '#d8d0c0', fontFamily: 'var(--font-inter)' }}>
-          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-1 w-4 h-4 accent-[#C9A84C] shrink-0" />
+      <footer className="p-5 md:p-6 space-y-4" style={{ borderTop: '1px solid #d6cfbf' }}>
+        <label className="flex items-start gap-3 cursor-pointer text-sm" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
+          <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} className="mt-1 w-4 h-4 accent-[#7a5c24] shrink-0" />
           I have read the {item.title} and agree to it on behalf of my business.
         </label>
         <label className="block">
@@ -102,8 +102,8 @@ function SignCard({ item, defaultName }: { item: Item; defaultName: string }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoComplete="name"
-            className="w-full min-h-12 px-4 text-lg outline-none focus:ring-1 focus:ring-[#C9A84C]"
-            style={{ background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}
+            className="w-full min-h-12 px-4 text-lg outline-none focus:ring-1 focus:ring-[#7a5c24]"
+            style={{ background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-playfair)', fontStyle: 'italic' }}
           />
         </label>
         <button
@@ -111,7 +111,7 @@ function SignCard({ item, defaultName }: { item: Item; defaultName: string }) {
           onClick={sign}
           disabled={!agree || !nameOk || busy}
           className="sheen inline-flex items-center justify-center gap-2 min-h-12 px-8 w-full sm:w-auto text-xs tracking-[0.18em] uppercase disabled:opacity-50"
-          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
         >
           {busy ? <Loader2 size={14} className="animate-spin" /> : <PenLine size={14} />}
           Sign agreement
@@ -127,11 +127,11 @@ function SignCard({ item, defaultName }: { item: Item; defaultName: string }) {
 function SignedCard({ item }: { item: Item }) {
   const [open, setOpen] = useState(false)
   return (
-    <article className="p-5 md:p-6" style={{ background: '#0f1a10', border: '1px solid rgba(111,191,115,0.35)' }}>
+    <article className="p-5 md:p-6" style={{ background: '#fbf9f4', border: '1px solid rgba(47,107,69,0.35)' }}>
       <div className="flex items-start gap-3">
-        <CheckCircle2 size={20} className="shrink-0 mt-1" style={{ color: '#6fbf73' }} aria-hidden />
+        <CheckCircle2 size={20} className="shrink-0 mt-1" style={{ color: '#2f6b45' }} aria-hidden />
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h2 className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             {item.title} <span className="text-xs" style={text}>v{item.version}</span>
           </h2>
           <p className="text-sm mt-0.5" style={text}>
@@ -143,7 +143,7 @@ function SignedCard({ item }: { item: Item }) {
               target="_blank"
               rel="noopener"
               className="inline-flex items-center gap-2 min-h-11 px-4 text-xs tracking-[0.14em] uppercase"
-              style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+              style={{ border: '1px solid rgba(20,19,15,0.20)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
             >
               <FileText size={14} /> Signed copy (PDF)
             </a>
@@ -152,7 +152,7 @@ function SignedCard({ item }: { item: Item }) {
               onClick={() => setOpen((o) => !o)}
               aria-expanded={open}
               className="min-h-11 px-4 text-xs tracking-[0.14em] uppercase"
-              style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+              style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}
             >
               {open ? 'Hide text' : 'Read text'}
             </button>
@@ -160,7 +160,7 @@ function SignedCard({ item }: { item: Item }) {
         </div>
       </div>
       {open && (
-        <div className="mt-5 pt-5" style={{ borderTop: '1px solid #1e2e1f' }}>
+        <div className="mt-5 pt-5" style={{ borderTop: '1px solid #d6cfbf' }}>
           <AgreementText item={item} />
         </div>
       )}
@@ -179,8 +179,8 @@ export default function AgreementClient({ items, defaultName }: { items: Item[];
       )}
       {items.map((item) => (item.signed ? <SignedCard key={item.key} item={item} /> : <SignCard key={item.key} item={item} defaultName={defaultName} />))}
       {toSign.length === 0 && (
-        <div className="p-6 md:p-8 text-center" style={{ border: '1px solid rgba(201,168,76,0.3)', background: 'linear-gradient(120deg, rgba(201,168,76,0.1), transparent)' }}>
-          <p className="text-2xl mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+        <div className="p-6 md:p-8 text-center" style={{ border: '1px solid rgba(20,19,15,0.15)', background: 'linear-gradient(120deg, rgba(122,92,36,0.06), transparent)' }}>
+          <p className="text-2xl mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             You&apos;re all set
           </p>
           <p className="text-sm mb-5" style={text}>
@@ -189,7 +189,7 @@ export default function AgreementClient({ items, defaultName }: { items: Item[];
           <Link
             href="/admin/listings/new"
             className="sheen group inline-flex items-center justify-center gap-3 min-h-12 px-8 text-xs tracking-[0.18em] uppercase"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             Add your first listing <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
           </Link>

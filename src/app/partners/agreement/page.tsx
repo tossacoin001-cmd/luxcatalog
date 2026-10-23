@@ -21,20 +21,20 @@ export default async function AgreementPage() {
   if (!status) redirect('/sign-in')
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <Navbar />
-      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-3xl mx-auto">
           <div className="mb-6">
             <Breadcrumbs trail={[{ label: 'Home', href: '/' }, { label: 'Become a Partner', href: '/partners' }, { label: 'Agreement' }]} />
           </div>
-          <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             {status.ctx.businessName}
           </p>
-          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             {status.allSigned ? 'Your partner agreement' : 'Sign your partner agreement'}
           </h1>
-          <p className="mt-3 text-sm leading-relaxed max-w-2xl" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <p className="mt-3 text-sm leading-relaxed max-w-2xl" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             {status.allSigned
               ? 'Everything is signed. Your signed copies are below and were emailed to you.'
               : 'Please read each document, then sign by typing your full legal name. You will receive a signed PDF copy by email. Once signed, you can add your first listing.'}

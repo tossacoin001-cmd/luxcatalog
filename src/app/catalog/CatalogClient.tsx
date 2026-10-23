@@ -79,7 +79,7 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         {/* Search */}
         <div className="relative flex-1">
-          <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#908673' }} />
+          <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#5e584c' }} />
           <input
             type="text"
             placeholder="Search by name, city or country…"
@@ -88,17 +88,17 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
             onChange={(e) => setSearch(e.target.value)}
             className="w-full h-12 pl-10 pr-11 text-base md:text-sm focus:outline-none transition-colors"
             style={{
-              background: '#0f1a10',
-              border: '1px solid #1e2e1f',
-              color: '#f5f0e8',
+              background: '#fbf9f4',
+              border: '1px solid #d6cfbf',
+              color: '#14130f',
               fontFamily: 'var(--font-inter)',
             }}
-            onFocus={(e) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)')}
-            onBlur={(e) => (e.currentTarget.style.borderColor = '#1e2e1f')}
+            onFocus={(e) => (e.currentTarget.style.borderColor = 'rgba(20,19,15,0.20)')}
+            onBlur={(e) => (e.currentTarget.style.borderColor = '#d6cfbf')}
           />
           {search && (
             <button onClick={() => setSearch('')} className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center justify-center w-11 h-11" aria-label="Clear search">
-              <X size={14} style={{ color: '#908673' }} />
+              <X size={14} style={{ color: '#5e584c' }} />
             </button>
           )}
         </div>
@@ -111,9 +111,9 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
             aria-label="Sort listings"
             className="flex-1 md:flex-none md:min-w-[180px] h-12 px-4 pr-8 text-xs tracking-wider focus:outline-none appearance-none cursor-pointer"
             style={{
-              background: '#0f1a10',
-              border: '1px solid #1e2e1f',
-              color: '#9a8f7a',
+              background: '#fbf9f4',
+              border: '1px solid #d6cfbf',
+              color: '#5e584c',
               fontFamily: 'var(--font-inter)',
             }}
           >
@@ -128,9 +128,9 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
             className="md:hidden flex items-center justify-center gap-2 h-12 px-4 text-xs tracking-wider transition-colors"
             aria-expanded={showFilters}
             style={{
-              background: showFilters ? '#C9A84C' : '#0f1a10',
-              border: '1px solid #1e2e1f',
-              color: showFilters ? '#080c08' : '#9a8f7a',
+              background: showFilters ? '#14130f' : '#fbf9f4',
+              border: '1px solid #d6cfbf',
+              color: showFilters ? '#f4f0e8' : '#5e584c',
               fontFamily: 'var(--font-inter)',
             }}
           >
@@ -150,9 +150,9 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
             className="snap-start shrink-0 min-h-11 px-4 text-xs tracking-[0.12em] uppercase transition-colors duration-300"
             style={{
               fontFamily: 'var(--font-inter)',
-              background: category === c.key ? '#C9A84C' : 'transparent',
-              border: `1px solid ${category === c.key ? '#C9A84C' : '#1e2e1f'}`,
-              color: category === c.key ? '#080c08' : '#9a8f7a',
+              background: category === c.key ? '#14130f' : 'transparent',
+              border: `1px solid ${category === c.key ? '#14130f' : '#d6cfbf'}`,
+              color: category === c.key ? '#f4f0e8' : '#5e584c',
             }}
           >
             {c.label}
@@ -169,7 +169,7 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
           <div className="mb-8 hidden md:block">
             <p
               className="text-[11px] tracking-[0.2em] uppercase mb-4"
-              style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
             >
               Category
             </p>
@@ -181,9 +181,9 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
                   className="text-left text-xs min-h-10 px-3 transition-all"
                   style={{
                     fontFamily: 'var(--font-inter)',
-                    background: category === c.key ? 'rgba(201,168,76,0.08)' : 'transparent',
-                    border: category === c.key ? '1px solid rgba(201,168,76,0.3)' : '1px solid transparent',
-                    color: category === c.key ? '#C9A84C' : '#9a8f7a',
+                    background: category === c.key ? 'rgba(122,92,36,0.05)' : 'transparent',
+                    border: category === c.key ? '1px solid rgba(20,19,15,0.15)' : '1px solid transparent',
+                    color: category === c.key ? '#7a5c24' : '#5e584c',
                   }}
                 >
                   {c.label}
@@ -196,7 +196,7 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
           <div className="mb-8">
             <p
               className="text-[11px] tracking-[0.2em] uppercase mb-4"
-              style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
             >
               Status
             </p>
@@ -208,9 +208,9 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
                   className="text-left text-xs min-h-10 px-3 transition-all"
                   style={{
                     fontFamily: 'var(--font-inter)',
-                    background: status === s.key ? 'rgba(201,168,76,0.08)' : 'transparent',
-                    border: status === s.key ? '1px solid rgba(201,168,76,0.3)' : '1px solid transparent',
-                    color: status === s.key ? '#C9A84C' : '#9a8f7a',
+                    background: status === s.key ? 'rgba(122,92,36,0.05)' : 'transparent',
+                    border: status === s.key ? '1px solid rgba(20,19,15,0.15)' : '1px solid transparent',
+                    color: status === s.key ? '#7a5c24' : '#5e584c',
                   }}
                 >
                   {s.label}
@@ -224,7 +224,7 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
             <button
               onClick={() => { setCategory('all'); setStatus('all'); setSearch('') }}
               className="min-h-11 text-xs tracking-wider underline"
-              style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
             >
               Clear all filters
             </button>
@@ -237,17 +237,17 @@ export default function CatalogClient({ listings: allListings }: { listings: Lis
           <p
             aria-live="polite"
             className="text-xs tracking-wider mb-6"
-            style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+            style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
           >
             {filtered.length} asset{filtered.length !== 1 ? 's' : ''} found
           </p>
 
           {filtered.length === 0 ? (
             <div className="text-center py-24">
-              <p className="text-lg mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+              <p className="text-lg mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                 No assets match your criteria
               </p>
-              <p className="text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-sm" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 Try broadening your search or clearing filters.
               </p>
             </div>

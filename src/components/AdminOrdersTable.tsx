@@ -20,9 +20,9 @@ interface OrderRow {
 }
 
 const statusStyles: Record<string, { bg: string; color: string; border: string }> = {
-  pending: { bg: 'rgba(200,148,80,0.1)', color: '#c99450', border: 'rgba(200,148,80,0.3)' },
-  paid: { bg: 'rgba(201,168,76,0.1)', color: '#C9A84C', border: 'rgba(201,168,76,0.3)' },
-  fulfilled: { bg: 'rgba(116,173,130,0.1)', color: '#74ad82', border: 'rgba(116,173,130,0.3)' },
+  pending: { bg: 'rgba(200,148,80,0.1)', color: '#7a5c24', border: 'rgba(200,148,80,0.3)' },
+  paid: { bg: 'rgba(122,92,36,0.06)', color: '#7a5c24', border: 'rgba(20,19,15,0.15)' },
+  fulfilled: { bg: 'rgba(116,173,130,0.1)', color: '#2f6b45', border: 'rgba(116,173,130,0.3)' },
   cancelled: { bg: 'rgba(211,105,95,0.1)', color: '#d3695f', border: 'rgba(211,105,95,0.3)' },
 }
 
@@ -50,7 +50,7 @@ export default function AdminOrdersTable({ orders }: { orders: OrderRow[] }) {
 
   if (orders.length === 0) {
     return (
-      <p className="py-16 text-center text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+      <p className="py-16 text-center text-sm" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
         No orders yet.
       </p>
     )
@@ -61,11 +61,11 @@ export default function AdminOrdersTable({ orders }: { orders: OrderRow[] }) {
       {orders.map((order) => {
         const s = statusStyles[order.status] ?? statusStyles.pending
         return (
-          <div key={order.id} className="p-6" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+          <div key={order.id} className="p-6" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 flex-wrap mb-2">
-                  <h3 className="text-base" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                  <h3 className="text-base" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                     {order.shippingName}
                   </h3>
                   <span
@@ -75,23 +75,23 @@ export default function AdminOrdersTable({ orders }: { orders: OrderRow[] }) {
                     {order.status}
                   </span>
                 </div>
-                <p className="text-xs mb-1" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-xs mb-1" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   {order.email} {order.phone && `· ${order.phone}`}
                 </p>
-                <p className="text-xs mb-3" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-xs mb-3" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   {order.shippingAddress}, {order.shippingCity}, {order.shippingState}
                 </p>
                 <div className="space-y-1 mb-2">
                   {order.items.map((item, i) => (
-                    <p key={i} className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                    <p key={i} className="text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                       {item.titleSnapshot} &times; {item.quantity}
                     </p>
                   ))}
                 </div>
-                <p className="text-sm" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-sm" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                   {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(order.total)}
                 </p>
-                <p className="text-[11px] mt-3" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] mt-3" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   {new Date(order.createdAt).toLocaleString('en-NG', { dateStyle: 'medium', timeStyle: 'short' })}
                 </p>
               </div>
@@ -101,7 +101,7 @@ export default function AdminOrdersTable({ orders }: { orders: OrderRow[] }) {
                 disabled={updatingId === order.id}
                 onChange={(e) => updateStatus(order.id, e.target.value)}
                 className="px-3 py-2 text-xs disabled:opacity-60 flex-shrink-0"
-                style={{ background: '#162318', border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+                style={{ background: '#ece6d9', border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}
               >
                 <option value="pending">Pending</option>
                 <option value="paid">Paid</option>

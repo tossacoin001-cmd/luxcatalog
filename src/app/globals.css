@@ -1,39 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  /* === LUX COLOR SYSTEM === */
+  /* === LUX COLOUR SYSTEM: ivory ground, ink text, one brass accent === */
+  --color-lux-bg:       #f4f0e8;   /* ground */
+  --color-lux-surface:  #fbf9f4;   /* paper */
+  --color-lux-surface2: #ece6d9;
+  --color-lux-border:   #d6cfbf;   /* rule */
+  --color-lux-border2:  #c4bcaa;
 
-  /* Dark backgrounds */
-  --color-lux-bg:       #080c08;
-  --color-lux-surface:  #0f1a10;
-  --color-lux-surface2: #162318;
-  --color-lux-border:   #1e2e1f;
-  --color-lux-border2:  #2a3e2b;
-
-  /* Gold */
-  --color-lux-gold:       #C9A84C;
-  --color-lux-gold-light: #e4c878;
-  --color-lux-gold-muted: #8a6f2e;
-  --color-lux-gold-dim:   rgba(201,168,76,0.15);
+  /* Brass: for text and thin marks only (7:1 on the ground) */
+  --color-lux-gold:       #7a5c24;
+  --color-lux-gold-light: #7a5c24;
+  --color-lux-gold-muted: #5e584c;
+  --color-lux-gold-dim:   rgba(122,92,36,0.08);
 
   /* Text */
-  --color-lux-text:        #f5f0e8;
-  --color-lux-text-muted:  #9a8f7a;
-  --color-lux-text-subtle: #908673;
+  --color-lux-text:        #14130f;   /* ink */
+  --color-lux-text-muted:  #5e584c;   /* stone */
+  --color-lux-text-subtle: #5e584c;
 
-  /* Light / cream sections */
-  --color-lux-cream:  #f8f4ee;
-  --color-lux-cream2: #efe9de;
+  --color-lux-cream:  #fbf9f4;
+  --color-lux-cream2: #ece6d9;
   --color-lux-cream3: #e5ddd0;
 
-  /* Status */
-  --color-lux-available:    #4caf72;
-  --color-lux-under-offer:  #e8a84c;
-  --color-lux-sold:         #e85c4c;
+  /* Status: free and taken are the only colours that mean something */
+  --color-lux-available:    #2f6b45;
+  --color-lux-under-offer:  #7a5c24;
+  --color-lux-sold:         #8a3b2e;
 
-  /* Fonts */
-  --font-playfair: 'Playfair Display', Didot, Georgia, serif;
-  --font-inter:    'Inter', system-ui, sans-serif;
+  /* Fonts (loaded in layout.tsx). The old names stay as aliases so every
+     existing component picks up the new type without being rewritten. */
+  --font-playfair: var(--font-serif), 'Newsreader', Georgia, serif;
+  --font-inter:    var(--font-sans), 'Hanken Grotesk', system-ui, sans-serif;
 }
 
 /* === BASE STYLES === */
@@ -53,68 +51,60 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* === TYPOGRAPHY === */
-.font-playfair {
+/* Headings are light, never bold: weight is spent on the price, not the title. */
+h1, h2, h3, h4 {
   font-family: var(--font-playfair);
+  font-weight: 300;
+  letter-spacing: -0.01em;
 }
 
-.font-inter {
-  font-family: var(--font-inter);
+/* === TYPOGRAPHY === */
+.font-playfair { font-family: var(--font-playfair); }
+.font-inter    { font-family: var(--font-inter); }
+
+/* The wordmark: set in the serif, never an icon. */
+[data-wordmark] {
+  font-family: var(--font-playfair);
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
-/* === GOLD GLOW EFFECTS === */
-.glow-gold {
-  box-shadow: 0 0 30px rgba(201, 168, 76, 0.15), 0 0 60px rgba(201, 168, 76, 0.05);
+/* Prices: tabular lining figures; the naira sign is small and light. */
+[data-price] {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+}
+[data-price] [data-currency] {
+  font-size: 0.6em;
+  font-weight: 300;
+  margin-right: 0.12em;
+  vertical-align: 0.12em;
 }
 
-.glow-gold-sm {
-  box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
-}
+/* Retired effects. The class names stay so nothing breaks; they draw nothing. */
+.glow-gold, .glow-gold-sm { box-shadow: none; }
+.text-glow-gold { text-shadow: none; }
+.text-gold-gradient { color: var(--color-lux-gold); }
 
-.text-glow-gold {
-  text-shadow: 0 0 40px rgba(201, 168, 76, 0.4);
-}
-
-/* === GOLD GRADIENT TEXT === */
-.text-gold-gradient {
-  background: linear-gradient(135deg, #C9A84C 0%, #e4c878 50%, #C9A84C 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* === LUXURY CARD === */
+/* === CARD: flat paper, one hairline, no lift === */
 .lux-card {
   background: var(--color-lux-surface);
   border: 1px solid var(--color-lux-border);
-  transition: all 0.35s ease;
+  transition: border-color 0.3s ease;
 }
-
 .lux-card:hover {
-  border-color: var(--color-lux-gold-muted);
-  box-shadow: 0 0 30px rgba(201, 168, 76, 0.12), 0 20px 60px rgba(0,0,0,0.4);
-  transform: translateY(-3px);
+  border-color: #14130f;
 }
 
 /* === SCROLLBAR === */
-::-webkit-scrollbar {
-  width: 6px;
-}
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-lux-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-lux-border2); }
 
-::-webkit-scrollbar-track {
-  background: var(--color-lux-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-lux-gold-muted);
-  border-radius: 3px;
-}
-
-/* === SECTION DIVIDER === */
+/* === SECTION DIVIDER: a single hairline === */
 .gold-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-lux-gold), transparent);
-  opacity: 0.4;
+  background: var(--color-lux-border);
 }
 
 /* === OVERLAY PATTERNS === */
@@ -144,11 +134,7 @@ body {
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(90deg,
-    var(--color-lux-surface) 25%,
-    var(--color-lux-surface2) 50%,
-    var(--color-lux-surface) 75%
-  );
+  background: linear-gradient(90deg, #ece6d9 25%, #f4f0e8 50%, #ece6d9 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -160,16 +146,6 @@ body {
 
 .animate-fade-up {
   animation: fadeUp 0.6s ease forwards;
-}
-
-/* === CREAM SECTION OVERRIDES === */
-.cream-section {
-  background: var(--color-lux-cream);
-  color: #1a1208;
-}
-
-.cream-section .text-lux-text {
-  color: #1a1208;
 }
 
 /* =====================================================================
@@ -186,13 +162,13 @@ body {
 }
 
 ::selection {
-  background: rgba(201, 168, 76, 0.35);
-  color: #f5f0e8;
+  background: rgba(122, 92, 36, 0.22);
+  color: #14130f;
 }
 
 /* Visible, on-brand keyboard focus everywhere (mouse clicks stay clean). */
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-  outline: 2px solid #C9A84C;
+  outline: 2px solid #14130f;
   outline-offset: 3px;
 }
 
@@ -223,14 +199,7 @@ a, button, [role='button'], label, summary {
   isolation: isolate;
 }
 .sheen::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  width: 40%;
-  background: linear-gradient(90deg, transparent, rgba(255, 245, 220, 0.45), transparent);
-  animation: sheen 4.5s var(--ease-in-out-soft) 1.2s infinite;
-  pointer-events: none;
-  z-index: 1;
+  display: none; /* retired: a light sweep is not quiet */
 }
 
 /* Endless slow ticker for the seasonal concierge strip. */

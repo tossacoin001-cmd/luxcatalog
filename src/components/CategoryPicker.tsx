@@ -4,13 +4,13 @@ import { categoryLabels } from '@/lib/utils'
 import { MODE_LABELS, defaultMode, specTemplate, subcategoriesFor, type Mode } from '@/lib/taxonomy'
 
 const inputStyle = {
-  background: '#0f1a10',
-  border: '1px solid #1e2e1f',
-  color: '#f5f0e8',
+  background: '#fbf9f4',
+  border: '1px solid #d6cfbf',
+  color: '#14130f',
   fontFamily: 'var(--font-inter)',
   appearance: 'none' as const,
 }
-const labelStyle = { color: '#908673', fontFamily: 'var(--font-inter)' }
+const labelStyle = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 const labelClass = 'block text-[11px] tracking-[0.15em] uppercase mb-2'
 const fieldClass = 'w-full h-11 px-4 text-sm focus:outline-none'
 
@@ -53,7 +53,7 @@ export default function CategoryPicker({
     <>
       <div>
         <label className={labelClass} style={labelStyle}>
-          Category <span style={{ color: '#C9A84C' }}>*</span>
+          Category <span style={{ color: '#7a5c24' }}>*</span>
         </label>
         <select value={value.category} onChange={(e) => pickCategory(e.target.value)} className={fieldClass} style={inputStyle}>
           {categories.map(([key, label]) => (
@@ -67,7 +67,7 @@ export default function CategoryPicker({
       {subs.length > 1 && (
         <div>
           <label className={labelClass} style={labelStyle}>
-            Collection <span style={{ color: '#C9A84C' }}>*</span>
+            Collection <span style={{ color: '#7a5c24' }}>*</span>
           </label>
           <select value={value.subcategory ?? ''} onChange={(e) => pickSub(e.target.value)} className={fieldClass} style={inputStyle}>
             {subs.map((s) => (
@@ -92,7 +92,7 @@ export default function CategoryPicker({
             ))}
           </select>
         ) : (
-          <p className="h-11 flex items-center px-4 text-sm" style={{ ...inputStyle, color: '#C9A84C' }}>
+          <p className="h-11 flex items-center px-4 text-sm" style={{ ...inputStyle, color: '#7a5c24' }}>
             {MODE_LABELS[value.mode]}
           </p>
         )}

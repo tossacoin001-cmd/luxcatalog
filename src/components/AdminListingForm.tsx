@@ -10,9 +10,9 @@ import CategoryPicker from '@/components/CategoryPicker'
 import type { Mode } from '@/lib/taxonomy'
 
 const inputStyle = {
-  background: '#0f1a10',
-  border: '1px solid #1e2e1f',
-  color: '#f5f0e8',
+  background: '#fbf9f4',
+  border: '1px solid #d6cfbf',
+  color: '#14130f',
   fontFamily: 'var(--font-inter)',
 }
 
@@ -152,8 +152,8 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
   const fieldClass = 'w-full h-11 px-4 text-sm focus:outline-none transition-colors'
   const labelClass = 'block text-[11px] tracking-[0.15em] uppercase mb-2'
   const focusHandlers = {
-    onFocus: (e: React.FocusEvent<HTMLElement>) => (e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)'),
-    onBlur: (e: React.FocusEvent<HTMLElement>) => (e.currentTarget.style.borderColor = '#1e2e1f'),
+    onFocus: (e: React.FocusEvent<HTMLElement>) => (e.currentTarget.style.borderColor = 'rgba(20,19,15,0.20)'),
+    onBlur: (e: React.FocusEvent<HTMLElement>) => (e.currentTarget.style.borderColor = '#d6cfbf'),
   }
 
   return (
@@ -161,20 +161,20 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
       {restricted && isEdit && (
         <div
           className="p-4 text-xs leading-relaxed"
-          style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+          style={{ background: 'rgba(122,92,36,0.04)', border: '1px solid rgba(20,19,15,0.14)', color: '#5e584c', fontFamily: 'var(--font-inter)' }}
         >
           Saving changes sends this listing back for review before it&rsquo;s live again.
         </div>
       )}
-      <div className="p-8" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-        <p className="text-[11px] tracking-[0.2em] uppercase mb-6" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+      <div className="p-8" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+        <p className="text-[11px] tracking-[0.2em] uppercase mb-6" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
           Basic Information
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Title <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Title <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <input
               type="text"
@@ -196,7 +196,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           />
 
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Status
             </label>
             <select
@@ -212,7 +212,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Price (NGN)
             </label>
             <input
@@ -224,14 +224,14 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
               style={inputStyle}
               {...focusHandlers}
             />
-            <p className="mt-1.5 text-[11px]" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <p className="mt-1.5 text-[11px]" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Leave blank for &ldquo;Price On Application&rdquo; listings. Powers the NGN/USD toggle and sorting.
             </p>
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Price Display <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Price Display <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <input
               type="text"
@@ -246,8 +246,8 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Location <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Location <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <input
               type="text"
@@ -262,8 +262,8 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Country <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Country <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <input
               type="text"
@@ -278,8 +278,8 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           </div>
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Description <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Description <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <textarea
               value={form.description}
@@ -294,7 +294,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           </div>
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Photos
             </label>
             <input
@@ -304,10 +304,10 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
               disabled={uploading}
               onChange={(e) => handleFiles(e.target.files)}
               className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:tracking-wider file:uppercase disabled:opacity-60"
-              style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
             />
             {uploading && (
-              <p className="flex items-center gap-2 mt-2 text-xs" style={{ color: '#9a8f7a' }}>
+              <p className="flex items-center gap-2 mt-2 text-xs" style={{ color: '#5e584c' }}>
                 <Loader2 size={12} className="animate-spin" /> Uploading…
               </p>
             )}
@@ -321,7 +321,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
                       type="button"
                       onClick={() => removeImage(url)}
                       className="absolute top-1 right-1 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                      style={{ background: 'rgba(8,12,8,0.8)', color: '#f5f0e8' }}
+                      style={{ background: 'rgba(244,240,232,0.94)', color: '#14130f' }}
                       aria-label="Remove photo"
                     >
                       <X size={12} />
@@ -333,14 +333,14 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           </div>
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Highlights (what the client gets)
             </label>
             <HighlightsEditor value={form.features} onChange={(v) => set('features', v)} />
           </div>
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Additional Details
             </label>
             <div className="space-y-2">
@@ -366,7 +366,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
                     type="button"
                     onClick={() => removeSpecRow(i)}
                     className="px-3 flex-shrink-0"
-                    style={{ color: '#908673' }}
+                    style={{ color: '#5e584c' }}
                     aria-label="Remove detail"
                   >
                     <X size={14} />
@@ -378,7 +378,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
               type="button"
               onClick={addSpecRow}
               className="mt-2 flex items-center gap-1.5 text-xs tracking-wider"
-              style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
             >
               <Plus size={12} /> Add Detail
             </button>
@@ -392,9 +392,9 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
                 checked={form.featured}
                 onChange={(e) => set('featured', e.target.checked)}
                 className="w-4 h-4 cursor-pointer"
-                style={{ accentColor: '#C9A84C' }}
+                style={{ accentColor: '#7a5c24' }}
               />
-              <label htmlFor="featured" className="text-sm cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+              <label htmlFor="featured" className="text-sm cursor-pointer" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 Feature this listing on the homepage
               </label>
             </div>
@@ -403,8 +403,8 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
       </div>
 
       {!restricted && form.category === 'supercar' && (
-        <div className="p-8" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-          <p className="text-[11px] tracking-[0.2em] uppercase mb-6" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+        <div className="p-8" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-6" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Chauffeur Hire (Lux Drive)
           </p>
           <div className="flex items-center gap-3 mb-5">
@@ -414,15 +414,15 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
               checked={form.hireAvailable}
               onChange={(e) => set('hireAvailable', e.target.checked)}
               className="w-4 h-4 cursor-pointer"
-              style={{ accentColor: '#C9A84C' }}
+              style={{ accentColor: '#7a5c24' }}
             />
-            <label htmlFor="hireAvailable" className="text-sm cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+            <label htmlFor="hireAvailable" className="text-sm cursor-pointer" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Also available for chauffeur-driven hire, independent of sale status
             </label>
           </div>
           {form.hireAvailable && (
             <div>
-              <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 Hire Rate Display
               </label>
               <input
@@ -444,7 +444,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           type="submit"
           disabled={loading || uploading}
           className="px-10 py-4 text-xs tracking-[0.2em] uppercase transition-all disabled:opacity-60"
-          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
         >
           {loading ? (isEdit ? 'Saving…' : 'Creating…') : (isEdit ? 'Save Changes' : 'Create Listing')}
         </button>
@@ -452,7 +452,7 @@ export default function AdminListingForm({ listing, restricted }: { listing?: Ad
           type="button"
           onClick={() => router.back()}
           className="px-8 py-4 text-xs tracking-[0.2em] uppercase transition-all"
-          style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+          style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}
         >
           Cancel
         </button>

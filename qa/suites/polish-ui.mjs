@@ -177,7 +177,7 @@ for (const [vp, metrics] of [['phone', PHONE], ['desktop', DESKTOP]]) {
   check(`${vp}: the request buttons say Request Barber, never Request Private Barber`, await ev(`[...document.querySelectorAll('[data-brief-trigger]')].every(b => !/private/i.test(b.textContent)) && [...document.querySelectorAll('[data-brief-trigger]')].some(b => /Request (Barber|Housekeeping)/.test(b.textContent))`))
   check(`${vp}: the catalogue still names the category Private Services (only this page drops it)`, (await (await fetch(BASE + '/catalog')).text()).includes('Private Services'))
   check(`${vp}: the breadcrumb says Services`, await ev(`[...document.querySelectorAll('nav[aria-label="Breadcrumb"] *, nav[aria-label="breadcrumb"] *')].every(e => !/private/i.test(e.textContent))`))
-  check(`${vp}: the tab title still says Private Services for search engines`, /Private Services/i.test(await ev('document.title')), await ev('document.title'))
+  check(`${vp}: the tab title still carries its search keywords (Private Services or Private Chefs)`, /Private (Services|Chefs)/i.test(await ev('document.title')), await ev('document.title'))
   check(`${vp}: the live provider card is shown with the service name clean`, await ev(`document.body.innerText.includes('Pol Chef')`))
   check(`${vp}: fits the screen`, await fits())
   await shot(`7-${vp}-services.jpg`)

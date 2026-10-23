@@ -21,11 +21,11 @@ export default function HowItWorks() {
   return (
     <section className="py-20 md:py-32 px-5 md:px-12 max-w-7xl mx-auto">
       <Reveal className="text-center mb-14 md:mb-20">
-        <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+        <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
           How it works
         </p>
-        <h2 className="text-3xl md:text-5xl leading-tight" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-          Effortless, from first look <em style={{ color: '#C9A84C' }}>to arrival</em>
+        <h2 className="text-3xl md:text-5xl leading-tight" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
+          Effortless, from first look <em style={{ color: '#7a5c24' }}>to arrival</em>
         </h2>
       </Reveal>
 
@@ -34,7 +34,7 @@ export default function HowItWorks() {
         <motion.div
           aria-hidden
           className="hidden md:block absolute top-7 left-[16.6%] right-[16.6%] h-px origin-left"
-          style={{ background: 'linear-gradient(90deg, rgba(201,168,76,0.1), #C9A84C, rgba(201,168,76,0.1))' }}
+          style={{ background: 'linear-gradient(90deg, rgba(122,92,36,0.06), #14130f, rgba(122,92,36,0.06))' }}
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true, margin: '0px 0px -20% 0px' }}
@@ -44,17 +44,17 @@ export default function HowItWorks() {
           <Reveal key={s.title} delay={0.15 * i} className="relative text-center px-2">
             <div
               className="relative mx-auto mb-6 flex items-center justify-center w-14 h-14 rounded-full"
-              style={{ background: '#0f1a10', border: '1px solid rgba(201,168,76,0.5)', boxShadow: '0 0 0 6px #080c08' }}
+              style={{ background: '#fbf9f4', border: '1px solid rgba(20,19,15,0.25)', boxShadow: '0 0 0 6px #080c08' }}
             >
-              <s.icon size={20} style={{ color: '#C9A84C' }} />
+              <s.icon size={20} style={{ color: '#7a5c24' }} />
             </div>
-            <p className="text-[11px] tracking-[0.3em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-[11px] tracking-[0.3em] uppercase mb-2" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Step {i + 1}
             </p>
-            <h3 className="text-2xl mb-3" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <h3 className="text-2xl mb-3" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               {s.title}
             </h3>
-            <p className="text-sm leading-relaxed max-w-xs mx-auto" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-sm leading-relaxed max-w-xs mx-auto" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               {s.body}
             </p>
           </Reveal>
@@ -67,11 +67,11 @@ export default function HowItWorks() {
             key={p.title}
             className="p-5 md:p-7 border-t border-lux-border even:border-l md:border-l md:first:border-l-0"
           >
-            <p.icon size={18} className="mb-4" style={{ color: '#C9A84C' }} />
-            <p className="text-base md:text-lg mb-1" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <p.icon size={18} className="mb-4" style={{ color: '#7a5c24' }} />
+            <p className="text-base md:text-lg mb-1" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               {p.title}
             </p>
-            <p className="text-xs md:text-sm leading-relaxed" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-xs md:text-sm leading-relaxed" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               {p.body}
             </p>
           </div>

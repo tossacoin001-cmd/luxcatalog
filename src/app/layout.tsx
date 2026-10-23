@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Playfair_Display, Inter } from 'next/font/google'
+import { Newsreader, Hanken_Grotesk } from 'next/font/google'
 import { Toaster } from 'sonner'
 import CurrencyProvider from '@/components/CurrencyProvider'
 import CartProvider from '@/components/CartProvider'
@@ -8,15 +8,17 @@ import { getAppUrl } from '@/lib/utils'
 import { SITE, homeTitle, homeDescription } from '@/lib/seo'
 import './globals.css'
 
-const playfair = Playfair_Display({
+const newsreader = Newsreader({
   subsets: ['latin'],
-  variable: '--font-playfair',
+  variable: '--font-serif',
+  weight: ['300', '400', '500'],
+  style: ['normal', 'italic'],
   display: 'swap',
 })
 
-const inter = Inter({
+const hanken = Hanken_Grotesk({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-sans',
   display: 'swap',
 })
 
@@ -38,7 +40,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${newsreader.variable} ${hanken.variable}`} suppressHydrationWarning>
       <head>
         <link rel="icon" href="/logo.svg" type="image/svg+xml" />
       </head>
@@ -49,12 +51,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </CurrencyProvider>
         </MotionProvider>
         <Toaster
-          theme="dark"
+          theme="light"
           toastOptions={{
             style: {
-              background: '#0f1a10',
-              border: '1px solid #1e2e1f',
-              color: '#f5f0e8',
+              background: '#fbf9f4',
+              border: '1px solid #d6cfbf',
+              color: '#14130f',
+              borderRadius: 0,
             },
           }}
         />

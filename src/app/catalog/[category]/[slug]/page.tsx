@@ -87,7 +87,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
     listing.status === 'available' ? 'available' : listing.status === 'under_offer' ? 'under_offer' : 'sold'
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <JsonLd
         data={[
           listingLd(getAppUrl(), { title: listing.title, description: listing.description, slug: listing.slug, category: listing.category, subcategory: listing.subcategory, price: listing.price ? Number(listing.price) : null, images: listing.images, location: listing.location, country: listing.country, status: listing.status, brand: partner?.brandName ?? null }, `${categoryHrefs[listing.category] ?? '/catalog'}/${listing.slug}`),
@@ -117,11 +117,11 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
       {/* Title: beneath the photo so the photo is seen in full. */}
       <header className="max-w-7xl mx-auto px-6 md:px-12 pt-8 md:pt-10">
-        <p className="text-xs md:text-sm font-semibold tracking-[0.22em] uppercase mb-3" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+        <p className="text-xs md:text-sm font-semibold tracking-[0.22em] uppercase mb-3" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
           {service ? service.label : categoryLabels[listing.category]}
         </p>
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <h1 className="text-[32px] md:text-6xl font-semibold leading-[1.1] tracking-[-0.01em] max-w-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f8f3ea' }}>
+          <h1 className="text-[32px] md:text-6xl font-semibold leading-[1.1] tracking-[-0.01em] max-w-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             {listing.title}
           </h1>
           <Badge variant={statusVariant} className="hidden md:inline-flex shrink-0 mb-2">
@@ -129,12 +129,12 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
           </Badge>
         </div>
         <div className="flex items-center gap-2 mt-4">
-          <MapPin size={15} style={{ color: '#C9A84C' }} />
-          <span className="text-base font-medium" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+          <MapPin size={15} style={{ color: '#7a5c24' }} />
+          <span className="text-base font-medium" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
             {listing.location}, {listing.country}
           </span>
         </div>
-        <div className="mt-8" style={{ height: 1, background: 'linear-gradient(90deg, rgba(201,168,76,0.45), rgba(201,168,76,0.05))' }} />
+        <div className="mt-8" style={{ height: 1, background: 'linear-gradient(90deg, rgba(122,92,36,0.14), rgba(122,92,36,0.03))' }} />
       </header>
 
       {/* Main content */}
@@ -143,30 +143,30 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
         <div className="lg:col-span-2 space-y-10">
           {/* Description */}
           <div>
-            <h2 className="text-xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <h2 className="text-xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               {service ? 'About This Service' : 'About This Asset'}
             </h2>
-            <p data-listing-description className="text-base leading-relaxed" style={{ color: '#ddd5c6', fontFamily: 'var(--font-inter)' }}>
+            <p data-listing-description className="text-base leading-relaxed" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
               {listing.description}
             </p>
           </div>
 
           {/* Divider */}
-          <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(201,168,76,0.2), transparent)' }} />
+          <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(122,92,36,0.12), transparent)' }} />
 
           {/* Specs */}
           {Object.keys(specs).length > 0 && (
             <div>
-              <h2 className="text-xl mb-5" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+              <h2 className="text-xl mb-5" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                 Specifications
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {Object.entries(specs).map(([key, val]) => (
-                  <div key={key} className="p-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-                    <p className="text-[11px] tracking-[0.15em] uppercase mb-1" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                  <div key={key} className="p-4" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+                    <p className="text-[11px] tracking-[0.15em] uppercase mb-1" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                       {specLabel(key)}
                     </p>
-                    <p className="text-sm font-medium" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-sm font-medium" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                       {val}
                     </p>
                   </div>
@@ -178,16 +178,16 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
           {/* Highlights: an outline, never a paragraph */}
           {highlights.length > 0 && (
             <div>
-              <h2 className="text-xl mb-5" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+              <h2 className="text-xl mb-5" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                 What&apos;s included
               </h2>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
                 {highlights.map((f) => (
-                  <li key={f} className="flex items-start gap-3 py-3" style={{ borderBottom: '1px solid #1e2e1f' }}>
-                    <span className="mt-0.5 flex items-center justify-center w-5 h-5 shrink-0 rounded-full" style={{ background: 'rgba(201,168,76,0.12)', border: '1px solid rgba(201,168,76,0.35)' }}>
-                      <Check size={11} style={{ color: '#C9A84C' }} />
+                  <li key={f} className="flex items-start gap-3 py-3" style={{ borderBottom: '1px solid #d6cfbf' }}>
+                    <span className="mt-0.5 flex items-center justify-center w-5 h-5 shrink-0 rounded-full" style={{ background: 'rgba(122,92,36,0.07)', border: '1px solid rgba(20,19,15,0.17)' }}>
+                      <Check size={11} style={{ color: '#7a5c24' }} />
                     </span>
-                    <span className="text-sm leading-relaxed" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+                    <span className="text-sm leading-relaxed" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
                       {f}
                     </span>
                   </li>
@@ -201,7 +201,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
         <div className="lg:col-span-1" id="enquire" style={{ scrollMarginTop: '6rem' }}>
           <div
             className="sticky top-24 p-7 space-y-6"
-            style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}
+            style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}
           >
             {booking ? (
               <Suspense fallback={<div className="min-h-[420px]" aria-hidden />}>
@@ -213,55 +213,55 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
               </Suspense>
             ) : (
               <div>
-                <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   {caption.label}
                 </p>
-                <p className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: !price ? 'italic' : 'normal' }}>
+                <p className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f', fontStyle: !price ? 'italic' : 'normal' }}>
                   <PriceDisplay price={price} priceDisplay={listing.priceDisplay} />
                   {caption.suffix && price ? (
-                    <span className="ml-2 text-sm not-italic" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                    <span className="ml-2 text-sm not-italic" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                       {caption.suffix}
                     </span>
                   ) : null}
                 </p>
                 {service?.key === 'private_chef' && (
-                  <p className="mt-1 text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                  <p className="mt-1 text-xs" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                     per guest, ingredients included
                   </p>
                 )}
               </div>
             )}
 
-            <div style={{ height: 1, background: '#1e2e1f' }} />
+            <div style={{ height: 1, background: '#ece6d9' }} />
 
             <div className="space-y-3">
               <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#908673' }}>Category</span>
-                <span style={{ color: '#9a8f7a' }}>{categoryLabels[listing.category]}</span>
+                <span style={{ color: '#5e584c' }}>Category</span>
+                <span style={{ color: '#5e584c' }}>{categoryLabels[listing.category]}</span>
               </div>
               {service && (
                 <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                  <span style={{ color: '#908673' }}>Service</span>
-                  <span style={{ color: '#9a8f7a' }}>{service.label}</span>
+                  <span style={{ color: '#5e584c' }}>Service</span>
+                  <span style={{ color: '#5e584c' }}>{service.label}</span>
                 </div>
               )}
               <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#908673' }}>Location</span>
-                <span style={{ color: '#9a8f7a' }}>{listing.location}</span>
+                <span style={{ color: '#5e584c' }}>Location</span>
+                <span style={{ color: '#5e584c' }}>{listing.location}</span>
               </div>
               <div className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#908673' }}>Status</span>
+                <span style={{ color: '#5e584c' }}>Status</span>
                 <Badge variant={statusVariant}>
                   {listing.status === 'under_offer' ? 'Under Offer' : listing.status}
                 </Badge>
               </div>
               {partner && (
                 <div className="flex justify-between items-center text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                  <span style={{ color: '#908673' }}>Listed By</span>
-                  <span className="flex items-center gap-2" style={{ color: '#9a8f7a' }}>
+                  <span style={{ color: '#5e584c' }}>Listed By</span>
+                  <span className="flex items-center gap-2" style={{ color: '#5e584c' }}>
                     {partner.logo && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={partner.logo} alt="" className="w-5 h-5 object-cover" style={{ background: '#162318' }} />
+                      <img src={partner.logo} alt="" className="w-5 h-5 object-cover" style={{ background: '#ece6d9' }} />
                     )}
                     {partner.brandName}
                   </span>
@@ -269,10 +269,10 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
               )}
             </div>
 
-            <div style={{ height: 1, background: '#1e2e1f' }} />
+            <div style={{ height: 1, background: '#ece6d9' }} />
 
             {booking ? (
-              <p className="text-[11px] leading-relaxed text-center" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] leading-relaxed text-center" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 Questions before you book? Tap the concierge button and a specialist will help.
               </p>
             ) : listing.category === 'decor' ? (
@@ -292,7 +292,7 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
 
                 <p
                   className="text-[11px] leading-relaxed text-center"
-                  style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+                  style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
                 >
                   Your enquiry is handled with complete discretion. A specialist will respond within 24 hours.
                 </p>

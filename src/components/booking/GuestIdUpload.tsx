@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { CheckCircle2, IdCard, Loader2 } from 'lucide-react'
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 const MAX = 4 * 1024 * 1024
 
 // Large phone photos are scaled down in the browser before upload so they
@@ -48,11 +48,11 @@ export default function GuestIdUpload({ reference, uploaded }: { reference: stri
   }
 
   return (
-    <section className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ background: '#0f1a10', border: `1px solid ${uploaded ? 'rgba(111,191,115,0.35)' : 'rgba(201,168,76,0.35)'}` }}>
+    <section className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ background: '#fbf9f4', border: `1px solid ${uploaded ? 'rgba(47,107,69,0.35)' : 'rgba(20,19,15,0.17)'}` }}>
       <div className="flex items-start gap-3">
-        {uploaded ? <CheckCircle2 size={20} className="mt-0.5 shrink-0" style={{ color: '#6fbf73' }} /> : <IdCard size={20} className="mt-0.5 shrink-0" style={{ color: '#C9A84C' }} />}
+        {uploaded ? <CheckCircle2 size={20} className="mt-0.5 shrink-0" style={{ color: '#2f6b45' }} /> : <IdCard size={20} className="mt-0.5 shrink-0" style={{ color: '#7a5c24' }} />}
         <div>
-          <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
             {uploaded ? 'ID received' : 'Add your ID before arrival'}
           </p>
           <p className="text-xs leading-relaxed" style={text}>
@@ -67,7 +67,7 @@ export default function GuestIdUpload({ reference, uploaded }: { reference: stri
         onClick={() => input.current?.click()}
         disabled={busy}
         className="shrink-0 inline-flex items-center justify-center gap-2 min-h-11 px-5 text-[11px] tracking-[0.14em] uppercase disabled:opacity-50"
-        style={uploaded ? { border: '1px solid #1e2e1f', ...text } : { background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+        style={uploaded ? { border: '1px solid #d6cfbf', ...text } : { background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
       >
         {busy && <Loader2 size={13} className="animate-spin" />} {uploaded ? 'Replace' : 'Upload ID'}
       </button>

@@ -32,15 +32,15 @@ export default async function SavedPage() {
     .map((s) => ({ ...s.listing, price: s.listing!.price ? Number(s.listing!.price) : null }))
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <Navbar />
 
-      <div className="pt-32 pb-12 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-32 pb-12 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-7xl mx-auto">
-          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Your Collection
           </p>
-          <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Saved Assets
           </h1>
         </div>
@@ -49,16 +49,16 @@ export default async function SavedPage() {
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-16">
         {saved.length === 0 ? (
           <div className="text-center py-24">
-            <p className="text-4xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <p className="text-4xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               Your collection is empty
             </p>
-            <p className="text-sm mb-8" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-sm mb-8" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Browse the catalog and save assets that capture your attention.
             </p>
             <Link
               href="/catalog"
               className="inline-flex items-center px-8 py-4 text-xs tracking-[0.2em] uppercase"
-              style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+              style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
             >
               Browse Catalog
             </Link>

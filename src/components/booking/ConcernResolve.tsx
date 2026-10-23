@@ -35,14 +35,14 @@ export default function ConcernResolve({ bookingId, concernId }: { bookingId: st
         onChange={(e) => setNote(e.target.value)}
         placeholder="How was it resolved?"
         className="flex-1 px-3 py-2 text-sm resize-y"
-        style={{ background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}
+        style={{ background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }}
       />
       <button
         type="button"
         onClick={resolve}
         disabled={busy || note.trim().length < 5}
         className="inline-flex items-center justify-center gap-2 min-h-11 px-4 text-[11px] tracking-[0.14em] uppercase disabled:opacity-50"
-        style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+        style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
       >
         {busy && <Loader2 size={13} className="animate-spin" />} Mark resolved
       </button>

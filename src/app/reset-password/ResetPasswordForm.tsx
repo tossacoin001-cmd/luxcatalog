@@ -33,7 +33,7 @@ export default function ResetPasswordForm({ token, linkError }: { token: string 
     <AuthShell
       title="Choose a New Password"
       footer={
-        <Link href="/sign-in" className="text-lux-gold hover:text-lux-gold-light">
+        <Link href="/sign-in" className="inline-flex items-center min-h-11 text-lux-text underline underline-offset-4">
           Back to sign in
         </Link>
       }
@@ -44,7 +44,7 @@ export default function ResetPasswordForm({ token, linkError }: { token: string 
           <Link
             href="/forgot-password"
             className="block w-full h-11 leading-[2.75rem] text-center text-xs tracking-[0.18em] uppercase"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             Request a New Link
           </Link>
@@ -55,7 +55,7 @@ export default function ResetPasswordForm({ token, linkError }: { token: string 
           <Link
             href="/sign-in"
             className="block w-full h-11 leading-[2.75rem] text-center text-xs tracking-[0.18em] uppercase"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             Sign In
           </Link>

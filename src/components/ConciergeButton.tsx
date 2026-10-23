@@ -55,11 +55,10 @@ export default function ConciergeButton() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.95 }}
             transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
-            className="group fixed z-40 right-4 md:right-8 flex items-center justify-center gap-3 h-14 w-14 sm:w-auto sm:pl-4 sm:pr-5 rounded-full shadow-[0_12px_40px_rgba(0,0,0,0.45)] active:scale-95 transition-transform"
-            style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom))', background: 'linear-gradient(135deg, #d8b85c, #b8943a)', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            className="group fixed z-40 right-4 md:right-8 flex items-center justify-center gap-3 h-14 w-14 sm:w-auto sm:pl-4 sm:pr-5 active:scale-95 transition-transform"
+            style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom))', background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             <span className="relative flex items-center justify-center">
-              <span className="absolute inline-flex h-8 w-8 rounded-full bg-[#080c08]/15 animate-ping [animation-duration:2.4s]" aria-hidden />
               <MessageCircle size={20} />
             </span>
             <span className="hidden sm:inline text-xs tracking-[0.16em] uppercase font-medium">Concierge</span>
@@ -68,18 +67,18 @@ export default function ConciergeButton() {
       </AnimatePresence>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4" style={{ background: 'rgba(8,12,8,0.88)', backdropFilter: 'blur(8px)' }} onClick={() => setOpen(false)}>
-          <div data-concierge-panel className="w-full sm:max-w-lg max-h-[92vh] overflow-y-auto" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Lux Catalog concierge">
-            <div className="flex items-start justify-between gap-3 px-6 py-5" style={{ borderBottom: '1px solid #1e2e1f' }}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4" style={{ background: 'rgba(20,19,15,0.5)' }} onClick={() => setOpen(false)}>
+          <div data-concierge-panel className="w-full sm:max-w-lg max-h-[92vh] overflow-y-auto" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Lux Catalog concierge">
+            <div className="flex items-start justify-between gap-3 px-6 py-5" style={{ borderBottom: '1px solid #d6cfbf' }}>
               <div>
-                <p className="text-[11px] tracking-[0.2em] uppercase mb-1" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] tracking-[0.2em] uppercase mb-1" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                   Lux Catalog concierge
                 </p>
-                <h3 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                <h3 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                   How can we help?
                 </h3>
               </div>
-              <button type="button" onClick={() => setOpen(false)} className="w-11 h-11 inline-flex items-center justify-center shrink-0" style={{ color: '#908673' }} aria-label="Close">
+              <button type="button" onClick={() => setOpen(false)} className="w-11 h-11 inline-flex items-center justify-center shrink-0" style={{ color: '#5e584c' }} aria-label="Close">
                 <X size={18} />
               </button>
             </div>
@@ -92,16 +91,16 @@ export default function ConciergeButton() {
                   aria-pressed={t.key === topic}
                   onClick={() => setTopic(t.key)}
                   className="min-h-11 px-4 text-[11px] tracking-[0.12em] uppercase"
-                  style={{ border: `1px solid ${t.key === topic ? '#C9A84C' : '#1e2e1f'}`, background: t.key === topic ? 'rgba(201,168,76,0.12)' : 'transparent', color: t.key === topic ? '#e4c878' : '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+                  style={{ border: `1px solid ${t.key === topic ? '#14130f' : '#d6cfbf'}`, background: t.key === topic ? 'rgba(122,92,36,0.07)' : 'transparent', color: t.key === topic ? '#7a5c24' : '#5e584c', fontFamily: 'var(--font-inter)' }}
                 >
                   {t.label}
                 </button>
               ))}
             </div>
             <BriefForm topic={chosen.topic} onDone={() => setOpen(false)} />
-            <p className="px-6 pb-6 -mt-2 text-center text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <p className="px-6 pb-6 -mt-2 text-center text-xs" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Prefer WhatsApp?{' '}
-              <a data-wa-fallback href={whatsappLink('Hello, I’d like help from the Lux Catalog concierge.')} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: '#9a8f7a' }}>
+              <a data-wa-fallback href={whatsappLink('Hello, I’d like help from the Lux Catalog concierge.')} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: '#5e584c' }}>
                 Message us there
               </a>
             </p>

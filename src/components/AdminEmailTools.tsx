@@ -7,8 +7,8 @@ import { Activity, MailPlus } from 'lucide-react'
 type Check = { name: string; status: 'ok' | 'warn' | 'fail'; detail: string }
 type RunResult = { status: Check['status']; checks: Check[]; emails: { admins: Record<string, string>; partners: Record<string, string> } }
 
-const tone = { ok: '#6fbf73', warn: '#e8a84c', fail: '#e85c4c' }
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const tone = { ok: '#2f6b45', warn: '#7a5c24', fail: '#8a3b2e' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 const btn = 'inline-flex items-center gap-2 min-h-11 px-5 text-xs tracking-[0.16em] uppercase disabled:opacity-60'
 
 const OUTCOME: Record<string, string> = {
@@ -64,10 +64,10 @@ export default function AdminEmailTools({ lastRun }: { lastRun: { at: string; st
   }
 
   return (
-    <div className="p-6 md:p-8 space-y-6" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+    <div className="p-6 md:p-8 space-y-6" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Emails &amp; Watchdog
           </p>
           <p className="text-sm" style={text}>
@@ -81,10 +81,10 @@ export default function AdminEmailTools({ lastRun }: { lastRun: { at: string; st
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <button type="button" onClick={preview} disabled={running} className={btn} style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+          <button type="button" onClick={preview} disabled={running} className={btn} style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
             <Activity size={14} /> {running ? 'Checking…' : 'Run Watchdog & preview emails'}
           </button>
-          <button type="button" onClick={loadInvitees} className={btn} style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <button type="button" onClick={loadInvitees} className={btn} style={{ border: '1px solid rgba(20,19,15,0.20)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             <MailPlus size={14} /> Invite members to choose emails
           </button>
         </div>
@@ -99,7 +99,7 @@ export default function AdminEmailTools({ lastRun }: { lastRun: { at: string; st
                 <li key={c.name} className="flex items-start gap-3 text-sm" style={text}>
                   <span className="mt-1.5 w-2 h-2 shrink-0" style={{ background: tone[c.status] }} />
                   <span>
-                    <span style={{ color: '#f5f0e8' }}>{c.name.replace(/_/g, ' ')}</span>: {c.detail}
+                    <span style={{ color: '#14130f' }}>{c.name.replace(/_/g, ' ')}</span>: {c.detail}
                   </span>
                 </li>
               ))}
@@ -128,7 +128,7 @@ export default function AdminEmailTools({ lastRun }: { lastRun: { at: string; st
               : 'Everyone has already chosen, or already received the invite.'}
           </p>
           {invitees.length > 0 && (
-            <button type="button" onClick={sendInvites} disabled={sending} className={btn} style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+            <button type="button" onClick={sendInvites} disabled={sending} className={btn} style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
               {sending ? 'Sending…' : `Send invite to ${invitees.length}`}
             </button>
           )}

@@ -42,25 +42,25 @@ export default function ListingActionBar({
             className="lg:hidden fixed inset-x-0 bottom-0 z-40 px-4 pt-3"
             style={{
               paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
-              background: 'rgba(8,12,8,0.86)',
+              background: 'rgba(244,240,232,0.97)',
               backdropFilter: 'blur(18px) saturate(140%)',
               WebkitBackdropFilter: 'blur(18px) saturate(140%)',
-              borderTop: '1px solid rgba(201,168,76,0.18)',
+              borderTop: '1px solid #d6cfbf',
             }}
           >
             <div className="flex items-center gap-3 max-w-3xl mx-auto">
               <div className="min-w-0 flex-1">
-                <p className="text-[11px] tracking-[0.18em] uppercase truncate" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-[11px] tracking-[0.18em] uppercase truncate" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   {title}
                 </p>
-                <p className="text-lg leading-tight truncate" style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: price ? 'normal' : 'italic' }}>
+                <p className="text-lg leading-tight truncate" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f', fontStyle: price ? 'normal' : 'italic' }}>
                   <PriceDisplay price={price} priceDisplay={priceDisplay} />
                 </p>
               </div>
               <a
                 href="#enquire"
                 className="flex items-center justify-center h-12 px-5 shrink-0 text-xs tracking-[0.16em] uppercase active:scale-95 transition-transform"
-                style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+                style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
               >
                 {primaryLabel}
               </a>

@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Luxury homes, shortlets, supercars, yachts and vetted services in Lagos.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#080c08',
-    theme_color: '#080c08',
+    background_color: '#f4f0e8',
+    theme_color: '#f4f0e8',
     icons: [
       { src: '/icon', sizes: '512x512', type: 'image/png' },
       { src: '/apple-icon', sizes: '180x180', type: 'image/png' },

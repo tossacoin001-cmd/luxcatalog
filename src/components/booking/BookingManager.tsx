@@ -25,10 +25,10 @@ type Settings = {
 }
 type Block = { id: string; start: string; end: string; note: string | null; source: string }
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
-const card = { background: '#0f1a10', border: '1px solid #1e2e1f' }
-const inputCls = 'w-full h-11 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#C9A84C]'
-const inputStyle = { background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
+const card = { background: '#fbf9f4', border: '1px solid #d6cfbf' }
+const inputCls = 'w-full h-11 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#7a5c24]'
+const inputStyle = { background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }
 const fmt = (day: string) => toDate(day).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
@@ -81,9 +81,9 @@ export default function BookingManager({ listingId, published }: { listingId: st
 
   if (loadError) {
     return (
-      <p className="text-sm p-4" role="alert" style={{ background: 'rgba(232,92,76,0.08)', color: '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
+      <p className="text-sm p-4" role="alert" style={{ background: 'rgba(138,59,46,0.08)', color: '#8a3b2e', fontFamily: 'var(--font-inter)' }}>
         {loadError}{' '}
-        <button type="button" onClick={() => { setLoadError(null); setAttempt((n) => n + 1) }} className="underline" style={{ color: '#C9A84C' }}>
+        <button type="button" onClick={() => { setLoadError(null); setAttempt((n) => n + 1) }} className="underline" style={{ color: '#7a5c24' }}>
           Try again
         </button>
       </p>
@@ -146,9 +146,9 @@ export default function BookingManager({ listingId, published }: { listingId: st
   return (
     <div className="space-y-10">
       {/* Online booking switch */}
-      <section className="p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ ...card, borderColor: s.enabled ? 'rgba(111,191,115,0.4)' : '#1e2e1f' }}>
+      <section className="p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ ...card, borderColor: s.enabled ? 'rgba(47,107,69,0.4)' : '#d6cfbf' }}>
         <div>
-          <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             {s.enabled ? 'Online booking is on' : 'Online booking is off'}
           </p>
           <p className="text-sm mt-1" style={text}>
@@ -163,7 +163,7 @@ export default function BookingManager({ listingId, published }: { listingId: st
           disabled={saving}
           onClick={() => save({ ...s, enabled: !s.enabled })}
           className="shrink-0 min-h-11 px-6 text-xs tracking-[0.16em] uppercase disabled:opacity-50"
-          style={s.enabled ? { border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' } : { background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          style={s.enabled ? { border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' } : { background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
         >
           {s.enabled ? 'Turn off' : 'Turn on booking'}
         </button>
@@ -171,7 +171,7 @@ export default function BookingManager({ listingId, published }: { listingId: st
 
       {/* Pricing and rules */}
       <section className="space-y-5">
-        <h2 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+        <h2 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
           Price and rules
         </h2>
         <div className="grid sm:grid-cols-2 gap-5">
@@ -248,9 +248,9 @@ export default function BookingManager({ listingId, published }: { listingId: st
                 onClick={() => set('cancellationPolicy', p)}
                 aria-pressed={s.cancellationPolicy === p}
                 className="text-left p-4"
-                style={{ ...card, borderColor: s.cancellationPolicy === p ? '#C9A84C' : '#1e2e1f' }}
+                style={{ ...card, borderColor: s.cancellationPolicy === p ? '#14130f' : '#d6cfbf' }}
               >
-                <span className="block text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                <span className="block text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                   {POLICY_TEXT[p].label}
                 </span>
                 <span className="block mt-1 text-xs leading-relaxed" style={text}>
@@ -265,7 +265,7 @@ export default function BookingManager({ listingId, published }: { listingId: st
           disabled={saving}
           onClick={() => save()}
           className="inline-flex items-center gap-2 min-h-12 px-8 text-xs tracking-[0.18em] uppercase disabled:opacity-50"
-          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
         >
           {saving && <Loader2 size={14} className="animate-spin" />} Save price and rules
         </button>
@@ -274,7 +274,7 @@ export default function BookingManager({ listingId, published }: { listingId: st
       {/* Calendar */}
       <section className="space-y-5">
         <div>
-          <h2 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h2 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Calendar
           </h2>
           <p className="text-sm mt-1" style={text}>
@@ -293,7 +293,7 @@ export default function BookingManager({ listingId, published }: { listingId: st
                 disabled={closing}
                 onClick={closeDates}
                 className="shrink-0 inline-flex items-center justify-center gap-2 min-h-11 px-5 text-xs tracking-[0.14em] uppercase disabled:opacity-50"
-                style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+                style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
               >
                 <CalendarX2 size={14} /> Close {fmt(sel.first)}
                 {sel.last && sel.last !== sel.first ? ` – ${fmt(sel.last)}` : ''}
@@ -305,12 +305,12 @@ export default function BookingManager({ listingId, published }: { listingId: st
           <ul className="space-y-2">
             {blocks.map((b) => (
               <li key={b.id} className="flex items-center justify-between gap-3 p-3" style={card}>
-                <span className="text-sm" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+                <span className="text-sm" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
                   {fmt(b.start)}
                   {addDays(b.start, 1) !== b.end ? ` – ${fmt(addDays(b.end, -1))}` : ''}
                   {b.note && <span style={text}> · {b.note}</span>}
                 </span>
-                <button type="button" onClick={() => reopen(b.id)} aria-label={`Reopen ${fmt(b.start)}`} className="inline-flex items-center justify-center w-11 h-11" style={{ color: '#908673' }}>
+                <button type="button" onClick={() => reopen(b.id)} aria-label={`Reopen ${fmt(b.start)}`} className="inline-flex items-center justify-center w-11 h-11" style={{ color: '#5e584c' }}>
                   <X size={15} />
                 </button>
               </li>

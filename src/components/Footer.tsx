@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { MessageCircle, Phone } from 'lucide-react'
 import { whatsappLink, PHONE_LINK, PHONE_DISPLAY } from '@/lib/contact'
 
@@ -33,35 +32,21 @@ export default function Footer() {
   return (
     <footer
       style={{
-        background: '#050805',
-        borderTop: '1px solid rgba(201,168,76,0.12)',
+        background: '#ece6d9',
+        borderTop: '1px solid #d6cfbf',
       }}
     >
-      {/* Gold divider line */}
-      <div
-        style={{
-          height: '1px',
-          background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)',
-          opacity: 0.25,
-        }}
-      />
-
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-20">
         {/* Top row */}
         <div className="flex flex-col md:flex-row gap-12 md:gap-0 justify-between">
           {/* Brand */}
           <div className="max-w-xs">
-            <Link href="/">
-              <Image
-                src="/logo-horizontal.svg"
-                alt="Lux Catalog"
-                width={180}
-                height={42}
-              />
+            <Link href="/" className="inline-flex items-center min-h-11" aria-label="Lux Catalog, home">
+              <span data-wordmark className="text-3xl leading-none" style={{ color: '#14130f' }}>Lux Catalog</span>
             </Link>
             <p
               className="mt-5 text-sm leading-relaxed"
-              style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
             >
               The definitive platform for discovering and acquiring the world&apos;s finest luxury assets.
             </p>
@@ -71,16 +56,16 @@ export default function Footer() {
                 href={whatsappLink("Hello, I'd like to speak with a Lux Catalog specialist.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 min-h-11 text-sm transition-colors hover:text-lux-gold w-fit"
-                style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+                className="inline-flex items-center gap-2 min-h-11 text-sm transition-colors hover:text-lux-text w-fit"
+                style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
               >
                 <MessageCircle size={14} />
                 WhatsApp: {PHONE_DISPLAY}
               </a>
               <a
                 href={PHONE_LINK}
-                className="inline-flex items-center gap-2 min-h-11 text-sm transition-colors hover:text-lux-gold w-fit"
-                style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+                className="inline-flex items-center gap-2 min-h-11 text-sm transition-colors hover:text-lux-text w-fit"
+                style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
               >
                 <Phone size={14} />
                 Call: {PHONE_DISPLAY}
@@ -94,7 +79,7 @@ export default function Footer() {
               <div key={heading}>
                 <h4
                   className="text-xs tracking-[0.2em] uppercase mb-5"
-                  style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                  style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}
                 >
                   {heading}
                 </h4>
@@ -104,7 +89,7 @@ export default function Footer() {
                       <Link
                         href={link.href}
                         className="inline-flex items-center min-h-11 text-sm transition-colors hover:text-lux-text"
-                        style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+                        style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
                       >
                         {link.label}
                       </Link>
@@ -119,23 +104,23 @@ export default function Footer() {
         {/* Bottom bar */}
         <div
           className="mt-14 pt-8 flex flex-col md:flex-row items-center justify-between gap-4"
-          style={{ borderTop: '1px solid #1e2e1f' }}
+          style={{ borderTop: '1px solid #d6cfbf' }}
         >
           <p
             className="text-xs tracking-wider"
-            style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+            style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
           >
             &copy; {new Date().getFullYear()} Lux Catalog. All rights reserved.
           </p>
           <p
             className="text-xs tracking-wider"
-            style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+            style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
           >
             Crafted by{' '}
             <a
               href="https://tossacoin.com"
-              className="inline-flex items-center min-h-11 hover:text-lux-gold-muted transition-colors"
-              style={{ color: '#908673' }}
+              className="inline-flex items-center min-h-11 hover:text-lux-text transition-colors"
+              style={{ color: '#5e584c' }}
             >
               Toss Enterprise
             </a>

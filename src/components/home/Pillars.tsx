@@ -79,8 +79,8 @@ const more = [
 
 function SubChip({ sub }: { sub: Sub }) {
   const cls =
-    'relative z-10 inline-flex items-center min-h-10 px-4 text-[11px] tracking-[0.16em] uppercase transition-colors duration-300 hover:bg-lux-gold hover:text-lux-bg'
-  const style = { border: '1px solid rgba(228,200,120,0.45)', color: '#f5f0e8', background: 'rgba(8,12,8,0.45)', backdropFilter: 'blur(8px)', fontFamily: 'var(--font-inter)' }
+    'inline-flex items-center min-h-11 px-4 text-[11px] tracking-[0.16em] uppercase transition-colors duration-300 hover:bg-[#14130f] hover:text-[#f4f0e8]'
+  const style = { border: '1px solid #c4bcaa', color: '#14130f', fontFamily: 'var(--font-inter)' }
   return (
     <Link href={sub.href} className={cls} style={style}>
       {sub.label}
@@ -93,14 +93,14 @@ export default function Pillars() {
     <section className="py-20 md:py-32 px-5 md:px-12 max-w-7xl mx-auto">
       <Reveal className="mb-12 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             The Collections
           </p>
-          <h2 className="text-3xl md:text-5xl leading-tight" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-            Five pillars of <em style={{ color: '#C9A84C' }}>exceptional</em> living
+          <h2 className="text-3xl md:text-5xl leading-tight" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
+            Five pillars of <em style={{ color: '#7a5c24' }}>exceptional</em> living
           </h2>
         </div>
-        <p data-pillars-intro className="max-w-sm text-base md:text-lg font-medium leading-relaxed" style={{ color: '#e8dfcf', fontFamily: 'var(--font-inter)' }}>
+        <p data-pillars-intro className="max-w-sm text-base md:text-lg font-medium leading-relaxed" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
           Buy outright, rent by the month or book by the night. Every asset is vetted, every partner verified.
         </p>
       </Reveal>
@@ -108,46 +108,33 @@ export default function Pillars() {
       <RevealGroup className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
         {pillars.map((p, i) => (
           <RevealItem key={p.title} className={i === 4 ? 'md:col-span-2' : ''}>
-            <article className={`group relative overflow-hidden aspect-[4/5] sm:aspect-[16/11] isolate ${i === 4 ? 'md:aspect-[21/8]' : ''}`}>
-              <Image
-                src={p.image}
-                alt={p.alt}
-                fill
-                sizes={i === 4 ? '100vw' : '(max-width: 768px) 100vw, 50vw'}
-                className="object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
-              />
-              <div
-                className="absolute inset-0"
-                style={{ background: 'linear-gradient(180deg, rgba(8,12,8,0.05) 0%, rgba(8,12,8,0.35) 45%, rgba(8,12,8,0.92) 100%)' }}
-              />
-              <div className="absolute inset-0 ring-1 ring-inset ring-transparent transition-[box-shadow] duration-500 group-hover:ring-[rgba(201,168,76,0.55)]" />
-              {/* Whole card is a link; chips sit above it with their own targets. */}
-              <Link href={p.href} className="absolute inset-0" aria-label={`Explore ${p.title}`} />
-
-              <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 pointer-events-none">
-                <div className="flex items-end justify-between gap-4 mb-5">
+            <article className="group">
+              <div className={`relative overflow-hidden isolate aspect-[4/3] ${i === 4 ? 'md:aspect-[21/8]' : ''}`}>
+                <Image
+                  src={p.image}
+                  alt={p.alt}
+                  fill
+                  sizes={i === 4 ? '100vw' : '(max-width: 768px) 100vw, 50vw'}
+                  className="object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
+                />
+                {/* The whole picture is a link; the chips below have their own targets. */}
+                <Link href={p.href} className="absolute inset-0" aria-label={`Explore ${p.title}`} />
+              </div>
+              <div className="pt-5 pb-2">
+                <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
-                    <p
-                      data-pillar-tagline
-                      className="text-[15px] md:text-base font-semibold leading-snug mb-2"
-                      style={{ color: '#f7ecd0', fontFamily: 'var(--font-inter)', textShadow: '0 1px 14px rgba(0,0,0,0.75)' }}
-                    >
+                    <p data-pillar-tagline className="text-sm leading-snug mb-1.5" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
                       {p.tagline}
                     </p>
-                    <h3 className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                    <h3 className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                       {p.title}
                     </h3>
                   </div>
-                  <span
-                    className="hidden sm:flex flex-shrink-0 items-center justify-center w-12 h-12 rounded-full transition-all duration-500 group-hover:bg-lux-gold group-hover:rotate-45"
-                    style={{ border: '1px solid rgba(201,168,76,0.6)' }}
-                  >
-                    <ArrowUpRight size={18} className="text-lux-gold transition-colors duration-500 group-hover:text-lux-bg" />
-                  </span>
+                  <ArrowUpRight size={20} className="mt-1 flex-shrink-0 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" style={{ color: '#14130f' }} aria-hidden />
                 </div>
-                <div className="flex flex-wrap gap-2 pointer-events-auto">
-                  {p.subs.map((s) => (
-                    <SubChip key={s.label} sub={s} />
+                <div className="flex flex-wrap gap-2">
+                  {p.subs.map((sb) => (
+                    <SubChip key={sb.label} sub={sb} />
                   ))}
                 </div>
               </div>
@@ -157,7 +144,7 @@ export default function Pillars() {
       </RevealGroup>
 
       <Reveal className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6" delay={0.1}>
-        <span className="text-[11px] tracking-[0.24em] uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+        <span className="text-[11px] tracking-[0.24em] uppercase" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
           Also in the catalog
         </span>
         <div className="flex flex-wrap gap-2">
@@ -166,7 +153,7 @@ export default function Pillars() {
               key={m.href}
               href={m.href}
               className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.14em] uppercase transition-colors duration-300 hover:text-lux-gold hover:border-lux-gold-muted"
-              style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+              style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}
             >
               {m.label}
             </Link>
@@ -174,8 +161,8 @@ export default function Pillars() {
           <RequestButton
             topic="A private jet charter"
             label="Private jet, on request"
-            className="inline-flex items-center gap-2 min-h-11 px-4 text-xs tracking-[0.14em] uppercase transition-colors duration-300 hover:bg-[rgba(201,168,76,0.08)]"
-            style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+            className="inline-flex items-center gap-2 min-h-11 px-4 text-xs tracking-[0.14em] uppercase transition-colors duration-300 hover:bg-[rgba(122,92,36,0.05)]"
+            style={{ border: '1px solid rgba(20,19,15,0.20)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
           >
             <Plane size={13} />
             Private Jets &middot; On Request

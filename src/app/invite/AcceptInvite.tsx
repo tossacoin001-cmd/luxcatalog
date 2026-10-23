@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { AuthError, AuthNotice } from '@/components/auth/AuthShell'
 import { signOut } from '@/lib/auth-client'
 
-const buttonStyle = { background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }
+const buttonStyle = { background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }
 
 export default function AcceptInvite({ token, invitedEmail, currentEmail }: { token: string; invitedEmail: string; currentEmail: string }) {
   const [loading, setLoading] = useState(false)

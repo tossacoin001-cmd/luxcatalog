@@ -18,13 +18,13 @@ export default function SeasonStrip() {
   // Rendered twice so the marquee loops seamlessly at -50%.
   const items = [...ticker, ...ticker]
   return (
-    <section className="relative overflow-hidden" style={{ background: '#0b120b', borderTop: '1px solid rgba(201,168,76,0.12)', borderBottom: '1px solid rgba(201,168,76,0.12)' }}>
-      <div className="py-5 overflow-hidden" style={{ borderBottom: '1px solid rgba(201,168,76,0.08)' }} aria-hidden>
+    <section className="relative overflow-hidden" style={{ background: '#f4f0e8', borderTop: '1px solid rgba(20,19,15,0.14)', borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
+      <div className="py-5 overflow-hidden" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }} aria-hidden>
         <div className="flex w-max animate-marquee">
           {items.map((t, i) => (
-            <span key={i} className="flex items-center gap-8 px-8 text-sm md:text-base whitespace-nowrap" style={{ fontFamily: 'var(--font-playfair)', color: '#9a8f7a' }}>
-              <em style={{ color: i % 2 ? '#9a8f7a' : '#e4c878' }}>{t}</em>
-              <span className="w-1.5 h-1.5 rotate-45" style={{ background: '#8a6f2e' }} />
+            <span key={i} className="flex items-center gap-8 px-8 text-sm md:text-base whitespace-nowrap" style={{ fontFamily: 'var(--font-playfair)', color: '#5e584c' }}>
+              <em style={{ color: i % 2 ? '#5e584c' : '#7a5c24' }}>{t}</em>
+              <span className="w-1.5 h-1.5 rotate-45" style={{ background: '#7a5c24' }} />
             </span>
           ))}
         </div>
@@ -32,13 +32,13 @@ export default function SeasonStrip() {
 
       <div className="max-w-7xl mx-auto px-5 md:px-12 py-14 md:py-20 grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-10 md:gap-16 items-center">
         <Reveal>
-          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             {SEASON.eyebrow}
           </p>
-          <h2 className="text-3xl md:text-5xl leading-tight mb-5" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h2 className="text-3xl md:text-5xl leading-tight mb-5" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             {SEASON.title}
           </h2>
-          <p className="text-base leading-relaxed max-w-xl" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-base leading-relaxed max-w-xl" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             {SEASON.body}
           </p>
         </Reveal>
@@ -46,13 +46,13 @@ export default function SeasonStrip() {
           <Link
             href="/catalog/shortlets"
             className="sheen inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-transform duration-300 active:scale-[0.98]"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             Reserve Your Dates
           </Link>
           <OpenConcierge
-            className="inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-[rgba(201,168,76,0.08)]"
-            style={{ border: '1px solid rgba(201,168,76,0.45)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+            className="inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-[rgba(122,92,36,0.05)]"
+            style={{ border: '1px solid rgba(20,19,15,0.23)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
           >
             <MessageCircle size={15} />
             Ask the Concierge

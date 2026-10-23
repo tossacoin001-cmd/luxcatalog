@@ -17,9 +17,9 @@ type Settings = {
   packages: (Omit<ServicePackage, 'id'> & { id?: string })[]
 }
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
-const field = { background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
-const card = { background: '#0f1a10', border: '1px solid #1e2e1f' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
+const field = { background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }
+const card = { background: '#fbf9f4', border: '1px solid #d6cfbf' }
 const labelCls = 'block text-[11px] tracking-[0.15em] uppercase mb-1.5'
 const TIMES = Array.from({ length: 48 }, (_, i) => `${String(Math.floor(i / 2)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`)
 const DURATIONS = [30, 45, 60, 90, 120, 150, 180, 240, 300, 360, 480, 600, 720]
@@ -31,7 +31,7 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
   return (
     <section className="p-5 md:p-6 space-y-4" style={card}>
       <div>
-        <h2 className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+        <h2 className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
           {title}
         </h2>
         {hint && (
@@ -76,7 +76,7 @@ export default function ServiceBookingManager({ listingId, published }: { listin
     return (
       <p className="text-sm" style={text}>
         Settings couldn&apos;t load.{' '}
-        <button type="button" className="underline" style={{ color: '#C9A84C' }} onClick={() => setAttempt((n) => n + 1)}>
+        <button type="button" className="underline" style={{ color: '#7a5c24' }} onClick={() => setAttempt((n) => n + 1)}>
           Try again
         </button>
       </p>
@@ -120,10 +120,10 @@ export default function ServiceBookingManager({ listingId, published }: { listin
 
   return (
     <div data-service-manager className="space-y-6">
-      <label className="flex items-start gap-3 p-5 cursor-pointer" style={{ ...card, borderColor: s.enabled ? 'rgba(111,191,115,0.45)' : '#1e2e1f' }}>
-        <input type="checkbox" name="enabled" checked={s.enabled} onChange={(e) => set({ enabled: e.target.checked })} className="mt-1 w-5 h-5 shrink-0 accent-[#C9A84C]" />
+      <label className="flex items-start gap-3 p-5 cursor-pointer" style={{ ...card, borderColor: s.enabled ? 'rgba(47,107,69,0.45)' : '#d6cfbf' }}>
+        <input type="checkbox" name="enabled" checked={s.enabled} onChange={(e) => set({ enabled: e.target.checked })} className="mt-1 w-5 h-5 shrink-0 accent-[#7a5c24]" />
         <span>
-          <span className="block text-base" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+          <span className="block text-base" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
             Take bookings online
           </span>
           <span className="block text-xs mt-1 leading-relaxed" style={text}>
@@ -134,7 +134,7 @@ export default function ServiceBookingManager({ listingId, published }: { listin
 
       <Section title="Packages" hint={`What guests can book. The listing shows your cheapest package as its "From" price.${floorText ? ` ${floorText} on Lux Catalog.` : ''}`}>
         {s.packages.map((p, i) => (
-          <div key={p.id ?? `new-${i}`} data-package-row className="p-4 space-y-3" style={{ border: '1px solid #1e2e1f', background: '#080c08' }}>
+          <div key={p.id ?? `new-${i}`} data-package-row className="p-4 space-y-3" style={{ border: '1px solid #d6cfbf', background: '#f4f0e8' }}>
             <div className="flex items-start gap-2">
               <label className="block flex-1">
                 <span className={labelCls} style={text}>
@@ -142,7 +142,7 @@ export default function ServiceBookingManager({ listingId, published }: { listin
                 </span>
                 <input name="name" value={p.name} onChange={(e) => setPkg(i, { name: e.target.value })} placeholder="e.g. Seven-course dinner" className="w-full h-11 px-3 text-base md:text-sm" style={field} />
               </label>
-              <button type="button" aria-label={`Remove ${p.name || 'package'}`} onClick={() => set({ packages: s.packages.filter((_, j) => j !== i) })} className="mt-6 w-11 h-11 inline-flex items-center justify-center shrink-0" style={{ color: '#908673' }}>
+              <button type="button" aria-label={`Remove ${p.name || 'package'}`} onClick={() => set({ packages: s.packages.filter((_, j) => j !== i) })} className="mt-6 w-11 h-11 inline-flex items-center justify-center shrink-0" style={{ color: '#5e584c' }}>
                 <Trash2 size={16} />
               </button>
             </div>
@@ -179,7 +179,7 @@ export default function ServiceBookingManager({ listingId, published }: { listin
                   Price (₦){p.pricing === 'per_guest' ? ' per guest' : ''}
                 </span>
                 <input name="price" inputMode="numeric" value={p.price || ''} onChange={(e) => setPkg(i, { price: Number(e.target.value.replace(/\D/g, '')) })} className="w-full h-11 px-3 text-base md:text-sm" style={field} />
-                <span className="block mt-1 text-[11px]" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                <span className="block mt-1 text-[11px]" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                   {floorText ? `${floorText}${p.pricing === 'per_guest' ? ' per guest' : ''}. ` : ''}Include ingredients, products and your time.
                 </span>
               </label>
@@ -203,7 +203,7 @@ export default function ServiceBookingManager({ listingId, published }: { listin
             type="button"
             onClick={() => set({ packages: [...s.packages, { name: '', description: '', durationMinutes: 120, pricing: 'fixed', price: 0, minGuests: 1, maxGuests: null }] })}
             className="inline-flex items-center gap-2 min-h-11 px-4 text-xs tracking-[0.14em] uppercase"
-            style={{ border: '1px dashed rgba(201,168,76,0.5)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+            style={{ border: '1px dashed rgba(20,19,15,0.25)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
           >
             <Plus size={14} /> Add package
           </button>
@@ -217,8 +217,8 @@ export default function ServiceBookingManager({ listingId, published }: { listin
             return (
               <div key={d} data-day-row={d} className="flex flex-wrap items-center gap-2">
                 <label className="flex items-center gap-2 w-32 min-h-11 cursor-pointer">
-                  <input type="checkbox" checked={!!h} onChange={(e) => setDay(d, e.target.checked ? { from: '10:00', to: '20:00' } : null)} className="w-5 h-5 accent-[#C9A84C]" />
-                  <span className="text-sm" style={{ color: h ? '#f5f0e8' : '#908673', fontFamily: 'var(--font-inter)' }}>
+                  <input type="checkbox" checked={!!h} onChange={(e) => setDay(d, e.target.checked ? { from: '10:00', to: '20:00' } : null)} className="w-5 h-5 accent-[#7a5c24]" />
+                  <span className="text-sm" style={{ color: h ? '#14130f' : '#5e584c', fontFamily: 'var(--font-inter)' }}>
                     {WEEKDAY_LABEL[d]}
                   </span>
                 </label>
@@ -252,10 +252,10 @@ export default function ServiceBookingManager({ listingId, published }: { listin
           {areasAll.map((a) => {
             const on = areaOn(a)
             return (
-              <div key={a} data-area={a} className="flex items-center gap-2 p-2" style={{ border: `1px solid ${on ? 'rgba(201,168,76,0.4)' : '#1e2e1f'}` }}>
+              <div key={a} data-area={a} className="flex items-center gap-2 p-2" style={{ border: `1px solid ${on ? 'rgba(20,19,15,0.20)' : '#d6cfbf'}` }}>
                 <label className="flex items-center gap-2 flex-1 min-h-11 cursor-pointer">
-                  <input type="checkbox" checked={!!on} onChange={() => toggleArea(a)} className="w-5 h-5 accent-[#C9A84C]" />
-                  <span className="text-sm" style={{ color: on ? '#f5f0e8' : '#908673', fontFamily: 'var(--font-inter)' }}>
+                  <input type="checkbox" checked={!!on} onChange={() => toggleArea(a)} className="w-5 h-5 accent-[#7a5c24]" />
+                  <span className="text-sm" style={{ color: on ? '#14130f' : '#5e584c', fontFamily: 'var(--font-inter)' }}>
                     {a}
                   </span>
                 </label>
@@ -342,7 +342,7 @@ export default function ServiceBookingManager({ listingId, published }: { listin
       </Section>
 
       {error && (
-        <p role="alert" className="text-sm p-3" style={{ background: 'rgba(232,92,76,0.08)', color: '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
+        <p role="alert" className="text-sm p-3" style={{ background: 'rgba(138,59,46,0.08)', color: '#8a3b2e', fontFamily: 'var(--font-inter)' }}>
           {error}
         </p>
       )}
@@ -351,7 +351,7 @@ export default function ServiceBookingManager({ listingId, published }: { listin
         onClick={save}
         disabled={saving}
         className="sheen w-full sm:w-auto inline-flex items-center justify-center gap-2 min-h-12 px-10 text-xs tracking-[0.2em] uppercase disabled:opacity-50"
-        style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+        style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
       >
         {saving && <Loader2 size={14} className="animate-spin" />} Save
       </button>

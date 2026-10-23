@@ -40,11 +40,11 @@ type App = {
 const EDITABLE = ['draft', 'info_requested', 'rejected']
 const STEPS = ['Partner type', 'Business', 'Documents', 'Standards', 'Review']
 
-const inputStyle = { background: '#0f1a10', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
+const inputStyle = { background: '#fbf9f4', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }
 const labelCls = 'block text-[11px] tracking-[0.15em] uppercase mb-2'
-const labelStyle = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const labelStyle = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 const fieldCls = 'w-full h-12 px-4 text-base md:text-sm focus:outline-none focus:border-lux-gold-muted'
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 
 // Every collection label, for the "where will you list" checkboxes.
 const COLLECTION_LABEL: Record<string, string> = Object.fromEntries(
@@ -196,7 +196,7 @@ export default function ApplyClient({
   if (userRole === 'admin' || userRole === 'team') {
     return (
       <StatusCard
-        icon={<CheckCircle2 size={22} style={{ color: '#6fbf73' }} />}
+        icon={<CheckCircle2 size={22} style={{ color: '#2f6b45' }} />}
         title="You're on the Lux Catalog team"
         body="Team accounts don't apply as partners. Partner applications are reviewed in the admin panel."
         cta={{ label: 'Review applications', href: '/admin/applications' }}
@@ -206,7 +206,7 @@ export default function ApplyClient({
   if (userRole === 'partner' && app?.status !== 'info_requested') {
     return (
       <StatusCard
-        icon={<CheckCircle2 size={22} style={{ color: '#6fbf73' }} />}
+        icon={<CheckCircle2 size={22} style={{ color: '#2f6b45' }} />}
         title="You're already a partner"
         body="Your partner dashboard is where you add and manage listings."
         cta={{ label: 'Open partner dashboard', href: '/admin' }}
@@ -216,7 +216,7 @@ export default function ApplyClient({
   if (app?.status === 'submitted') {
     return (
       <StatusCard
-        icon={<Clock size={22} style={{ color: '#C9A84C' }} />}
+        icon={<Clock size={22} style={{ color: '#7a5c24' }} />}
         title="Your application is with our team"
         body="We review every partner personally, usually within 2 working days. We'll email you, and may call to confirm a few details."
       />
@@ -225,7 +225,7 @@ export default function ApplyClient({
   if (app?.status === 'approved') {
     return (
       <StatusCard
-        icon={<CheckCircle2 size={22} style={{ color: '#6fbf73' }} />}
+        icon={<CheckCircle2 size={22} style={{ color: '#2f6b45' }} />}
         title="Approved: welcome to Lux Catalog"
         body="Next, sign your partner agreement, then add your first listing from the partner dashboard."
         cta={{ label: 'Sign your partner agreement', href: '/partners/agreement' }}
@@ -264,9 +264,9 @@ export default function ApplyClient({
                 className="flex items-center gap-2 min-h-11 px-3 text-xs tracking-[0.12em] uppercase disabled:opacity-40"
                 style={{
                   fontFamily: 'var(--font-inter)',
-                  color: active ? '#080c08' : '#9a8f7a',
-                  background: active ? '#C9A84C' : 'transparent',
-                  border: `1px solid ${active ? '#C9A84C' : '#1e2e1f'}`,
+                  color: active ? '#f4f0e8' : '#5e584c',
+                  background: active ? '#14130f' : 'transparent',
+                  border: `1px solid ${active ? '#14130f' : '#d6cfbf'}`,
                 }}
               >
                 <span>{i + 1}</span>
@@ -280,7 +280,7 @@ export default function ApplyClient({
       <div className="flex justify-end -mt-4 min-h-5 text-xs" style={text} aria-live="polite">
         {saving === 'saving' && 'Saving…'}
         {saving === 'saved' && 'All changes saved'}
-        {saving === 'error' && <span style={{ color: '#e8b4b4' }}>Not saved, check your connection</span>}
+        {saving === 'error' && <span style={{ color: '#8a3b2e' }}>Not saved, check your connection</span>}
       </div>
 
       {/* Step 0: type */}
@@ -295,13 +295,13 @@ export default function ApplyClient({
                 disabled={!editable}
                 onClick={() => chooseType(t.key)}
                 className="text-left p-5 transition-colors hover:border-lux-gold-muted"
-                style={{ background: '#0f1a10', border: `1px solid ${selected ? '#C9A84C' : '#1e2e1f'}` }}
+                style={{ background: '#fbf9f4', border: `1px solid ${selected ? '#14130f' : '#d6cfbf'}` }}
               >
                 <span className="flex items-center justify-between gap-3">
-                  <span className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                  <span className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                     {t.label}
                   </span>
-                  {selected && <Check size={16} style={{ color: '#C9A84C' }} />}
+                  {selected && <Check size={16} style={{ color: '#7a5c24' }} />}
                 </span>
                 <span className="block mt-1 text-sm" style={text}>
                   {t.tagline}
@@ -319,7 +319,7 @@ export default function ApplyClient({
             <span className={labelCls} style={labelStyle}>
               Applying as
             </span>
-            <div className="flex" role="radiogroup" style={{ border: '1px solid rgba(201,168,76,0.3)', width: 'fit-content' }}>
+            <div className="flex" role="radiogroup" style={{ border: '1px solid rgba(20,19,15,0.15)', width: 'fit-content' }}>
               {(['individual', 'company'] as const).map((f) => (
                 <button
                   key={f}
@@ -329,7 +329,7 @@ export default function ApplyClient({
                   disabled={app.partnerType === 'security_company' && f === 'individual'}
                   onClick={() => update({ legalForm: f })}
                   className="min-h-11 px-5 text-xs tracking-[0.14em] uppercase disabled:opacity-30"
-                  style={{ background: app.legalForm === f ? '#C9A84C' : 'transparent', color: app.legalForm === f ? '#080c08' : '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+                  style={{ background: app.legalForm === f ? '#14130f' : 'transparent', color: app.legalForm === f ? '#f4f0e8' : '#5e584c', fontFamily: 'var(--font-inter)' }}
                 >
                   {f === 'individual' ? 'Individual' : 'Registered company'}
                 </button>
@@ -386,7 +386,7 @@ export default function ApplyClient({
                     aria-pressed={on}
                     onClick={() => update({ collections: on ? app.collections.filter((x) => x !== c) : [...app.collections, c] })}
                     className="min-h-11 px-4 text-xs tracking-[0.12em] uppercase"
-                    style={{ border: `1px solid ${on ? '#C9A84C' : '#1e2e1f'}`, background: on ? 'rgba(201,168,76,0.12)' : 'transparent', color: on ? '#e4c878' : '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+                    style={{ border: `1px solid ${on ? '#14130f' : '#d6cfbf'}`, background: on ? 'rgba(122,92,36,0.07)' : 'transparent', color: on ? '#7a5c24' : '#5e584c', fontFamily: 'var(--font-inter)' }}
                   >
                     {COLLECTION_LABEL[c] ?? c}
                   </button>
@@ -442,7 +442,7 @@ export default function ApplyClient({
           {spec.declarations.map((d) => {
             const on = !!app.declarations?.[d.key]
             return (
-              <label key={d.key} className="flex items-start gap-4 p-4 cursor-pointer" style={{ background: '#0f1a10', border: `1px solid ${on ? 'rgba(201,168,76,0.5)' : '#1e2e1f'}` }}>
+              <label key={d.key} className="flex items-start gap-4 p-4 cursor-pointer" style={{ background: '#fbf9f4', border: `1px solid ${on ? 'rgba(20,19,15,0.25)' : '#d6cfbf'}` }}>
                 <input
                   type="checkbox"
                   checked={on}
@@ -452,9 +452,9 @@ export default function ApplyClient({
                     else delete next[d.key]
                     update({ declarations: next })
                   }}
-                  className="mt-1 w-5 h-5 shrink-0 accent-[#C9A84C]"
+                  className="mt-1 w-5 h-5 shrink-0 accent-[#7a5c24]"
                 />
-                <span className="text-sm leading-relaxed" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+                <span className="text-sm leading-relaxed" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
                   {d.text}
                 </span>
               </label>
@@ -467,8 +467,8 @@ export default function ApplyClient({
       {/* Step 4: review */}
       {step === 4 && app && spec && (
         <div className="space-y-6">
-          <div className="p-6 space-y-2" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-            <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <div className="p-6 space-y-2" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+            <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               {app.businessName || 'Your business'}
             </p>
             <p className="text-sm" style={text}>
@@ -494,7 +494,7 @@ export default function ApplyClient({
             </Notice>
           )}
           <div className="flex flex-col sm:flex-row gap-3">
-            <button type="button" onClick={() => setStep(3)} className="min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+            <button type="button" onClick={() => setStep(3)} className="min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Back
             </button>
             <button
@@ -502,7 +502,7 @@ export default function ApplyClient({
               onClick={submit}
               disabled={submitting || missing.length > 0}
               className="sheen inline-flex items-center justify-center gap-2 min-h-12 px-8 text-xs tracking-[0.18em] uppercase disabled:opacity-50"
-              style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+              style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
             >
               {submitting && <Loader2 size={14} className="animate-spin" />}
               {app.status === 'info_requested' ? 'Resubmit application' : 'Submit application'}
@@ -524,10 +524,10 @@ function fileSize(bytes: number) {
 function NavButtons({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
   return (
     <div className="flex justify-between gap-3 pt-2">
-      <button type="button" onClick={onBack} className="min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+      <button type="button" onClick={onBack} className="min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
         Back
       </button>
-      <button type="button" onClick={onNext} className="min-h-12 px-8 text-xs tracking-[0.16em] uppercase" style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+      <button type="button" onClick={onNext} className="min-h-12 px-8 text-xs tracking-[0.16em] uppercase" style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
         Continue
       </button>
     </div>
@@ -535,9 +535,9 @@ function NavButtons({ onBack, onNext }: { onBack: () => void; onNext: () => void
 }
 
 function Notice({ tone, title, children }: { tone: 'ok' | 'warn' | 'alert'; title: string; children: React.ReactNode }) {
-  const c = tone === 'ok' ? '#6fbf73' : tone === 'warn' ? '#e8a84c' : '#e85c4c'
+  const c = tone === 'ok' ? '#2f6b45' : tone === 'warn' ? '#7a5c24' : '#8a3b2e'
   return (
-    <div className="p-5 text-sm" role={tone === 'alert' ? 'alert' : undefined} style={{ border: `1px solid ${c}55`, background: `${c}10`, color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+    <div className="p-5 text-sm" role={tone === 'alert' ? 'alert' : undefined} style={{ border: `1px solid ${c}55`, background: `${c}10`, color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
       <p className="mb-1" style={{ color: c }}>
         {title}
       </p>
@@ -548,16 +548,16 @@ function Notice({ tone, title, children }: { tone: 'ok' | 'warn' | 'alert'; titl
 
 function StatusCard({ icon, title, body, cta }: { icon: React.ReactNode; title: string; body: string; cta?: { label: string; href: string } }) {
   return (
-    <div className="p-8 text-center space-y-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+    <div className="p-8 text-center space-y-4" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
       <div className="flex justify-center">{icon}</div>
-      <p className="text-2xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+      <p className="text-2xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
         {title}
       </p>
       <p className="text-sm max-w-md mx-auto leading-relaxed" style={text}>
         {body}
       </p>
       {cta && (
-        <Link href={cta.href} className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.18em] uppercase" style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+        <Link href={cta.href} className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.18em] uppercase" style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
           {cta.label}
         </Link>
       )}
@@ -650,12 +650,12 @@ function DocumentRow({
   }
 
   return (
-    <div className="p-5 space-y-3" style={{ background: '#0f1a10', border: `1px solid ${doc ? 'rgba(111,191,115,0.35)' : '#1e2e1f'}` }}>
+    <div className="p-5 space-y-3" style={{ background: '#fbf9f4', border: `1px solid ${doc ? 'rgba(47,107,69,0.35)' : '#d6cfbf'}` }}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-base" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <p className="text-base" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             {requirement.label}{' '}
-            <span className="text-[11px] tracking-[0.14em] uppercase ml-1" style={{ color: required ? '#C9A84C' : '#908673', fontFamily: 'var(--font-inter)' }}>
+            <span className="text-[11px] tracking-[0.14em] uppercase ml-1" style={{ color: required ? '#7a5c24' : '#5e584c', fontFamily: 'var(--font-inter)' }}>
               {required ? 'Required' : 'Optional'}
             </span>
           </p>
@@ -663,7 +663,7 @@ function DocumentRow({
             {requirement.help}
           </p>
         </div>
-        {doc && <CheckCircle2 size={18} className="shrink-0" style={{ color: '#6fbf73' }} aria-label="Uploaded" />}
+        {doc && <CheckCircle2 size={18} className="shrink-0" style={{ color: '#2f6b45' }} aria-label="Uploaded" />}
       </div>
 
       {requirement.expires && (
@@ -674,15 +674,15 @@ function DocumentRow({
 
       {doc ? (
         <div className="flex flex-wrap items-center gap-3 text-sm" style={text}>
-          <a href={`/api/partner-documents/${doc.id}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 min-h-11 hover:text-lux-gold" style={{ color: '#d6cdbd' }}>
+          <a href={`/api/partner-documents/${doc.id}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 min-h-11 hover:text-lux-gold" style={{ color: '#3a362d' }}>
             <FileText size={15} /> {doc.fileName} · {fileSize(doc.size)}
           </a>
           {!disabled && (
             <>
-              <button type="button" onClick={() => input.current?.click()} disabled={busy} className="inline-flex items-center gap-1.5 min-h-11 px-3 text-xs tracking-[0.12em] uppercase" style={{ border: '1px solid #1e2e1f', color: '#C9A84C' }}>
+              <button type="button" onClick={() => input.current?.click()} disabled={busy} className="inline-flex items-center gap-1.5 min-h-11 px-3 text-xs tracking-[0.12em] uppercase" style={{ border: '1px solid #d6cfbf', color: '#7a5c24' }}>
                 {busy ? (progress !== null ? `${progress}%` : <Loader2 size={14} className="animate-spin" />) : 'Replace'}
               </button>
-              <button type="button" onClick={remove} disabled={busy} aria-label={`Remove ${requirement.label}`} className="inline-flex items-center justify-center w-11 h-11" style={{ color: '#908673' }}>
+              <button type="button" onClick={remove} disabled={busy} aria-label={`Remove ${requirement.label}`} className="inline-flex items-center justify-center w-11 h-11" style={{ color: '#5e584c' }}>
                 <X size={15} />
               </button>
             </>
@@ -695,7 +695,7 @@ function DocumentRow({
             onClick={() => input.current?.click()}
             disabled={busy}
             className="inline-flex items-center gap-2 min-h-12 px-5 text-xs tracking-[0.14em] uppercase disabled:opacity-60"
-            style={{ border: '1px dashed rgba(201,168,76,0.5)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+            style={{ border: '1px dashed rgba(20,19,15,0.25)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
           >
             {busy ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
             {busy ? (progress !== null ? `Uploading ${progress}%` : 'Uploading…') : 'Upload file'}

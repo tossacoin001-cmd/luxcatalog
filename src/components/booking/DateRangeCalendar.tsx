@@ -91,11 +91,11 @@ export default function DateRangeCalendar({
           disabled={view <= minMonth}
           aria-label="Previous month"
           className="inline-flex items-center justify-center w-11 h-11 disabled:opacity-25"
-          style={{ color: '#C9A84C' }}
+          style={{ color: '#7a5c24' }}
         >
           <ChevronLeft size={18} />
         </button>
-        <p className="text-xs tracking-[0.18em] uppercase" style={{ color: '#9a8f7a' }} aria-live="polite">
+        <p className="text-xs tracking-[0.18em] uppercase" style={{ color: '#5e584c' }} aria-live="polite">
           {value.first && !value.last ? (unit === 'night' ? 'Now choose check-out' : 'Now choose the last day') : unit === 'night' ? 'Choose check-in' : 'Choose the first day'}
         </p>
         <button
@@ -104,7 +104,7 @@ export default function DateRangeCalendar({
           disabled={view >= maxMonth}
           aria-label="Next month"
           className="inline-flex items-center justify-center w-11 h-11 disabled:opacity-25"
-          style={{ color: '#C9A84C' }}
+          style={{ color: '#7a5c24' }}
         >
           <ChevronRight size={18} />
         </button>
@@ -112,10 +112,10 @@ export default function DateRangeCalendar({
       <div className={monthCount === 2 ? 'grid grid-cols-1 sm:grid-cols-2 gap-6' : ''}>
         {months.map((m, mi) => (
           <div key={m} className={mi === 1 ? 'hidden sm:block' : ''}>
-            <p className="text-center text-sm mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <p className="text-center text-sm mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               {monthLabel(m)}
             </p>
-            <div className="grid grid-cols-7 text-center text-[11px] mb-1" style={{ color: '#908673' }} aria-hidden>
+            <div className="grid grid-cols-7 text-center text-[11px] mb-1" style={{ color: '#5e584c' }} aria-hidden>
               {WEEKDAYS.map((w) => (
                 <span key={w}>{w}</span>
               ))}
@@ -135,8 +135,8 @@ export default function DateRangeCalendar({
                     aria-label={`${longLabel(day)}${s.closed ? ', unavailable' : ''}`}
                     className="h-10 text-sm transition-colors disabled:cursor-not-allowed"
                     style={{
-                      background: selected ? '#C9A84C' : s.inRange ? 'rgba(201,168,76,0.16)' : 'transparent',
-                      color: selected ? '#080c08' : s.disabled ? '#4a4538' : '#e8e0d0',
+                      background: selected ? '#14130f' : s.inRange ? 'rgba(122,92,36,0.10)' : 'transparent',
+                      color: selected ? '#f4f0e8' : s.disabled ? '#4a4538' : '#3a362d',
                       textDecoration: s.closed && !selected ? 'line-through' : 'none',
                       fontWeight: selected ? 600 : 400,
                     }}

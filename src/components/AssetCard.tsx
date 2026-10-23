@@ -86,7 +86,7 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
             src={asset.images[0]}
             alt={asset.title}
             fill
-            className="img-fade object-cover group-hover:scale-[1.06]"
+            className="img-fade object-cover group-hover:scale-[1.03]"
             data-loaded={imgLoaded}
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
@@ -95,7 +95,7 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
         ) : (
           <div
             className="w-full h-full flex items-center justify-center"
-            style={{ background: '#0f1a10' }}
+            style={{ background: '#fbf9f4' }}
           >
             <span className="text-lux-text-subtle text-xs tracking-widest uppercase">
               {categoryName}
@@ -128,9 +128,8 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
           onClick={handleSave}
           className="absolute top-2 right-2 flex items-center justify-center w-11 h-11 transition-all duration-200 active:scale-90"
           style={{
-            background: 'rgba(8,12,8,0.6)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(201,168,76,0.2)',
+            background: 'rgba(244,240,232,0.94)',
+            border: '1px solid #d6cfbf',
           }}
           aria-label={isSaved ? 'Remove from saved' : 'Save to collection'}
           aria-pressed={isSaved}
@@ -138,7 +137,7 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
           <Heart
             size={16}
             className="transition-colors"
-            style={{ color: isSaved ? '#C9A84C' : '#9a8f7a', fill: isSaved ? '#C9A84C' : 'transparent' }}
+            style={{ color: '#14130f', fill: isSaved ? '#14130f' : 'transparent' }}
           />
         </button>
       </div>
@@ -148,7 +147,7 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
         {/* Category */}
         <p
           className="text-[11px] tracking-[0.2em] uppercase mb-2"
-          style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+          style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
         >
           {categoryName}
           {badge ? ` · ${badge}` : ''}
@@ -156,32 +155,32 @@ export default function AssetCard({ asset, href, saved = false, onToggleSave }: 
 
         {/* Title */}
         <h3
-          className="text-base leading-snug mb-3 group-hover:text-lux-gold transition-colors duration-300 line-clamp-2"
-          style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}
+          className="text-base leading-snug mb-3 line-clamp-2"
+          style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}
         >
           {asset.title}
         </h3>
 
         {/* Location */}
         <div className="flex items-center gap-1.5 mb-4">
-          <MapPin size={11} style={{ color: '#908673', flexShrink: 0 }} />
+          <MapPin size={11} style={{ color: '#5e584c', flexShrink: 0 }} />
           <span
             className="text-xs truncate"
-            style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+            style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
           >
             {asset.location}, {asset.country}
           </span>
         </div>
 
         {/* Price + Gold divider */}
-        <div style={{ borderTop: '1px solid #1e2e1f', paddingTop: '1rem' }}>
+        <div style={{ borderTop: '1px solid #d6cfbf', paddingTop: '1rem' }}>
           <p
-            className="text-sm tracking-wide"
-            style={{ fontFamily: 'var(--font-playfair)', color: '#C9A84C', fontStyle: !asset.price ? 'italic' : 'normal' }}
+            className="text-xl"
+            style={{ fontFamily: 'var(--font-playfair)', color: '#14130f', fontStyle: !asset.price ? 'italic' : 'normal' }}
           >
             <PriceDisplay price={asset.price} priceDisplay={asset.priceDisplay} />
             {suffix && asset.price ? (
-              <span className="ml-1.5 text-[11px] not-italic tracking-wider" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <span className="ml-1.5 text-[11px] not-italic tracking-wider" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 {suffix}
               </span>
             ) : null}

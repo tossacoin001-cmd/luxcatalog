@@ -63,7 +63,7 @@ export default function ListingGallery({ images, title, children }: ListingGalle
         <div
           data-gallery-shade
           className="absolute inset-x-0 top-0 h-48 pointer-events-none"
-          style={{ background: 'linear-gradient(180deg, rgba(8,12,8,0.35) 0%, rgba(8,12,8,0) 100%)' }}
+          style={{ background: 'linear-gradient(180deg, rgba(20,19,15,0.18) 0%, rgba(20,19,15,0) 100%)' }}
         />
 
         {count > 0 && (
@@ -71,7 +71,7 @@ export default function ListingGallery({ images, title, children }: ListingGalle
             type="button"
             onClick={() => setLightboxOpen(true)}
             className="absolute top-24 right-5 md:right-12 z-10 flex items-center gap-2 min-h-11 px-4 text-xs tracking-[0.15em] uppercase transition-colors hover:bg-black/70"
-            style={{ background: 'rgba(8,12,8,0.55)', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}
+            style={{ background: 'rgba(244,240,232,0.94)', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }}
             aria-label="View photos fullscreen"
           >
             <Expand size={14} />
@@ -92,7 +92,7 @@ export default function ListingGallery({ images, title, children }: ListingGalle
       {count > 1 && (
         <div
           className="flex gap-3 max-w-7xl mx-auto px-6 md:px-12 py-4 overflow-x-auto"
-          style={{ borderBottom: '1px solid #1e2e1f' }}
+          style={{ borderBottom: '1px solid #d6cfbf' }}
         >
           {images.map((img, i) => (
             <button
@@ -102,7 +102,7 @@ export default function ListingGallery({ images, title, children }: ListingGalle
               aria-label={`Show photo ${i + 1}`}
               aria-current={i === active}
               className="relative w-24 h-16 flex-shrink-0 overflow-hidden transition-opacity hover:opacity-100"
-              style={{ border: i === active ? '1px solid #C9A84C' : '1px solid #1e2e1f', opacity: i === active ? 1 : 0.65 }}
+              style={{ border: i === active ? '1px solid #14130f' : '1px solid #d6cfbf', opacity: i === active ? 1 : 0.65 }}
             >
               <Image src={img} alt="" fill sizes="96px" className="object-cover" />
             </button>
@@ -131,7 +131,7 @@ function GalleryArrow({ side, onClick }: { side: 'left' | 'right'; onClick: () =
       onClick={onClick}
       aria-label={side === 'left' ? 'Previous photo' : 'Next photo'}
       className={`absolute top-1/2 -translate-y-1/2 z-10 hidden md:flex items-center justify-center w-11 h-11 rounded-full transition-colors hover:bg-black/70 ${side === 'left' ? 'left-6' : 'right-6'}`}
-      style={{ background: 'rgba(8,12,8,0.55)', border: '1px solid #1e2e1f', color: '#f5f0e8' }}
+      style={{ background: 'rgba(244,240,232,0.94)', border: '1px solid #d6cfbf', color: '#14130f' }}
     >
       <Icon size={20} />
     </button>
@@ -259,10 +259,10 @@ function Lightbox({ images, title, index, onIndexChange, onClose }: LightboxProp
       aria-modal="true"
       aria-label={`${title} photos`}
       className="fixed inset-0 z-[100] flex flex-col"
-      style={{ background: '#040604' }}
+      style={{ background: '#0c0b09' }}
     >
-      <div className="flex items-center justify-between px-4 md:px-8 py-4" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
-        <span className="text-xs tracking-[0.2em] uppercase" style={{ color: '#9a8f7a' }}>
+      <div className="flex items-center justify-between px-4 md:px-8 py-4" style={{ color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
+        <span className="text-xs tracking-[0.2em] uppercase" style={{ color: '#d6cfbf' }}>
           {index + 1} / {count}
         </span>
         <div className="flex items-center gap-2">
@@ -326,7 +326,7 @@ function Lightbox({ images, title, index, onIndexChange, onClose }: LightboxProp
               aria-label={`Show photo ${i + 1}`}
               aria-current={i === index}
               className="relative w-16 h-11 flex-shrink-0 overflow-hidden"
-              style={{ border: i === index ? '1px solid #C9A84C' : '1px solid #1e2e1f', opacity: i === index ? 1 : 0.55 }}
+              style={{ border: i === index ? '1px solid #14130f' : '1px solid #d6cfbf', opacity: i === index ? 1 : 0.55 }}
             >
               <Image src={img} alt="" fill sizes="64px" className="object-cover" />
             </button>
@@ -355,7 +355,7 @@ function IconButton({
       disabled={disabled}
       aria-label={label}
       className="flex items-center justify-center w-10 h-10 transition-colors hover:bg-white/10 disabled:opacity-30"
-      style={{ border: '1px solid #1e2e1f' }}
+      style={{ border: '1px solid rgba(244,240,232,0.45)', color: '#f4f0e8' }}
     >
       {children}
     </button>
@@ -371,7 +371,7 @@ function LightboxArrow({ side, onClick }: { side: 'left' | 'right'; onClick: () 
       onClick={onClick}
       aria-label={side === 'left' ? 'Previous photo' : 'Next photo'}
       className={`absolute top-1/2 -translate-y-1/2 flex items-center justify-center w-12 h-12 rounded-full transition-colors hover:bg-white/10 ${side === 'left' ? 'left-3 md:left-8' : 'right-3 md:right-8'}`}
-      style={{ background: 'rgba(8,12,8,0.6)', border: '1px solid #1e2e1f', color: '#f5f0e8' }}
+      style={{ background: 'rgba(244,240,232,0.94)', border: '1px solid #d6cfbf', color: '#14130f' }}
     >
       <Icon size={24} />
     </button>

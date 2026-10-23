@@ -18,13 +18,13 @@ export const dynamic = 'force-dynamic'
 
 const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 const STATUS: Record<string, { text: string; color: string }> = {
-  confirmed: { text: 'Confirmed', color: '#6fbf73' },
-  completed: { text: 'Completed', color: '#9a8f7a' },
-  pending_payment: { text: 'Awaiting payment', color: '#C9A84C' },
-  requested: { text: 'Request: answer within 12h', color: '#e0b75a' },
-  declined: { text: 'Declined', color: '#908673' },
-  cancelled: { text: 'Cancelled', color: '#e85c4c' },
-  expired: { text: 'Not completed', color: '#908673' },
+  confirmed: { text: 'Confirmed', color: '#2f6b45' },
+  completed: { text: 'Completed', color: '#5e584c' },
+  pending_payment: { text: 'Awaiting payment', color: '#7a5c24' },
+  requested: { text: 'Request: answer within 12h', color: '#7a5c24' },
+  declined: { text: 'Declined', color: '#5e584c' },
+  cancelled: { text: 'Cancelled', color: '#8a3b2e' },
+  expired: { text: 'Not completed', color: '#5e584c' },
 }
 // Is a hold (e.g. a request waiting for the partner) still running?
 const stillHeld = (until: Date | null) => !!until && until.getTime() > Date.now()
@@ -63,25 +63,25 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
   ])
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <AdminNavbar role={role} />
-      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             {isPartner ? 'Your listings' : 'All listings'}
           </p>
           <div className="flex flex-wrap items-end justify-between gap-3">
-            <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               Bookings
             </h1>
             {!isPartner && (
               <div className="flex flex-wrap gap-2">
               {areas.includes('payouts') && (
-                <Link href="/admin/payouts" className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                <Link href="/admin/payouts" className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid rgba(20,19,15,0.20)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                   Payouts
                 </Link>
               )}
-              <Link href="/admin/refunds" className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              <Link href="/admin/refunds" className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid rgba(20,19,15,0.20)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                 Refunds{refundsWaiting ? ` (${refundsWaiting})` : ''}
               </Link>
               </div>
@@ -91,17 +91,17 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
       </div>
       <div className="max-w-6xl mx-auto px-5 md:px-12 py-8 space-y-6">
         {attention > 0 && (
-          <Link href="/admin/bookings?view=attention" className="flex items-center gap-2 p-4 text-sm" style={{ background: 'rgba(224,183,90,0.08)', border: '1px solid rgba(224,183,90,0.35)', color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
+          <Link href="/admin/bookings?view=attention" className="flex items-center gap-2 p-4 text-sm" style={{ background: 'rgba(122,92,36,0.08)', border: '1px solid rgba(122,92,36,0.35)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             <AlertTriangle size={16} /> {attention} booking{attention === 1 ? '' : 's'} need attention (refunds, damage claims or guest concerns). Open them.
           </Link>
         )}
         {openConcerns > 0 && (
-          <Link href="/admin/bookings?view=attention" className="flex items-center gap-2 p-4 text-sm" style={{ background: 'rgba(232,92,76,0.08)', border: '1px solid rgba(232,92,76,0.4)', color: '#f0c4bd', fontFamily: 'var(--font-inter)' }}>
+          <Link href="/admin/bookings?view=attention" className="flex items-center gap-2 p-4 text-sm" style={{ background: 'rgba(138,59,46,0.08)', border: '1px solid rgba(138,59,46,0.4)', color: '#8a3b2e', fontFamily: 'var(--font-inter)' }}>
             <AlertTriangle size={16} /> {openConcerns} open concern{openConcerns === 1 ? '' : 's'} from guests. Open them.
           </Link>
         )}
         {refundsWaiting > 0 && (
-          <Link href="/admin/refunds" className="flex items-center gap-2 p-4 text-sm" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.3)', color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
+          <Link href="/admin/refunds" className="flex items-center gap-2 p-4 text-sm" style={{ background: 'rgba(122,92,36,0.04)', border: '1px solid rgba(20,19,15,0.15)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             {refundsWaiting} refund{refundsWaiting === 1 ? '' : 's'} waiting for approval. Open the refund queue.
           </Link>
         )}
@@ -111,14 +111,14 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
               key={k}
               href={`/admin/bookings?view=${k}`}
               className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.12em] uppercase"
-              style={{ border: `1px solid ${view === k ? '#C9A84C' : '#1e2e1f'}`, color: view === k ? '#e4c878' : '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+              style={{ border: `1px solid ${view === k ? '#14130f' : '#d6cfbf'}`, color: view === k ? '#7a5c24' : '#5e584c', fontFamily: 'var(--font-inter)' }}
             >
               {VIEWS[k]}
             </Link>
           ))}
         </nav>
         {bookings.length === 0 ? (
-          <p className="py-16 text-center text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+          <p className="py-16 text-center text-sm" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             No bookings here yet.
           </p>
         ) : (
@@ -127,14 +127,14 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
               const st = STATUS[b.status]
               const last = b.unit === 'night' ? b.endDate : new Date(b.endDate.getTime() - 86_400_000)
               return (
-                <li key={b.id} className="p-5 grid gap-2 md:grid-cols-[1fr_auto] md:items-center" style={{ background: '#0f1a10', border: `1px solid ${b.needsRefund || b.cautionStatus === 'claimed' ? 'rgba(224,183,90,0.45)' : '#1e2e1f'}` }}>
+                <li key={b.id} className="p-5 grid gap-2 md:grid-cols-[1fr_auto] md:items-center" style={{ background: '#fbf9f4', border: `1px solid ${b.needsRefund || b.cautionStatus === 'claimed' ? 'rgba(122,92,36,0.45)' : '#d6cfbf'}` }}>
                   <div className="min-w-0">
-                    <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                    <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                       {b.listing.title}
                     </p>
                     {b.unit === 'session' ? (
                       <>
-                        <p className="text-sm" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+                        <p className="text-sm" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
                           {sessionLabel(b.startDate, b.endDate)} · {b.packageName}
                           {b.guests ? ` · ${b.guests} guest${b.guests === 1 ? '' : 's'}` : ''} · {b.area}
                         </p>
@@ -142,62 +142,62 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
                         {!isPartner || ['confirmed', 'completed'].includes(b.status) ? (
                           <>
                             {b.address && (
-                              <p className="text-sm mt-1" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                              <p className="text-sm mt-1" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                                 {b.address}
                               </p>
                             )}
                             {b.serviceNotes && (
-                              <p className="text-xs mt-1" style={{ color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
+                              <p className="text-xs mt-1" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                                 Notes: {b.serviceNotes}
                               </p>
                             )}
                           </>
                         ) : (
-                          <p className="text-xs mt-1" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                          <p className="text-xs mt-1" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                             The full address and notes appear here once the booking is paid.
                           </p>
                         )}
                       </>
                     ) : (
-                      <p className="text-sm" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+                      <p className="text-sm" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
                         {fmt(b.startDate)} → {fmt(last)} · {b.units} {b.unit === 'night' ? (b.units === 1 ? 'night' : 'nights') : b.units === 1 ? 'day' : 'days'}
                         {b.guests ? ` · ${b.guests} guest${b.guests === 1 ? '' : 's'}` : ''}
                       </p>
                     )}
-                    <p className="text-xs mt-1 break-all" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-xs mt-1 break-all" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                       {b.guestName} · {b.guestEmail}
                       {b.guestPhone ? ` · ${b.guestPhone}` : ''} · {b.reference}
                     </p>
                     {['confirmed', 'completed'].includes(b.status) && b.unit === 'night' && b.listing.bookingSettings?.requireGuestId && (
                       <p className="text-xs mt-1" style={{ fontFamily: 'var(--font-inter)' }}>
                         {b.guestIdUploadedAt ? (
-                          <a href={`/api/bookings/${b.reference}/guest-id`} target="_blank" rel="noopener" className="underline underline-offset-2" style={{ color: '#C9A84C' }}>
+                          <a href={`/api/bookings/${b.reference}/guest-id`} target="_blank" rel="noopener" className="underline underline-offset-2" style={{ color: '#7a5c24' }}>
                             View guest ID
                           </a>
                         ) : (
-                          <span style={{ color: '#e0b75a' }}>Guest ID not uploaded yet</span>
+                          <span style={{ color: '#7a5c24' }}>Guest ID not uploaded yet</span>
                         )}
                       </p>
                     )}
                     {b.note && (
-                      <p className="text-xs mt-1" style={{ color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
+                      <p className="text-xs mt-1" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                         {b.note}
                       </p>
                     )}
                     {!isPartner &&
                       b.concerns?.map((c) => (
-                        <div key={c.id} data-concern={c.id} className="mt-3 p-3" style={{ background: c.status === 'open' ? 'rgba(232,92,76,0.06)' : 'transparent', border: `1px solid ${c.status === 'open' ? 'rgba(232,92,76,0.35)' : '#1e2e1f'}` }}>
-                          <p className="text-xs tracking-[0.12em] uppercase" style={{ color: c.status === 'open' ? (concernKind(c.kind)?.urgent ? '#ff8a7a' : '#e0b75a') : '#6fbf73', fontFamily: 'var(--font-inter)' }}>
+                        <div key={c.id} data-concern={c.id} className="mt-3 p-3" style={{ background: c.status === 'open' ? 'rgba(138,59,46,0.06)' : 'transparent', border: `1px solid ${c.status === 'open' ? 'rgba(138,59,46,0.35)' : '#d6cfbf'}` }}>
+                          <p className="text-xs tracking-[0.12em] uppercase" style={{ color: c.status === 'open' ? (concernKind(c.kind)?.urgent ? '#8a3b2e' : '#7a5c24') : '#2f6b45', fontFamily: 'var(--font-inter)' }}>
                             {c.status === 'open' ? `${concernKind(c.kind)?.urgent ? 'Urgent · ' : ''}Guest concern` : 'Resolved'} · {concernKind(c.kind)?.label ?? c.kind} · {fmt(c.createdAt)}
                           </p>
-                          <p className="text-sm mt-1" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                          <p className="text-sm mt-1" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                             “{c.message}”
                           </p>
                           {c.status === 'open' ? (
                             <ConcernResolve bookingId={b.id} concernId={c.id} />
                           ) : (
                             c.resolutionNote && (
-                              <p className="text-xs mt-1" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                              <p className="text-xs mt-1" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                                 Resolved: {c.resolutionNote}
                               </p>
                             )
@@ -206,15 +206,15 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
                       ))}
                   </div>
                   <div className="md:text-right">
-                    <p className="text-base" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-base" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                       {naira(Number(b.total))}
                     </p>
-                    <p className="text-xs tracking-[0.12em] uppercase" style={{ color: b.needsRefund ? '#e0b75a' : st.color, fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-xs tracking-[0.12em] uppercase" style={{ color: b.needsRefund ? '#7a5c24' : st.color, fontFamily: 'var(--font-inter)' }}>
                       {b.needsRefund ? 'Refund due' : st.text}
                       {b.paidAt ? ` · paid ${fmt(b.paidAt)}` : ''}
                     </p>
                     {b.cancelledBy && (
-                      <p className="text-xs" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                      <p className="text-xs" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                         by {b.cancelledBy}
                       </p>
                     )}

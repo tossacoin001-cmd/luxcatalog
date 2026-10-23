@@ -10,8 +10,8 @@ import { partnerTypeSpec } from '@/lib/partner-requirements'
 export const metadata: Metadata = { title: 'Partner Agreements | Admin' }
 export const dynamic = 'force-dynamic'
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
-const card = { background: '#0f1a10', border: '1px solid #1e2e1f' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
+const card = { background: '#fbf9f4', border: '1px solid #d6cfbf' }
 const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
 export default async function AgreementsAdminPage() {
@@ -22,14 +22,14 @@ export default async function AgreementsAdminPage() {
   const unreviewed = AGREEMENTS.filter((a) => !a.reviewed).length
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <AdminNavbar role="admin" />
-      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-6xl mx-auto">
-          <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Partner programme
           </p>
-          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Agreements
           </h1>
         </div>
@@ -37,8 +37,8 @@ export default async function AgreementsAdminPage() {
 
       <div className="max-w-6xl mx-auto px-5 md:px-12 py-8 space-y-10">
         {unreviewed > 0 && (
-          <div className="p-5 text-sm leading-relaxed" style={{ background: 'rgba(201,168,76,0.08)', border: '1px solid rgba(201,168,76,0.3)', color: '#e6d3a1', fontFamily: 'var(--font-inter)' }}>
-            <p className="mb-2" style={{ color: '#f5f0e8' }}>
+          <div className="p-5 text-sm leading-relaxed" style={{ background: 'rgba(122,92,36,0.05)', border: '1px solid rgba(20,19,15,0.15)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
+            <p className="mb-2" style={{ color: '#14130f' }}>
               {unreviewed} of {AGREEMENTS.length} texts are awaiting your lawyer&apos;s review.
             </p>
             <p>
@@ -51,28 +51,28 @@ export default async function AgreementsAdminPage() {
         )}
 
         <section>
-          <h2 className="text-xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h2 className="text-xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Agreement texts
           </h2>
           <ul className="grid gap-3 md:grid-cols-2">
             {AGREEMENTS.map((a) => (
               <li key={a.key} className="p-5 flex flex-col gap-3" style={card}>
                 <div>
-                  <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                  <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                     {a.title} <span className="text-xs" style={text}>v{a.version}</span>
                   </p>
                   <p className="text-xs mt-1" style={text}>
                     {a.appliesTo === 'all' ? 'Every partner' : a.appliesTo.map((t) => partnerTypeSpec(t)?.label ?? t).join(', ')}
                   </p>
                 </div>
-                <p className="inline-flex items-center gap-2 text-xs" style={{ color: a.reviewed ? '#6fbf73' : '#e0b75a', fontFamily: 'var(--font-inter)' }}>
+                <p className="inline-flex items-center gap-2 text-xs" style={{ color: a.reviewed ? '#2f6b45' : '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                   {a.reviewed ? <CheckCircle2 size={14} /> : <Clock size={14} />}
                   {a.reviewed ? 'Approved by lawyer' : 'Awaiting lawyer review'}
                 </p>
                 <a
                   href={`/api/admin/agreements/${a.key}/pdf`}
                   className="self-start inline-flex items-center gap-2 min-h-11 px-4 text-xs tracking-[0.14em] uppercase"
-                  style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                  style={{ border: '1px solid rgba(20,19,15,0.20)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
                 >
                   <FileText size={14} /> Download for review
                 </a>
@@ -82,7 +82,7 @@ export default async function AgreementsAdminPage() {
         </section>
 
         <section>
-          <h2 className="text-xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h2 className="text-xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Partners
           </h2>
           {statuses.length === 0 ? (
@@ -94,10 +94,10 @@ export default async function AgreementsAdminPage() {
               {statuses.map(({ p, s }) => (
                 <li key={p.id} className="p-5" style={card}>
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <p style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                    <p style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                       {s?.businessName ?? p.name} <span className="text-xs" style={text}>{p.email}</span>
                     </p>
-                    <p className="text-xs" style={{ color: s?.allSigned ? '#6fbf73' : '#e0b75a', fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-xs" style={{ color: s?.allSigned ? '#2f6b45' : '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                       {s?.allSigned ? 'All signed' : `${s?.signedCount ?? 0} of ${s?.required ?? 0} signed`}
                     </p>
                   </div>
@@ -105,7 +105,7 @@ export default async function AgreementsAdminPage() {
                     <ul className="mt-3 space-y-1">
                       {s.history.map((h) => (
                         <li key={h.id} className="text-xs flex flex-wrap gap-x-3" style={text}>
-                          <a href={`/api/partner-agreements/${h.id}/pdf`} target="_blank" rel="noopener" className="underline underline-offset-2" style={{ color: '#C9A84C' }}>
+                          <a href={`/api/partner-agreements/${h.id}/pdf`} target="_blank" rel="noopener" className="underline underline-offset-2" style={{ color: '#7a5c24' }}>
                             {h.title} v{h.version}
                           </a>
                           <span>

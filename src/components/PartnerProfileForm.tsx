@@ -6,9 +6,9 @@ import { toast } from 'sonner'
 import { Loader2, X } from 'lucide-react'
 
 const inputStyle = {
-  background: '#0f1a10',
-  border: '1px solid #1e2e1f',
-  color: '#f5f0e8',
+  background: '#fbf9f4',
+  border: '1px solid #d6cfbf',
+  color: '#14130f',
   fontFamily: 'var(--font-inter)',
 }
 
@@ -73,11 +73,11 @@ export default function PartnerProfileForm({ profile, redirectAfterSave }: { pro
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <div className="p-8" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+      <div className="p-8" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
         <div className="space-y-5">
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Brand Name <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Brand Name <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <input
               type="text"
@@ -91,18 +91,18 @@ export default function PartnerProfileForm({ profile, redirectAfterSave }: { pro
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Logo
             </label>
             {logo ? (
               <div className="flex items-center gap-4 mb-3">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={logo} alt="" className="w-16 h-16 object-cover" style={{ background: '#162318' }} />
+                <img src={logo} alt="" className="w-16 h-16 object-cover" style={{ background: '#ece6d9' }} />
                 <button
                   type="button"
                   onClick={() => setLogo(null)}
                   className="text-xs tracking-wider flex items-center gap-1"
-                  style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+                  style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
                 >
                   <X size={12} /> Remove
                 </button>
@@ -114,18 +114,18 @@ export default function PartnerProfileForm({ profile, redirectAfterSave }: { pro
                 disabled={uploading}
                 onChange={(e) => handleLogo(e.target.files)}
                 className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:tracking-wider file:uppercase disabled:opacity-60"
-                style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+                style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
               />
             )}
             {uploading && (
-              <p className="flex items-center gap-2 mt-2 text-xs" style={{ color: '#9a8f7a' }}>
+              <p className="flex items-center gap-2 mt-2 text-xs" style={{ color: '#5e584c' }}>
                 <Loader2 size={12} className="animate-spin" /> Uploading…
               </p>
             )}
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Short Bio
             </label>
             <textarea
@@ -144,7 +144,7 @@ export default function PartnerProfileForm({ profile, redirectAfterSave }: { pro
         type="submit"
         disabled={loading || uploading}
         className="px-10 py-4 text-xs tracking-[0.2em] uppercase transition-all disabled:opacity-60"
-        style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+        style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
       >
         {loading ? 'Saving…' : 'Save Profile'}
       </button>

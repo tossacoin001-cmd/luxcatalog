@@ -21,7 +21,7 @@ import { durationLabel, sessionLabel, SESSION_POLICY_TEXT } from '@/lib/sessions
 export const metadata: Metadata = { title: 'Your booking', robots: { index: false } }
 export const dynamic = 'force-dynamic'
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 const fmt = (d: Date) => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 
 async function load(reference: string) {
@@ -70,20 +70,20 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
   const accepted = holdLive && !!b.respondedAt
   const until = b.holdExpiresAt ? b.holdExpiresAt.toLocaleString('en-GB', { weekday: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Lagos' }) : ''
   const state = b.needsRefund
-    ? { icon: <AlertTriangle size={22} style={{ color: '#e0b75a' }} />, title: 'We’ll refund this payment', body: 'Your payment came through after these dates were taken by another guest. Our team will refund you in full and help you find an alternative.' }
+    ? { icon: <AlertTriangle size={22} style={{ color: '#7a5c24' }} />, title: 'We’ll refund this payment', body: 'Your payment came through after these dates were taken by another guest. Our team will refund you in full and help you find an alternative.' }
     : b.status === 'confirmed' || b.status === 'completed'
-      ? { icon: <CheckCircle2 size={22} style={{ color: '#6fbf73' }} />, title: 'Your booking is confirmed', body: isSession ? 'A confirmation and receipt are on their way to your email. Your professional will arrive at the time below; our concierge is on hand if anything changes.' : 'A confirmation and receipt are on their way to your email. Our concierge will send arrival details before your stay.' }
+      ? { icon: <CheckCircle2 size={22} style={{ color: '#2f6b45' }} />, title: 'Your booking is confirmed', body: isSession ? 'A confirmation and receipt are on their way to your email. Your professional will arrive at the time below; our concierge is on hand if anything changes.' : 'A confirmation and receipt are on their way to your email. Our concierge will send arrival details before your stay.' }
       : b.status === 'cancelled' && b.paidAt
-        ? { icon: <XCircle size={22} style={{ color: '#e85c4c' }} />, title: 'This booking is cancelled', body: b.cancelledBy === 'guest' ? 'You cancelled this booking. Any refund due is shown below.' : `This booking was cancelled by the ${b.cancelledBy ?? 'team'}. You will receive a full refund.` }
+        ? { icon: <XCircle size={22} style={{ color: '#8a3b2e' }} />, title: 'This booking is cancelled', body: b.cancelledBy === 'guest' ? 'You cancelled this booking. Any refund due is shown below.' : `This booking was cancelled by the ${b.cancelledBy ?? 'team'}. You will receive a full refund.` }
       : requestLive
-        ? { icon: <Clock size={22} style={{ color: '#C9A84C' }} />, title: 'Waiting for the host to accept', body: `We’ve sent your request. The host replies by ${until} (Lagos time), and your dates are held until then. No payment has been taken.` }
+        ? { icon: <Clock size={22} style={{ color: '#7a5c24' }} />, title: 'Waiting for the host to accept', body: `We’ve sent your request. The host replies by ${until} (Lagos time), and your dates are held until then. No payment has been taken.` }
       : b.status === 'declined'
-        ? { icon: <XCircle size={22} style={{ color: '#e85c4c' }} />, title: 'The host can’t accept this request', body: `${b.declineReason ? `${b.declineReason}. ` : ''}No payment was taken. Our concierge can suggest similar options for your dates.` }
+        ? { icon: <XCircle size={22} style={{ color: '#8a3b2e' }} />, title: 'The host can’t accept this request', body: `${b.declineReason ? `${b.declineReason}. ` : ''}No payment was taken. Our concierge can suggest similar options for your dates.` }
       : accepted
-        ? { icon: <CheckCircle2 size={22} style={{ color: '#6fbf73' }} />, title: 'Accepted: complete your booking', body: `The host has accepted. Pay by ${until} (Lagos time) to confirm; your dates are held until then.` }
+        ? { icon: <CheckCircle2 size={22} style={{ color: '#2f6b45' }} />, title: 'Accepted: complete your booking', body: `The host has accepted. Pay by ${until} (Lagos time) to confirm; your dates are held until then.` }
       : holdLive
-        ? { icon: <Clock size={22} style={{ color: '#C9A84C' }} />, title: 'Waiting for your payment', body: 'Your dates are held for a few more minutes. If you’ve paid, this page updates as soon as the payment is confirmed.' }
-        : { icon: <XCircle size={22} style={{ color: '#e85c4c' }} />, title: b.status === 'cancelled' ? 'This booking was cancelled' : b.note?.includes('did not answer') || b.status === 'requested' ? 'The host didn’t reply in time' : 'This booking wasn’t completed', body: 'No payment was taken for it. You can choose your dates again on the listing.' }
+        ? { icon: <Clock size={22} style={{ color: '#7a5c24' }} />, title: 'Waiting for your payment', body: 'Your dates are held for a few more minutes. If you’ve paid, this page updates as soon as the payment is confirmed.' }
+        : { icon: <XCircle size={22} style={{ color: '#8a3b2e' }} />, title: b.status === 'cancelled' ? 'This booking was cancelled' : b.note?.includes('did not answer') || b.status === 'requested' ? 'The host didn’t reply in time' : 'This booking wasn’t completed', body: 'No payment was taken for it. You can choose your dates again on the listing.' }
 
   const listingHref = `${categoryHrefs[b.listing.category] ?? '/catalog'}/${b.listing.slug}`
   const sessionRows: [string, string][] = isSession
@@ -113,13 +113,13 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
   ]
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <Navbar />
       <div className="max-w-2xl mx-auto px-5 md:px-8 pt-28 md:pt-32 pb-16 space-y-8">
-        <div className="p-6 md:p-8 flex items-start gap-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }} role="status">
+        <div className="p-6 md:p-8 flex items-start gap-4" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }} role="status">
           <span className="shrink-0 mt-1">{state.icon}</span>
           <div>
-            <h1 className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <h1 className="text-2xl md:text-3xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               {state.title}
             </h1>
             <p className="mt-2 text-sm leading-relaxed" style={text}>
@@ -134,55 +134,55 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
 
         {holdLive && b.userId === session.user.id && <PayNow reference={b.reference} label={accepted ? `Pay ${naira(Number(b.amountDue))} and confirm` : 'Continue to payment'} />}
 
-        <section className="p-6 md:p-8 space-y-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+        <section className="p-6 md:p-8 space-y-4" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
           <div>
-            <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
               {b.listing.location}
             </p>
-            <Link href={listingHref} className="text-xl hover:underline" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <Link href={listingHref} className="text-xl hover:underline" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               {b.listing.title}
             </Link>
           </div>
           <dl className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
             {rows.map(([k, v]) => (
-              <div key={k} className="flex justify-between gap-4 py-1" style={{ borderBottom: '1px solid #1e2e1f' }}>
-                <dt style={{ color: '#908673' }}>{k}</dt>
-                <dd className="text-right" style={{ color: k === 'Total' ? '#f5f0e8' : '#d6cdbd', fontWeight: k === 'Total' ? 600 : 400 }}>
+              <div key={k} className="flex justify-between gap-4 py-1" style={{ borderBottom: '1px solid #d6cfbf' }}>
+                <dt style={{ color: '#5e584c' }}>{k}</dt>
+                <dd className="text-right" style={{ color: k === 'Total' ? '#14130f' : '#3a362d', fontWeight: k === 'Total' ? 600 : 400 }}>
                   {v}
                 </dd>
               </div>
             ))}
           </dl>
           <p className="text-xs leading-relaxed" style={text}>
-            <strong style={{ color: '#d6cdbd', fontWeight: 500 }}>{policy.label} cancellation.</strong> {policy.summary}
+            <strong style={{ color: '#3a362d', fontWeight: 500 }}>{policy.label} cancellation.</strong> {policy.summary}
             {Number(b.cautionDeposit) > 0 ? ' The caution deposit is refunded within 48 hours of check-out.' : ''}
           </p>
         </section>
 
         {pro && (
-          <section data-whos-coming className="p-5 md:p-6 flex items-start gap-4" style={{ background: '#0f1a10', border: '1px solid rgba(201,168,76,0.3)' }}>
+          <section data-whos-coming className="p-5 md:p-6 flex items-start gap-4" style={{ background: '#fbf9f4', border: '1px solid rgba(20,19,15,0.15)' }}>
             {pro.logo ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={pro.logo} alt="" className="w-14 h-14 object-cover shrink-0" style={{ background: '#162318' }} />
+              <img src={pro.logo} alt="" className="w-14 h-14 object-cover shrink-0" style={{ background: '#ece6d9' }} />
             ) : (
-              <span className="w-14 h-14 shrink-0 flex items-center justify-center text-xl" style={{ background: '#162318', color: '#C9A84C', fontFamily: 'var(--font-playfair)' }}>
+              <span className="w-14 h-14 shrink-0 flex items-center justify-center text-xl" style={{ background: '#ece6d9', color: '#7a5c24', fontFamily: 'var(--font-playfair)' }}>
                 {pro.name.slice(0, 1)}
               </span>
             )}
             <div>
-              <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                 Who’s coming
               </p>
-              <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+              <p className="text-lg" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                 {pro.name}
               </p>
               {pro.contact && pro.contact !== pro.name && (
-                <p className="text-sm" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+                <p className="text-sm" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
                   {pro.contact}
                 </p>
               )}
-              <p className="mt-2 flex items-center gap-1.5 text-xs" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-                <ShieldCheck size={14} style={{ color: '#6fbf73' }} /> Vetted by Lux Catalog: identity and police character checked.
+              <p className="mt-2 flex items-center gap-1.5 text-xs" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+                <ShieldCheck size={14} style={{ color: '#2f6b45' }} /> Vetted by Lux Catalog: identity and police character checked.
               </p>
             </div>
           </section>
@@ -190,15 +190,15 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
 
         {/* Make the stay effortless: Private Services for guests with a stay. */}
         {night && b.status === 'confirmed' && b.userId === session.user.id && (
-          <section data-cross-sell className="p-5 md:p-6 space-y-4" style={{ background: '#0f1a10', border: '1px solid rgba(201,168,76,0.3)' }}>
+          <section data-cross-sell className="p-5 md:p-6 space-y-4" style={{ background: '#fbf9f4', border: '1px solid rgba(20,19,15,0.15)' }}>
             <div>
-              <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                 Private Services
               </p>
-              <h2 className="text-xl md:text-2xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+              <h2 className="text-xl md:text-2xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                 Make your stay effortless
               </h2>
-              <p className="text-sm mt-1 leading-relaxed" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-sm mt-1 leading-relaxed" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
                 A private chef for your first night, a massage after the flight, a barber before the party. Vetted professionals come to you.
               </p>
             </div>
@@ -207,8 +207,8 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
                 <Link
                   key={g.key}
                   href={`/catalog/private-services#${g.key}`}
-                  className="flex items-center justify-center text-center min-h-12 px-3 text-[11px] tracking-[0.14em] uppercase transition-colors hover:bg-[rgba(201,168,76,0.08)]"
-                  style={{ border: '1px solid rgba(201,168,76,0.45)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                  className="flex items-center justify-center text-center min-h-12 px-3 text-[11px] tracking-[0.14em] uppercase transition-colors hover:bg-[rgba(122,92,36,0.05)]"
+                  style={{ border: '1px solid rgba(20,19,15,0.23)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
                 >
                   {g.label}
                 </Link>
@@ -218,14 +218,14 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
         )}
 
         {b.refunds.length > 0 && (
-          <section className="p-5 space-y-2" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-            <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+          <section className="p-5 space-y-2" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+            <p className="text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
               Refunds
             </p>
             {b.refunds.filter((r) => r.status !== 'rejected').map((r) => (
               <div key={r.id} className="flex justify-between gap-3 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#908673' }}>{r.kind === 'caution' ? 'Caution deposit' : 'Refund'}</span>
-                <span style={{ color: '#d6cdbd' }}>
+                <span style={{ color: '#5e584c' }}>{r.kind === 'caution' ? 'Caution deposit' : 'Refund'}</span>
+                <span style={{ color: '#3a362d' }}>
                   {naira(Number(r.amount))} ·{' '}
                   {r.status === 'completed' ? 'sent' : r.status === 'processing' ? 'on its way' : r.status === 'failed' ? 'being retried by our team' : 'being approved'}
                 </span>
@@ -244,11 +244,11 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <Link href="/bookings" className="inline-flex items-center justify-center min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <Link href="/bookings" className="inline-flex items-center justify-center min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             All my bookings
           </Link>
           {!holdLive && !requestLive && b.status !== 'confirmed' && b.status !== 'completed' && (
-            <Link href={listingHref} className="inline-flex items-center justify-center min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+            <Link href={listingHref} className="inline-flex items-center justify-center min-h-12 px-6 text-xs tracking-[0.16em] uppercase" style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
               {isSession ? 'Choose another time' : 'Choose dates again'}
             </Link>
           )}

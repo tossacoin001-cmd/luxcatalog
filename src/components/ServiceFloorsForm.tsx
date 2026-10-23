@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react'
 
 type Floor = { key: string; label: string; minPrice: number; custom: boolean }
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 const digits = (v: string) => v.replace(/\D/g, '')
 const show = (v: string) => (v ? Number(v).toLocaleString('en-NG') : '')
 
@@ -41,18 +41,18 @@ export default function ServiceFloorsForm({ floors, defaults }: { floors: Floor[
 
   return (
     <div className="space-y-6">
-      <ul style={{ border: '1px solid #1e2e1f' }}>
+      <ul style={{ border: '1px solid #d6cfbf' }}>
         {floors.map((f, i) => (
-          <li key={f.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-6 p-4" style={{ background: '#0f1a10', borderTop: i ? '1px solid #1e2e1f' : undefined }}>
+          <li key={f.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-6 p-4" style={{ background: '#fbf9f4', borderTop: i ? '1px solid #d6cfbf' : undefined }}>
             <label htmlFor={`floor-${f.key}`} className="min-w-0">
-              <span className="block text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+              <span className="block text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                 {f.label}
               </span>
               <span className="block text-xs" style={text}>
                 {f.key === 'private_chef' ? 'Per guest. ' : ''}Default ₦{defaults[f.key].toLocaleString('en-NG')}
               </span>
             </label>
-            <div className="flex items-center shrink-0 w-full sm:w-48" style={{ border: '1px solid #1e2e1f', background: '#080c08' }}>
+            <div className="flex items-center shrink-0 w-full sm:w-48" style={{ border: '1px solid #d6cfbf', background: '#f4f0e8' }}>
               <span className="pl-3 text-sm" style={text}>
                 ₦
               </span>
@@ -63,7 +63,7 @@ export default function ServiceFloorsForm({ floors, defaults }: { floors: Floor[
                 value={show(values[f.key])}
                 onChange={(e) => setValues((v) => ({ ...v, [f.key]: digits(e.target.value) }))}
                 className="w-full h-11 px-2 text-sm bg-transparent focus:outline-none"
-                style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}
+                style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}
               />
             </div>
           </li>
@@ -74,7 +74,7 @@ export default function ServiceFloorsForm({ floors, defaults }: { floors: Floor[
         onClick={save}
         disabled={busy || !changed.length}
         className="inline-flex items-center justify-center gap-2 min-h-12 px-8 w-full sm:w-auto text-xs tracking-[0.18em] uppercase disabled:opacity-50"
-        style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+        style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
       >
         {busy && <Loader2 size={14} className="animate-spin" />} Save floors{changed.length ? ` (${changed.length})` : ''}
       </button>

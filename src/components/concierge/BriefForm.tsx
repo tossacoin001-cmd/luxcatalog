@@ -8,9 +8,9 @@ import Turnstile from '@/components/auth/Turnstile'
 import { briefMessage } from '@/lib/enquiry'
 import { whatsappLink } from '@/lib/contact'
 
-const field = { background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
+const field = { background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }
 const label = 'block text-[11px] tracking-[0.15em] uppercase mb-1.5'
-const muted = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const muted = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 
 // "Tell us what you are looking for": a short request that goes straight to
 // the Lux Catalog team (no account needed). WhatsApp is only offered as a
@@ -53,15 +53,15 @@ export default function BriefForm({ topic, initialMessage = '', onDone }: { topi
   if (sent) {
     return (
       <div className="px-6 py-8 space-y-4 text-center" role="status">
-        <span className="inline-flex items-center justify-center w-12 h-12 rounded-full" style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.25)' }}>
-          <CheckCircle size={20} style={{ color: '#C9A84C' }} />
+        <span className="inline-flex items-center justify-center w-12 h-12 rounded-full" style={{ background: 'rgba(122,92,36,0.06)', border: '1px solid rgba(20,19,15,0.14)' }}>
+          <CheckCircle size={20} style={{ color: '#7a5c24' }} />
         </span>
-        <p className="text-base" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+        <p className="text-base" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
           Thank you. A specialist will reply personally, usually within a few hours. A copy is on its way to your email.
         </p>
         <p className="text-xs" style={muted}>
           Prefer to talk now?{' '}
-          <a data-wa-fallback href={whatsappLink(`Hello, I just sent a request on Lux Catalog${topic ? ` about: ${topic}` : ''}.`)} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: '#C9A84C' }}>
+          <a data-wa-fallback href={whatsappLink(`Hello, I just sent a request on Lux Catalog${topic ? ` about: ${topic}` : ''}.`)} target="_blank" rel="noopener noreferrer" className="underline" style={{ color: '#7a5c24' }}>
             Message us on WhatsApp
           </a>
           .
@@ -102,7 +102,7 @@ export default function BriefForm({ topic, initialMessage = '', onDone }: { topi
         type="submit"
         disabled={loading}
         className="w-full min-h-12 text-xs tracking-[0.2em] uppercase inline-flex items-center justify-center gap-2 disabled:opacity-60"
-        style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+        style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
       >
         {loading && <Loader2 size={14} className="animate-spin" />} Send request
       </button>

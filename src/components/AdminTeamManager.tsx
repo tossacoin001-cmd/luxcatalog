@@ -24,13 +24,13 @@ interface Invitation {
 }
 
 const inputStyle = {
-  background: '#0f1a10',
-  border: '1px solid #1e2e1f',
-  color: '#f5f0e8',
+  background: '#fbf9f4',
+  border: '1px solid #d6cfbf',
+  color: '#14130f',
   fontFamily: 'var(--font-inter)',
 }
-const muted = { color: '#908673', fontFamily: 'var(--font-inter)' }
-const card = { background: '#0f1a10', border: '1px solid #1e2e1f' }
+const muted = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
+const card = { background: '#fbf9f4', border: '1px solid #d6cfbf' }
 
 const roleLabel = (role: string) => (role === 'admin' ? 'Admin' : role === 'team' ? 'Team' : role === 'partner' ? 'Partner' : 'Member')
 
@@ -53,7 +53,7 @@ function AreaPicker({ value, onChange }: { value: Area[]; onChange: (v: Area[]) 
             type="button"
             onClick={() => onChange(p.areas)}
             className="min-h-9 px-3 text-[11px] tracking-[0.12em] uppercase"
-            style={{ border: `1px solid ${same(p.areas) ? '#C9A84C' : '#1e2e1f'}`, color: same(p.areas) ? '#e4c878' : '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+            style={{ border: `1px solid ${same(p.areas) ? '#14130f' : '#d6cfbf'}`, color: same(p.areas) ? '#7a5c24' : '#5e584c', fontFamily: 'var(--font-inter)' }}
           >
             {p.label}
           </button>
@@ -63,15 +63,15 @@ function AreaPicker({ value, onChange }: { value: Area[]; onChange: (v: Area[]) 
         {AREAS.map((a) => {
           const on = value.includes(a.key)
           return (
-            <label key={a.key} className="flex items-start gap-3 p-3 cursor-pointer" style={{ border: `1px solid ${on ? 'rgba(201,168,76,0.45)' : '#1e2e1f'}` }}>
+            <label key={a.key} className="flex items-start gap-3 p-3 cursor-pointer" style={{ border: `1px solid ${on ? 'rgba(20,19,15,0.23)' : '#d6cfbf'}` }}>
               <input
                 type="checkbox"
                 checked={on}
                 onChange={() => onChange(on ? value.filter((k) => k !== a.key) : [...value, a.key])}
-                className="mt-0.5 w-4 h-4 accent-[#C9A84C] shrink-0"
+                className="mt-0.5 w-4 h-4 accent-[#7a5c24] shrink-0"
               />
               <span>
-                <span className="block text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                <span className="block text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                   {a.label}
                 </span>
                 <span className="block text-xs" style={muted}>
@@ -96,11 +96,11 @@ function RoleSelect({ value, onChange }: { value: 'admin' | 'team'; onChange: (v
 }
 
 function AreaChips({ areas }: { areas: string[] }) {
-  if (!areas.length) return <span className="text-xs" style={{ color: '#e0b75a', fontFamily: 'var(--font-inter)' }}>No access yet</span>
+  if (!areas.length) return <span className="text-xs" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>No access yet</span>
   return (
     <span className="flex flex-wrap gap-1.5">
       {areas.map((a) => (
-        <span key={a} className="text-[11px] px-2 py-0.5" style={{ border: '1px solid #1e2e1f', ...muted }}>
+        <span key={a} className="text-[11px] px-2 py-0.5" style={{ border: '1px solid #d6cfbf', ...muted }}>
           {areaLabel(a)}
         </span>
       ))}
@@ -126,7 +126,7 @@ function AccessEditor({
   const [areas, setAreas] = useState<Area[]>(initialAreas)
   const [busy, setBusy] = useState(false)
   return (
-    <div className="mt-4 pt-4 space-y-4" style={{ borderTop: '1px solid #1e2e1f' }}>
+    <div className="mt-4 pt-4 space-y-4" style={{ borderTop: '1px solid #d6cfbf' }}>
       <RoleSelect value={role} onChange={setRole} />
       {role === 'team' && <AreaPicker value={areas} onChange={setAreas} />}
       <div className="flex gap-2">
@@ -142,11 +142,11 @@ function AccessEditor({
             }
           }}
           className="inline-flex items-center gap-2 min-h-11 px-5 text-xs tracking-[0.16em] uppercase disabled:opacity-50"
-          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
         >
           <Check size={13} /> {saveLabel}
         </button>
-        <button type="button" onClick={onCancel} className="min-h-11 px-4 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid #1e2e1f', ...muted }}>
+        <button type="button" onClick={onCancel} className="min-h-11 px-4 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid #d6cfbf', ...muted }}>
           Cancel
         </button>
       </div>
@@ -276,15 +276,15 @@ export default function AdminTeamManager({
           type="submit"
           disabled={inviting || (role === 'team' && areas.length === 0)}
           className="h-11 px-8 text-xs tracking-[0.18em] uppercase disabled:opacity-60"
-          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
         >
           {inviting ? 'Sending…' : 'Send invite'}
         </button>
       </form>
 
       {lastInvite && (
-        <div className="p-5 space-y-3" style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.3)' }}>
-          <p className="text-sm" style={{ color: '#e8d9b0', fontFamily: 'var(--font-inter)' }}>
+        <div className="p-5 space-y-3" style={{ background: 'rgba(122,92,36,0.04)', border: '1px solid rgba(20,19,15,0.15)' }}>
+          <p className="text-sm" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             {lastInvite.emailed ? `Emailed to ${lastInvite.email}.` : `Email could not be sent to ${lastInvite.email}.`} You can also share this
             link directly (for example on WhatsApp). It works once, only for that email address, and expires in 7 days.
           </p>
@@ -297,7 +297,7 @@ export default function AdminTeamManager({
                 toast.success('Link copied.')
               }}
               className="h-10 px-4 flex items-center gap-2 text-xs tracking-[0.15em] uppercase"
-              style={{ border: '1px solid #C9A84C', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+              style={{ border: '1px solid #14130f', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
             >
               <Copy size={13} /> Copy
             </button>
@@ -308,7 +308,7 @@ export default function AdminTeamManager({
       {/* Old team invites that landed as partners */}
       {invitedPartners.length > 0 && (
         <div>
-          <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#e0b75a', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Invited as partners
           </p>
           <p className="text-sm mb-4" style={muted}>
@@ -320,7 +320,7 @@ export default function AdminTeamManager({
               <div key={p.id} className="p-4" style={card}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                       {p.name || p.email}
                     </p>
                     <p className="text-xs break-all" style={muted}>
@@ -331,7 +331,7 @@ export default function AdminTeamManager({
                     <button
                       onClick={() => setEditing(p.id)}
                       className="min-h-11 px-4 text-[11px] tracking-[0.14em] uppercase"
-                      style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                      style={{ border: '1px solid rgba(20,19,15,0.20)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
                     >
                       Move to team
                     </button>
@@ -348,7 +348,7 @@ export default function AdminTeamManager({
 
       {/* Current members */}
       <div>
-        <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+        <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
           Team
         </p>
         <div className="space-y-3">
@@ -358,7 +358,7 @@ export default function AdminTeamManager({
               <div key={m.id} className="p-4" style={card}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 space-y-1.5">
-                    <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+                    <p className="text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                       {m.name || m.email}
                       {self && <span className="ml-2 text-[11px] uppercase" style={muted}>(You)</span>}
                     </p>
@@ -368,14 +368,14 @@ export default function AdminTeamManager({
                     {m.role === 'team' && <AreaChips areas={m.permissions ?? []} />}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1" style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                    <span className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1" style={{ border: '1px solid rgba(20,19,15,0.15)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                       {roleLabel(m.role)}
                     </span>
                     {!self && editing !== m.id && (
                       <button
                         onClick={() => setEditing(m.id)}
                         className="min-h-11 px-3 text-[11px] tracking-[0.14em] uppercase"
-                        style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                        style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
                       >
                         Edit access
                       </button>
@@ -385,7 +385,7 @@ export default function AdminTeamManager({
                         onClick={() => handleRemove('member', m.userId!)}
                         disabled={busyId === m.userId}
                         className="inline-flex items-center justify-center w-11 h-11 transition-colors hover:text-lux-sold disabled:opacity-60"
-                        style={{ color: '#908673' }}
+                        style={{ color: '#5e584c' }}
                         aria-label={`Remove ${m.name || m.email}`}
                       >
                         <X size={14} />
@@ -411,7 +411,7 @@ export default function AdminTeamManager({
       {/* Pending invitations */}
       {invitations.length > 0 && (
         <div>
-          <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Pending invitations
           </p>
           <div className="space-y-3">
@@ -419,18 +419,18 @@ export default function AdminTeamManager({
               <div key={inv.id} className="p-4" style={card}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 space-y-1.5">
-                    <p className="flex items-center gap-2 text-sm break-all" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-                      <Mail size={14} className="shrink-0" style={{ color: '#908673' }} /> {inv.email}
+                    <p className="flex items-center gap-2 text-sm break-all" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+                      <Mail size={14} className="shrink-0" style={{ color: '#5e584c' }} /> {inv.email}
                     </p>
                     {inv.role === 'team' && <AreaChips areas={inv.permissions ?? []} />}
                     {inv.role === 'partner' && (
-                      <p className="text-xs" style={{ color: '#e0b75a', fontFamily: 'var(--font-inter)' }}>
+                      <p className="text-xs" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                         Sent with the old partner option. Change it to a team invite.
                       </p>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1" style={{ border: '1px solid #1e2e1f', ...muted }}>
+                    <span className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1" style={{ border: '1px solid #d6cfbf', ...muted }}>
                       {roleLabel(inv.role)} &middot; Pending
                     </span>
                     {editing !== inv.id && (
@@ -438,7 +438,7 @@ export default function AdminTeamManager({
                         onClick={() => (inv.role === 'partner' ? setEditing(inv.id) : resend(inv))}
                         disabled={busyId === inv.id}
                         className="inline-flex items-center min-h-11 px-3 text-[11px] tracking-[0.14em] uppercase transition-colors hover:text-lux-gold disabled:opacity-60"
-                        style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                        style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
                       >
                         {inv.role === 'partner' ? 'Change to team' : 'Resend'}
                       </button>
@@ -456,7 +456,7 @@ export default function AdminTeamManager({
                       onClick={() => handleRemove('invitation', inv.id)}
                       disabled={busyId === inv.id}
                       className="inline-flex items-center justify-center w-11 h-11 transition-colors hover:text-lux-sold disabled:opacity-60"
-                      style={{ color: '#908673' }}
+                      style={{ color: '#5e584c' }}
                       aria-label={`Revoke invitation for ${inv.email}`}
                     >
                       <X size={14} />

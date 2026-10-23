@@ -12,19 +12,19 @@ export const metadata: Metadata = pageMeta({
 
 export default function DiscoverPage() {
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <Navbar />
 
       {/* Header */}
-      <div className="pt-32 pb-10 px-6 md:px-12 text-center" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-32 pb-10 px-6 md:px-12 text-center" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-2xl mx-auto">
-          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Concierge Discovery
           </p>
-          <h1 className="text-4xl md:text-5xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-4xl md:text-5xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Find exactly what you want
           </h1>
-          <p className="text-sm leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-sm leading-relaxed" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             Choose what interests you. We ask only what matters for each, then show what is available for your dates, with a way straight into booking.
           </p>
         </div>

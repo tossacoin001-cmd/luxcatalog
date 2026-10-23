@@ -24,17 +24,17 @@ export default async function ListingBookingPage({ params }: { params: Promise<{
   if (role === 'partner' && (await partnerMustSign(userId))) redirect('/partners/agreement')
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <AdminNavbar role={role} />
-      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-4xl mx-auto">
-          <Link href="/admin/listings" className="text-[11px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+          <Link href="/admin/listings" className="text-[11px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             ← Listings
           </Link>
-          <p className="text-xs tracking-[0.3em] uppercase mb-2" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-2" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Booking &amp; calendar
           </p>
-          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             {listing.title}
           </h1>
           {listing.published && (
@@ -42,7 +42,7 @@ export default async function ListingBookingPage({ params }: { params: Promise<{
               href={`${categoryHrefs[listing.category] ?? '/catalog'}/${listing.slug}#enquire`}
               target="_blank"
               className="inline-block mt-2 text-xs underline underline-offset-2"
-              style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
             >
               View as a guest
             </Link>

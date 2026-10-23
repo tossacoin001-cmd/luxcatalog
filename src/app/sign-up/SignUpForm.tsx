@@ -88,8 +88,8 @@ export default function SignUpForm({
           onChange={set('password')}
         />
         <AuthField label="Confirm Password" type="password" autoComplete="new-password" required value={form.confirm} onChange={set('confirm')} />
-        <label className="flex items-start gap-3 text-sm leading-relaxed cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 w-4 h-4 accent-[#C9A84C]" />
+        <label className="flex items-start gap-3 text-sm leading-relaxed cursor-pointer" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 w-4 h-4 accent-[#7a5c24]" />
           <span>Send me the Lux Edit: hand-picked listings and private offers, weekly. You can change or stop this any time.</span>
         </label>
         <Turnstile onToken={onToken} resetKey={resetCaptcha} />

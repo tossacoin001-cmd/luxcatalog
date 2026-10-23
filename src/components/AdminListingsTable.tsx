@@ -72,7 +72,7 @@ export default function AdminListingsTable({
 
   if (listings.length === 0) {
     return (
-      <p className="py-16 text-center text-sm" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+      <p className="py-16 text-center text-sm" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
         No listings yet. Click &ldquo;+ Add Listing&rdquo; to create the first one.
       </p>
     )
@@ -94,12 +94,12 @@ export default function AdminListingsTable({
     <div className="overflow-x-auto">
       <table className="w-full text-sm" style={{ borderCollapse: 'separate', borderSpacing: 0 }}>
         <thead>
-          <tr style={{ borderBottom: '1px solid #1e2e1f' }}>
+          <tr style={{ borderBottom: '1px solid #d6cfbf' }}>
             {headers.map((h) => (
               <th
                 key={h}
                 className="text-left pb-3 pr-6 text-[11px] tracking-[0.15em] uppercase"
-                style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+                style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
               >
                 {h}
               </th>
@@ -110,30 +110,30 @@ export default function AdminListingsTable({
           {listings.map((listing) => (
             <tr
               key={listing.id}
-              style={{ borderBottom: '1px solid #1e2e1f', opacity: deletingId === listing.id ? 0.4 : 1 }}
+              style={{ borderBottom: '1px solid #d6cfbf', opacity: deletingId === listing.id ? 0.4 : 1 }}
               className="hover:bg-lux-surface transition-colors group"
             >
               <td className="py-4 pr-6">
-                <span style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>{listing.title}</span>
+                <span style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>{listing.title}</span>
               </td>
               <td className="py-4 pr-6">
-                <span className="text-[11px] tracking-wider uppercase" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                <span className="text-[11px] tracking-wider uppercase" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   {categoryLabels[listing.category] ?? listing.category}
                 </span>
               </td>
               {showSubmittedBy && (
                 <td className="py-4 pr-6">
-                  <span className="text-xs" style={{ color: listing.submittedBy === 'House' ? '#908673' : '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                  <span className="text-xs" style={{ color: listing.submittedBy === 'House' ? '#5e584c' : '#5e584c', fontFamily: 'var(--font-inter)' }}>
                     {listing.submittedBy}
                   </span>
                 </td>
               )}
               <td className="py-4 pr-6">
-                <span className="text-xs" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                <span className="text-xs" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                   {listing.priceDisplay}
                 </span>
                 {listing.marginRequested && (
-                  <p className="text-[11px] tracking-wider uppercase mt-1" style={{ color: '#9a8f7a' }}>
+                  <p className="text-[11px] tracking-wider uppercase mt-1" style={{ color: '#5e584c' }}>
                     Margin requested
                   </p>
                 )}
@@ -148,20 +148,20 @@ export default function AdminListingsTable({
                   className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1"
                   style={
                     listing.published
-                      ? { border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }
-                      : { border: '1px solid #908673', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+                      ? { border: '1px solid rgba(20,19,15,0.15)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }
+                      : { border: '1px solid #c4bcaa', color: '#5e584c', fontFamily: 'var(--font-inter)' }
                   }
                 >
                   {listing.published ? 'Live' : canPublish ? 'Pending Review' : 'Awaiting admin approval'}
                 </span>
               </td>
               <td className="py-4 pr-6">
-                <span className="text-xs" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                <span className="text-xs" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   {listing.soldCount ? `${listing.soldCount} sold` : `${listing.inquiryCount ?? 0} enquiries`}
                 </span>
               </td>
               <td className="py-4 pr-6">
-                <span className="text-xs" style={{ color: listing.featured ? '#C9A84C' : '#908673', fontFamily: 'var(--font-inter)' }}>
+                <span className="text-xs" style={{ color: listing.featured ? '#7a5c24' : '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   {listing.featured ? '★ Yes' : 'No'}
                 </span>
               </td>
@@ -173,7 +173,7 @@ export default function AdminListingsTable({
                       disabled={publishingId === listing.id}
                       onClick={() => handlePublish(listing.id)}
                       className="text-xs tracking-wider hover:text-lux-gold transition-colors disabled:opacity-60"
-                      style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                      style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
                     >
                       {publishingId === listing.id ? 'Approving…' : 'Approve'}
                     </button>
@@ -181,7 +181,7 @@ export default function AdminListingsTable({
                   <Link
                     href={`/admin/listings/${listing.id}/edit`}
                     className="text-xs tracking-wider hover:text-lux-gold transition-colors"
-                    style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+                    style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
                   >
                     Edit
                   </Link>
@@ -189,7 +189,7 @@ export default function AdminListingsTable({
                     <Link
                       href={`/admin/listings/${listing.id}/booking`}
                       className="text-xs tracking-wider hover:text-lux-gold transition-colors whitespace-nowrap"
-                      style={{ color: listing.bookingOnline ? '#6fbf73' : '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                      style={{ color: listing.bookingOnline ? '#2f6b45' : '#7a5c24', fontFamily: 'var(--font-inter)' }}
                     >
                       {listing.bookingOnline ? 'Calendar · online' : 'Set up booking'}
                     </Link>
@@ -199,7 +199,7 @@ export default function AdminListingsTable({
                     disabled={deletingId === listing.id}
                     onClick={() => handleDelete(listing.id, listing.title)}
                     className="text-xs tracking-wider transition-colors hover:text-lux-sold disabled:opacity-60"
-                    style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}
+                    style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
                   >
                     {deletingId === listing.id ? 'Deleting…' : 'Delete'}
                   </button>

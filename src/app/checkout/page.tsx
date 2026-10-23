@@ -10,9 +10,9 @@ import { useCurrency } from '@/components/CurrencyProvider'
 import { formatListingPrice } from '@/lib/utils'
 
 const fieldStyle = {
-  background: '#162318',
-  border: '1px solid #1e2e1f',
-  color: '#f5f0e8',
+  background: '#ece6d9',
+  border: '1px solid #d6cfbf',
+  color: '#14130f',
   fontFamily: 'var(--font-inter)',
 }
 
@@ -59,16 +59,16 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div style={{ background: '#080c08', minHeight: '100vh' }}>
+      <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
         <Navbar />
         <div className="max-w-2xl mx-auto px-6 pt-40 pb-24 text-center">
-          <h1 className="text-2xl mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-2xl mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Your cart is empty
           </h1>
           <button
             onClick={() => router.push('/catalog/decor')}
             className="inline-flex items-center px-8 py-4 text-xs tracking-[0.2em] uppercase"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             Browse Interior Decor
           </button>
@@ -79,15 +79,15 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <Navbar />
 
-      <div className="pt-32 pb-12 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-32 pb-12 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-4xl mx-auto">
-          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Interior Decor
           </p>
-          <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-4xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Checkout
           </h1>
         </div>
@@ -95,19 +95,19 @@ export default function CheckoutPage() {
 
       <div className="max-w-4xl mx-auto px-6 md:px-12 py-16 grid grid-cols-1 lg:grid-cols-3 gap-12">
         <form onSubmit={handleSubmit} className="lg:col-span-2 space-y-5">
-          <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-[11px] tracking-[0.2em] uppercase mb-2" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Delivery Details
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 Full Name *
               </label>
               <input required name="name" value={form.name} onChange={(e) => set('name', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
             </div>
             <div>
-              <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 Phone *
               </label>
               <input required name="phone" type="tel" value={form.phone} onChange={(e) => set('phone', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
@@ -115,14 +115,14 @@ export default function CheckoutPage() {
           </div>
 
           <div>
-            <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Email *
             </label>
             <input required name="email" type="email" value={form.email} onChange={(e) => set('email', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
           </div>
 
           <div>
-            <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Delivery Address *
             </label>
             <input required name="address" value={form.address} onChange={(e) => set('address', e.target.value)} placeholder="Street address" className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
@@ -130,13 +130,13 @@ export default function CheckoutPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 City *
               </label>
               <input required name="city" value={form.city} onChange={(e) => set('city', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
             </div>
             <div>
-              <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 State *
               </label>
               <input required name="state" value={form.state} onChange={(e) => set('state', e.target.value)} placeholder="e.g. Lagos" className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
@@ -144,14 +144,14 @@ export default function CheckoutPage() {
           </div>
 
           <div>
-            <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className="block text-[11px] tracking-[0.15em] uppercase mb-2" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Country *
             </label>
             <input required name="country" value={form.country} onChange={(e) => set('country', e.target.value)} className="w-full h-11 px-4 text-sm focus:outline-none" style={fieldStyle} />
           </div>
 
           {deliveryEstimate && (
-            <p className="text-xs" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-xs" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
               {deliveryEstimate}
             </p>
           )}
@@ -160,30 +160,30 @@ export default function CheckoutPage() {
             type="submit"
             disabled={loading}
             className="w-full py-4 text-xs tracking-[0.2em] uppercase transition-all disabled:opacity-60"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             {loading ? 'Redirecting to payment…' : 'Continue to Payment'}
           </button>
-          <p className="text-[11px] text-center" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-[11px] text-center" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             Secured by Paystack: card, bank transfer or USSD. Charged in Naira.
           </p>
         </form>
 
         <div>
-          <div className="sticky top-24 p-7 space-y-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-            <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+          <div className="sticky top-24 p-7 space-y-4" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+            <p className="text-[11px] tracking-[0.2em] uppercase" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Order Summary
             </p>
             {items.map((item) => (
               <div key={item.listingId} className="flex justify-between text-xs" style={{ fontFamily: 'var(--font-inter)' }}>
-                <span style={{ color: '#9a8f7a' }}>{item.title} × {item.quantity}</span>
-                <span style={{ color: '#f5f0e8' }}>{formatListingPrice(item.priceNgn * item.quantity, null, currency, rate)}</span>
+                <span style={{ color: '#5e584c' }}>{item.title} × {item.quantity}</span>
+                <span style={{ color: '#14130f' }}>{formatListingPrice(item.priceNgn * item.quantity, null, currency, rate)}</span>
               </div>
             ))}
-            <div style={{ height: 1, background: '#1e2e1f' }} />
+            <div style={{ height: 1, background: '#ece6d9' }} />
             <div className="flex justify-between text-sm">
-              <span style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>Total</span>
-              <span style={{ color: '#C9A84C', fontFamily: 'var(--font-playfair)' }}>
+              <span style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>Total</span>
+              <span style={{ color: '#7a5c24', fontFamily: 'var(--font-playfair)' }}>
                 {formatListingPrice(subtotalNgn, null, currency, rate)}
               </span>
             </div>

@@ -39,7 +39,7 @@ export default function ForgotPasswordForm() {
       title="Reset Password"
       subtitle="Enter your email and we will send you a link to choose a new password."
       footer={
-        <Link href="/sign-in" className="text-lux-gold hover:text-lux-gold-light">
+        <Link href="/sign-in" className="inline-flex items-center min-h-11 text-lux-text underline underline-offset-4">
           Back to sign in
         </Link>
       }

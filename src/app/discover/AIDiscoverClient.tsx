@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import {
-  ArrowLeft, ArrowRight, RotateCcw, Sparkles, MessageCircle, CheckCircle2, CircleSlash,
+  ArrowLeft, ArrowRight, RotateCcw, Compass, MessageCircle, CheckCircle2, CircleSlash,
   Landmark, BedDouble, Car, Sailboat, ConciergeBell, ShieldCheck, Sofa, Building2, Plane, type LucideIcon,
 } from 'lucide-react'
 import RequestButton from '@/components/concierge/RequestButton'
@@ -20,9 +20,9 @@ const UNIT_TITLE: Record<string, string> = { year: ' (per year)', night: ' (per 
 type Answer = { kind?: KindKey; budget?: string; services?: string[]; bedrooms?: number; start?: string; end?: string; date?: string; time?: string; guests?: number }
 
 const lagosToday = () => new Date(Date.now() + 3_600_000).toISOString().slice(0, 10)
-const gold = { color: '#C9A84C', fontFamily: 'var(--font-inter)' }
-const muted = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
-const field = { background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
+const gold = { color: '#7a5c24', fontFamily: 'var(--font-inter)' }
+const muted = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
+const field = { background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }
 const label = 'block text-[11px] tracking-[0.15em] uppercase mb-1.5'
 
 function Chip({ on, onClick, children, option }: { on: boolean; onClick: () => void; children: React.ReactNode; option: string }) {
@@ -34,9 +34,9 @@ function Chip({ on, onClick, children, option }: { on: boolean; onClick: () => v
       onClick={onClick}
       className="min-h-11 px-4 py-2 text-left text-[13px] leading-snug transition-colors"
       style={{
-        border: `1px solid ${on ? '#C9A84C' : '#1e2e1f'}`,
-        background: on ? 'rgba(201,168,76,0.12)' : '#0f1a10',
-        color: on ? '#C9A84C' : '#d8cfbc',
+        border: `1px solid ${on ? '#14130f' : '#d6cfbf'}`,
+        background: on ? 'rgba(122,92,36,0.07)' : '#fbf9f4',
+        color: on ? '#7a5c24' : '#3a362d',
         fontFamily: 'var(--font-inter)',
       }}
     >
@@ -120,7 +120,7 @@ export default function DiscoverClient() {
   if (phase === 'loading') {
     return (
       <div data-discover className="max-w-xl mx-auto px-6 py-28 text-center" role="status">
-        <Sparkles size={22} className="mx-auto mb-5" style={{ color: '#C9A84C' }} />
+        <Compass size={22} className="mx-auto mb-5" style={{ color: '#7a5c24' }} />
         <p className="text-sm" style={muted}>Finding what is available for you…</p>
       </div>
     )
@@ -129,15 +129,15 @@ export default function DiscoverClient() {
   if (phase === 'failed') {
     return (
       <div data-discover className="max-w-xl mx-auto px-6 md:px-12 py-24 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-7" style={{ background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.3)' }}>
-          <Sparkles size={22} style={{ color: '#C9A84C' }} />
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-7" style={{ background: 'rgba(122,92,36,0.06)', border: '1px solid rgba(20,19,15,0.15)' }}>
+          <Compass size={22} style={{ color: '#7a5c24' }} />
         </div>
-        <h2 className="text-2xl md:text-3xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>Let’s find it together</h2>
+        <h2 className="text-2xl md:text-3xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>Let’s find it together</h2>
         <p className="text-sm leading-relaxed mb-10" style={muted}>
           Our matching is taking a short break. A specialist can pick up right where you left off; your answers are ready to send along.
         </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
-          <RequestButton topic="Help finding the right match" label="Ask a specialist" initialMessage={handoffText()} className="inline-flex items-center gap-2 px-8 min-h-12 text-xs tracking-[0.2em] uppercase" style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+          <RequestButton topic="Help finding the right match" label="Ask a specialist" initialMessage={handoffText()} className="inline-flex items-center gap-2 px-8 min-h-12 text-xs tracking-[0.2em] uppercase" style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
             <MessageCircle size={14} /> Ask a specialist
           </RequestButton>
           <button type="button" data-discover-restart onClick={restart} className="inline-flex items-center gap-2 min-h-12 px-6 text-xs tracking-wider" style={muted}>
@@ -153,9 +153,9 @@ export default function DiscoverClient() {
     return (
       <div data-discover className="max-w-4xl mx-auto px-5 md:px-12 py-12" >
         <div data-discover-results>
-          <div className="p-6 mb-10" style={{ background: '#0f1a10', border: '1px solid rgba(201,168,76,0.2)' }}>
+          <div className="p-6 mb-10" style={{ background: '#fbf9f4', border: '1px solid rgba(20,19,15,0.14)' }}>
             <div className="flex items-start gap-3">
-              <Sparkles size={16} style={{ color: '#C9A84C', flexShrink: 0, marginTop: 2 }} />
+              <Compass size={16} style={{ color: '#7a5c24', flexShrink: 0, marginTop: 2 }} />
               <p className="text-sm leading-relaxed" style={muted}>{result.summary}</p>
             </div>
           </div>
@@ -163,23 +163,23 @@ export default function DiscoverClient() {
           <div className="space-y-14">
             {result.groups.map((g, i) => (
               <section key={g.kind} data-result-group={g.kind}>
-                <h2 className="text-2xl mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>{g.label}</h2>
+                <h2 className="text-2xl mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>{g.label}</h2>
                 {g.matches.length > 0 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {g.matches.map((m) => (
-                      <article key={m.slug} data-result-card={m.slug} data-availability={m.availability} className="flex flex-col" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+                      <article key={m.slug} data-result-card={m.slug} data-availability={m.availability} className="flex flex-col" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
                         {m.image && (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={m.image} alt="" loading="lazy" className="w-full h-44 object-cover" style={{ opacity: m.availability === 'unavailable' ? 0.55 : 1 }} />
                         )}
                         <div className="p-5 flex flex-col flex-1">
-                          <h3 className="text-lg mb-1" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>{m.title}</h3>
+                          <h3 className="text-lg mb-1" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>{m.title}</h3>
                           <p className="text-sm mb-3" style={gold}>
                             {m.priceDisplay}
                             {m.priceNote ? <span style={muted}> {m.priceNote}</span> : null}
                           </p>
                           {m.availability !== 'unchecked' && (
-                            <p className="inline-flex items-center gap-1.5 text-xs mb-3" style={{ color: m.availability === 'available' ? '#7fb98a' : '#b98a7f', fontFamily: 'var(--font-inter)' }}>
+                            <p className="inline-flex items-center gap-1.5 text-xs mb-3" style={{ color: m.availability === 'available' ? '#2f6b45' : '#b98a7f', fontFamily: 'var(--font-inter)' }}>
                               {m.availability === 'available' ? <CheckCircle2 size={14} /> : <CircleSlash size={14} />}
                               {m.availability === 'available' ? 'Available on your dates' : 'Not free on those dates'}
                             </p>
@@ -189,7 +189,7 @@ export default function DiscoverClient() {
                             href={m.href}
                             data-result-cta
                             className="mt-auto inline-flex items-center justify-center gap-2 min-h-11 px-5 text-[11px] tracking-[0.16em] uppercase"
-                            style={m.availability === 'available' ? { background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' } : { border: '1px solid rgba(201,168,76,0.45)', ...gold }}
+                            style={m.availability === 'available' ? { background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' } : { border: '1px solid rgba(20,19,15,0.23)', ...gold }}
                           >
                             {m.availability === 'available' ? 'View and book' : m.availability === 'unavailable' ? 'See other dates' : 'View'} <ArrowRight size={13} />
                           </Link>
@@ -199,7 +199,7 @@ export default function DiscoverClient() {
                   </div>
                 )}
                 {(g.empty || g.missing.length > 0) && (
-                  <div className="mt-5 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+                  <div className="mt-5 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
                     <p className="text-sm leading-relaxed" style={muted}>
                       {g.missing.length > 0 ? `We will arrange ${g.missing.join(', ')} for you personally.` : g.askUs}
                     </p>
@@ -208,7 +208,7 @@ export default function DiscoverClient() {
                       label={`Ask us about ${g.label.toLowerCase()}`}
                       initialMessage={describeBrief({ ...b, needs: [b.needs[i]] })}
                       className="shrink-0 inline-flex items-center justify-center gap-2 min-h-11 px-5 text-[11px] tracking-[0.14em] uppercase"
-                      style={{ border: '1px solid rgba(201,168,76,0.45)', ...gold }}
+                      style={{ border: '1px solid rgba(20,19,15,0.23)', ...gold }}
                     >
                       <MessageCircle size={14} /> Ask a specialist
                     </RequestButton>
@@ -218,8 +218,8 @@ export default function DiscoverClient() {
             ))}
           </div>
 
-          <div className="mt-14 flex flex-wrap items-center justify-between gap-4 pt-8" style={{ borderTop: '1px solid #1e2e1f' }}>
-            <RequestButton topic="Help finding the right match" label="Ask a specialist" initialMessage={handoffText()} className="inline-flex items-center gap-2 min-h-11 px-6 text-[11px] tracking-[0.16em] uppercase" style={{ border: '1px solid rgba(201,168,76,0.45)', ...gold }}>
+          <div className="mt-14 flex flex-wrap items-center justify-between gap-4 pt-8" style={{ borderTop: '1px solid #d6cfbf' }}>
+            <RequestButton topic="Help finding the right match" label="Ask a specialist" initialMessage={handoffText()} className="inline-flex items-center gap-2 min-h-11 px-6 text-[11px] tracking-[0.16em] uppercase" style={{ border: '1px solid rgba(20,19,15,0.23)', ...gold }}>
               <MessageCircle size={14} /> Not quite right? Ask a specialist
             </RequestButton>
             <button type="button" data-discover-restart onClick={restart} className="inline-flex items-center gap-2 min-h-11 text-xs tracking-wider" style={muted}>
@@ -248,7 +248,7 @@ export default function DiscoverClient() {
 
         {stepId === 'pillars' && (
           <>
-            <h2 className="text-2xl md:text-3xl mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>What are you looking for?</h2>
+            <h2 className="text-2xl md:text-3xl mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>What are you looking for?</h2>
             <p className="text-sm mb-8" style={muted}>Choose as many as you like. We will ask only what matters for each.</p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-10">
               {PILLARS.map((p) => {
@@ -262,10 +262,10 @@ export default function DiscoverClient() {
                     aria-pressed={on}
                     onClick={() => setPicked((cur) => toggle(cur, p.key))}
                     className="min-h-28 p-4 flex flex-col items-start gap-2 text-left transition-colors"
-                    style={{ border: `1px solid ${on ? '#C9A84C' : '#1e2e1f'}`, background: on ? 'rgba(201,168,76,0.12)' : '#0f1a10' }}
+                    style={{ border: `1px solid ${on ? '#14130f' : '#d6cfbf'}`, background: on ? 'rgba(122,92,36,0.07)' : '#fbf9f4' }}
                   >
-                    <Icon size={22} style={{ color: '#C9A84C' }} />
-                    <span className="text-[15px]" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>{p.label}</span>
+                    <Icon size={22} style={{ color: '#7a5c24' }} />
+                    <span className="text-[15px]" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>{p.label}</span>
                     <span className="text-[11px] leading-snug" style={muted}>{p.line}</span>
                   </button>
                 )
@@ -276,7 +276,7 @@ export default function DiscoverClient() {
 
         {pillar && detailPillar && (
           <>
-            <h2 className="text-2xl md:text-3xl mb-8" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>{pillar.label}</h2>
+            <h2 className="text-2xl md:text-3xl mb-8" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>{pillar.label}</h2>
 
             {pillar.kinds.length > 1 && (
               <Group name="intent" title="What would you like to do?">
@@ -352,7 +352,7 @@ export default function DiscoverClient() {
 
         {stepId === 'where' && (
           <>
-            <h2 className="text-2xl md:text-3xl mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>Anything else that matters?</h2>
+            <h2 className="text-2xl md:text-3xl mb-2" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>Anything else that matters?</h2>
             <p className="text-sm mb-8" style={muted}>Optional. It only helps us choose better.</p>
             <Group name="location" title="Where">
               {LOCATION_OPTIONS.map((o) => <Chip key={o.key} option={o.key} on={location.includes(o.key)} onClick={() => setLocation((l) => toggle(l, o.key))}>{o.label}</Chip>)}
@@ -364,7 +364,7 @@ export default function DiscoverClient() {
         )}
       </div>
 
-      <div className="flex items-center justify-between gap-3 pt-4" style={{ borderTop: '1px solid #1e2e1f' }}>
+      <div className="flex items-center justify-between gap-3 pt-4" style={{ borderTop: '1px solid #d6cfbf' }}>
         {at > 0 ? (
           <button type="button" data-discover-back onClick={goBack} className="inline-flex items-center gap-2 min-h-12 px-3 text-xs tracking-[0.15em] uppercase" style={muted}>
             <ArrowLeft size={14} /> Back
@@ -379,8 +379,8 @@ export default function DiscoverClient() {
             data-discover-next
             disabled={!canNext}
             onClick={goNext}
-            className="inline-flex items-center gap-2 min-h-12 px-7 text-xs tracking-[0.2em] uppercase transition-opacity disabled:opacity-40"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            className="inline-flex items-center gap-2 min-h-12 px-7 text-xs tracking-[0.2em] uppercase transition-colors disabled:bg-[#d6cfbf] disabled:text-[#3a362d]"
+            style={{ background: canNext ? '#14130f' : undefined, color: canNext ? '#f4f0e8' : undefined, fontFamily: 'var(--font-inter)' }}
           >
             {stepId === 'where' ? 'See my matches' : 'Next'} <ArrowRight size={14} />
           </button>

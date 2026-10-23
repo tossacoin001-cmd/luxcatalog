@@ -14,20 +14,20 @@ export default async function ServiceFloorsPage() {
   const floors = await serviceFloors()
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <AdminNavbar role="admin" />
-      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-28 md:pt-32 pb-8 px-5 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-3xl mx-auto">
-          <Link href="/admin/listings" className="text-[11px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+          <Link href="/admin/listings" className="text-[11px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             ← Listings
           </Link>
-          <p className="text-xs tracking-[0.3em] uppercase mb-2" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-xs tracking-[0.3em] uppercase mb-2" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Private Services
           </p>
-          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h1 className="text-3xl md:text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Price floors
           </h1>
-          <p className="mt-3 text-sm leading-relaxed max-w-xl" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <p className="mt-3 text-sm leading-relaxed max-w-xl" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             The lowest starting price a partner may list each service at, so the category stays luxury. House listings you add
             yourself are not limited. Changes apply to new listings and edits, and are recorded in the audit log.
           </p>

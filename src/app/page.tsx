@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { homeTitle, homeDescription, organizationLd, websiteLd } from '@/lib/seo'
 import { pageMeta } from '@/lib/seo-metadata'
 import JsonLd from '@/components/JsonLd'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Compass } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import AssetCard from '@/components/AssetCard'
@@ -40,7 +40,7 @@ export default async function HomePage() {
   const featuredListings = featured.map((l) => ({ ...l, price: l.price ? Number(l.price) : null }))
 
   return (
-    <div style={{ background: '#080c08' }}>
+    <div style={{ background: '#f4f0e8' }}>
       <JsonLd data={organizationLd(getAppUrl(), { sameAs: (process.env.NEXT_PUBLIC_SOCIAL_PROFILES ?? '').split(',').map((x) => x.trim()).filter(Boolean), email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || undefined })} />
       <JsonLd data={websiteLd(getAppUrl())} />
       <Navbar />
@@ -52,21 +52,21 @@ export default async function HomePage() {
       <SeasonStrip />
 
       {/* FEATURED: cream gallery. Swipeable rail on phones, grid from tablet up. */}
-      <section style={{ background: '#f8f4ee' }} className="py-20 md:py-28">
+      <section style={{ background: '#fbf9f4' }} className="py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-5 md:px-12">
           <Reveal className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-12 gap-4">
             <div>
-              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5f22', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                 Featured Collection
               </p>
-              <h2 className="text-3xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#1a1208' }}>
+              <h2 className="text-3xl md:text-5xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                 Curated this season
               </h2>
             </div>
             <Link
               href="/catalog"
               className="group inline-flex items-center gap-2 min-h-11 text-xs tracking-[0.18em] uppercase self-start md:self-auto"
-              style={{ color: '#7a5f22', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
             >
               View all listings
               <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
@@ -87,7 +87,7 @@ export default async function HomePage() {
             </RevealGroup>
           )}
           {featuredListings.length > 1 && (
-            <p className="md:hidden mt-4 text-[11px] tracking-[0.2em] uppercase" style={{ color: '#7a5f22', fontFamily: 'var(--font-inter)' }}>
+            <p className="md:hidden mt-4 text-[11px] tracking-[0.2em] uppercase" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
               Swipe to see more &rarr;
             </p>
           )}
@@ -102,23 +102,23 @@ export default async function HomePage() {
           <div
             aria-hidden
             className="absolute inset-0 pointer-events-none"
-            style={{ background: 'linear-gradient(120deg, rgba(201,168,76,0.12), rgba(201,168,76,0.02) 55%, transparent)', border: '1px solid rgba(201,168,76,0.25)' }}
+            style={{ background: 'linear-gradient(120deg, rgba(122,92,36,0.07), rgba(122,92,36,0.01) 55%, transparent)', border: '1px solid rgba(20,19,15,0.14)' }}
           />
           <div className="relative max-w-2xl">
-            <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
               For owners, operators and brands
             </p>
-            <h2 className="text-2xl md:text-4xl leading-tight mb-3" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
-              Own something exceptional? <em style={{ color: '#C9A84C' }}>List it with us.</em>
+            <h2 className="text-2xl md:text-4xl leading-tight mb-3" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
+              Own something exceptional? <em style={{ color: '#7a5c24' }}>List it with us.</em>
             </h2>
-            <p className="text-sm md:text-base leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-sm md:text-base leading-relaxed" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Shortlets, cars, yachts, chauffeur and protection services, interiors. Verified partners, discerning clients, secure payouts.
             </p>
           </div>
           <Link
             href="/partners"
             className="relative group inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase shrink-0"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             Become a Partner
             <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />
@@ -127,9 +127,9 @@ export default async function HomePage() {
       </section>
 
       {trustedPartners.length > 0 && (
-        <section style={{ borderTop: '1px solid rgba(201,168,76,0.12)', background: '#0b120b' }}>
+        <section style={{ borderTop: '1px solid rgba(20,19,15,0.14)', background: '#f4f0e8' }}>
           <div className="max-w-7xl mx-auto px-5 md:px-12 py-12">
-            <p className="text-[11px] tracking-[0.3em] uppercase text-center mb-8" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <p className="text-[11px] tracking-[0.3em] uppercase text-center mb-8" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Trusted Partners
             </p>
             <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
@@ -149,31 +149,31 @@ export default async function HomePage() {
       )}
 
       {/* AI DISCOVERY */}
-      <section className="relative py-24 md:py-32 overflow-hidden" style={{ background: '#080c08', borderTop: '1px solid rgba(201,168,76,0.08)' }}>
+      <section className="relative py-24 md:py-32 overflow-hidden" style={{ background: '#f4f0e8', borderTop: '1px solid rgba(20,19,15,0.14)' }}>
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse 55% 55% at 50% 50%, rgba(201,168,76,0.07) 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(ellipse 55% 55% at 50% 50%, rgba(122,92,36,0.04) 0%, transparent 70%)' }}
         />
         <Reveal className="relative max-w-3xl mx-auto text-center px-5 md:px-12">
           <span
             className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-6"
-            style={{ border: '1px solid rgba(201,168,76,0.45)' }}
+            style={{ border: '1px solid rgba(20,19,15,0.23)' }}
           >
-            <Sparkles size={18} style={{ color: '#C9A84C' }} />
+            <Compass size={18} style={{ color: '#7a5c24' }} />
           </span>
-          <h2 className="text-3xl md:text-5xl leading-tight mb-5" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+          <h2 className="text-3xl md:text-5xl leading-tight mb-5" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Not sure where to start?
             <br />
-            <em style={{ color: '#C9A84C' }}>Describe it. We&apos;ll find it.</em>
+            <em style={{ color: '#7a5c24' }}>Describe it. We&apos;ll find it.</em>
           </h2>
-          <p className="text-base mb-9 max-w-xl mx-auto leading-relaxed" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <p className="text-base mb-9 max-w-xl mx-auto leading-relaxed" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             Tell our AI matchmaker what you want, in your own words. A waterfront stay for six, a weekend convertible, a
             discreet security detail. It surfaces the assets that fit.
           </p>
           <Link
             href="/discover"
-            className="group inline-flex items-center justify-center gap-3 min-h-[52px] px-10 text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-[rgba(201,168,76,0.1)]"
-            style={{ border: '1px solid #C9A84C', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+            className="group inline-flex items-center justify-center gap-3 min-h-[52px] px-10 text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-[rgba(122,92,36,0.06)]"
+            style={{ border: '1px solid #14130f', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
           >
             Try AI Discovery
             <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1" />

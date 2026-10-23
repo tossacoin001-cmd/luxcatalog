@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
-const box = { background: '#0f1a10', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
+const box = { background: '#fbf9f4', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }
 
 // Approve / ask for more / reject, plus private admin notes. The note for the
 // applicant is required when asking for more information or rejecting, so
@@ -46,8 +46,8 @@ export default function ApplicationDecision({ id, status, internalNote }: { id: 
   const btn = 'w-full inline-flex items-center justify-center gap-2 min-h-12 text-xs tracking-[0.16em] uppercase disabled:opacity-50'
 
   return (
-    <div className="p-5 space-y-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-      <p className="text-xs tracking-[0.16em] uppercase" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+    <div className="p-5 space-y-4" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+      <p className="text-xs tracking-[0.16em] uppercase" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
         Decision
       </p>
       {decided ? (
@@ -64,28 +64,28 @@ export default function ApplicationDecision({ id, status, internalNote }: { id: 
       )}
       <div className="space-y-2">
         {status !== 'approved' && (
-          <button type="button" onClick={() => act('approve')} disabled={!!busy} className={btn} style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+          <button type="button" onClick={() => act('approve')} disabled={!!busy} className={btn} style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
             {busy === 'approve' && <Loader2 size={14} className="animate-spin" />} Approve partner
           </button>
         )}
         {!decided && (
           <>
-            <button type="button" onClick={() => act('request_info')} disabled={!!busy} className={btn} style={{ border: '1px solid rgba(232,168,76,0.5)', color: '#e8a84c', fontFamily: 'var(--font-inter)' }}>
+            <button type="button" onClick={() => act('request_info')} disabled={!!busy} className={btn} style={{ border: '1px solid rgba(232,168,76,0.5)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
               {busy === 'request_info' && <Loader2 size={14} className="animate-spin" />} Request more info
             </button>
-            <button type="button" onClick={() => act('reject')} disabled={!!busy} className={btn} style={{ border: '1px solid rgba(232,92,76,0.4)', color: '#e85c4c', fontFamily: 'var(--font-inter)' }}>
+            <button type="button" onClick={() => act('reject')} disabled={!!busy} className={btn} style={{ border: '1px solid rgba(138,59,46,0.4)', color: '#8a3b2e', fontFamily: 'var(--font-inter)' }}>
               {busy === 'reject' && <Loader2 size={14} className="animate-spin" />} Reject
             </button>
           </>
         )}
       </div>
-      <label className="block pt-2" style={{ borderTop: '1px solid #1e2e1f' }}>
+      <label className="block pt-2" style={{ borderTop: '1px solid #d6cfbf' }}>
         <span className="block text-xs my-2" style={text}>
           Private admin notes (never shown to the applicant)
         </span>
         <textarea rows={3} value={internal} onChange={(e) => setInternal(e.target.value)} className="w-full px-3 py-2 text-sm focus:outline-none resize-y" style={box} />
       </label>
-      <button type="button" onClick={() => act('note')} disabled={!!busy} className={btn} style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+      <button type="button" onClick={() => act('note')} disabled={!!busy} className={btn} style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
         Save note
       </button>
     </div>

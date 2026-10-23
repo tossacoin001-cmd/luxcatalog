@@ -56,16 +56,16 @@ export default async function AdminListingsPage() {
   }))
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <AdminNavbar role={role} />
 
-      <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-7xl mx-auto flex flex-wrap items-end justify-between gap-4">
           <div>
-            <Link href="/admin" className="text-[11px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <Link href="/admin" className="text-[11px] tracking-[0.2em] uppercase mb-4 block hover:text-lux-gold transition-colors" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               ← Admin
             </Link>
-            <h1 className="text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <h1 className="text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               {isVendor ? 'My Listings' : 'All Listings'}
             </h1>
           </div>
@@ -74,7 +74,7 @@ export default async function AdminListingsPage() {
               <Link
                 href="/admin/services"
                 className="inline-flex items-center min-h-11 px-4 text-xs tracking-[0.14em] uppercase"
-                style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+                style={{ border: '1px solid rgba(20,19,15,0.20)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
               >
                 Service floors
               </Link>
@@ -82,7 +82,7 @@ export default async function AdminListingsPage() {
             <Link
               href="/admin/listings/new"
               className="inline-flex items-center px-7 py-3 text-xs tracking-[0.18em] uppercase"
-              style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+              style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
             >
               + Add Listing
             </Link>

@@ -9,17 +9,17 @@ export type Crumb = { label: string; href?: string }
 // also works for visitors who arrived from a shared link or search result.
 export default function Breadcrumbs({ trail, overlay = false }: { trail: Crumb[]; overlay?: boolean }) {
   const parent = [...trail].reverse().find((c, i) => i > 0 && c.href)
-  const color = overlay ? '#e8dfcf' : '#9a8f7a'
-  const shadow = overlay ? '0 1px 12px rgba(0,0,0,0.7)' : undefined
+  const color = overlay ? '#3a362d' : '#5e584c'
+  const shadow = undefined
   // Over a photo: a dark glass backing keeps the way back readable on any image.
-  const backing = overlay ? { background: 'rgba(8,12,8,0.6)', backdropFilter: 'blur(8px)', border: '1px solid rgba(232,223,207,0.18)' } : {}
+  const backing = overlay ? { background: 'rgba(244,240,232,0.94)', border: '1px solid #d6cfbf' } : {}
 
   return (
     <nav aria-label="Breadcrumb" style={{ fontFamily: 'var(--font-inter)' }}>
       {parent && (
         <Link
           href={parent.href!}
-          className={`sm:hidden inline-flex items-center gap-2 min-h-11 text-xs tracking-[0.16em] uppercase transition-colors hover:text-lux-gold ${overlay ? 'px-3' : 'pr-3'}`}
+          className={`sm:hidden inline-flex items-center gap-2 min-h-11 text-xs tracking-[0.16em] uppercase transition-colors hover:text-lux-text ${overlay ? 'px-3' : 'pr-3'}`}
           style={{ color, textShadow: shadow, ...backing }}
         >
           <ArrowLeft size={15} />
@@ -32,8 +32,8 @@ export default function Breadcrumbs({ trail, overlay = false }: { trail: Crumb[]
             <Link
               href={parent.href!}
               aria-label={`Back to ${parent.label}`}
-              className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-colors hover:bg-lux-gold hover:text-lux-bg"
-              style={{ border: `1px solid ${overlay ? 'rgba(232,223,207,0.45)' : 'rgba(201,168,76,0.35)'}`, color: overlay ? '#f5f0e8' : '#C9A84C', background: overlay ? 'rgba(8,12,8,0.35)' : undefined, backdropFilter: overlay ? 'blur(8px)' : undefined }}
+              className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-colors hover:bg-[#14130f] hover:text-[#f4f0e8]"
+              style={{ border: '1px solid #c4bcaa', color: '#14130f' }}
             >
               <ArrowLeft size={15} />
             </Link>
@@ -46,17 +46,17 @@ export default function Breadcrumbs({ trail, overlay = false }: { trail: Crumb[]
               {c.href && !last ? (
                 <Link
                   href={c.href}
-                  className="inline-flex items-center min-h-10 px-1 transition-colors hover:text-lux-gold"
+                  className="inline-flex items-center min-h-10 px-1 transition-colors hover:text-lux-text"
                   style={{ color, textShadow: shadow }}
                 >
                   {c.label}
                 </Link>
               ) : (
-                <span aria-current="page" className="px-1 truncate max-w-[22ch]" style={{ color: overlay ? '#e4c878' : '#C9A84C', textShadow: shadow }}>
+                <span aria-current="page" className="px-1 truncate max-w-[22ch]" style={{ color: '#14130f', textShadow: shadow }}>
                   {c.label}
                 </span>
               )}
-              {!last && <ChevronRight size={12} aria-hidden style={{ color: overlay ? '#cfc4b2' : '#908673' }} />}
+              {!last && <ChevronRight size={12} aria-hidden style={{ color: overlay ? '#cfc4b2' : '#5e584c' }} />}
             </li>
           )
         })}

@@ -9,8 +9,8 @@ type Card = {
   priceDisplay: string; price: number | null; images: string[]; status: string; featured: boolean
 }
 
-const gold = { color: '#C9A84C', fontFamily: 'var(--font-inter)' }
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const gold = { color: '#7a5c24', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 
 // The Private Services catalogue: four groups, every service shown even
 // before it has providers (the concierge arranges those), so the page sells
@@ -24,8 +24,8 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
           <a
             key={g.key}
             href={`#${g.key}`}
-            className="inline-flex items-center min-h-11 px-4 text-[11px] tracking-[0.16em] uppercase transition-colors hover:bg-[rgba(201,168,76,0.08)]"
-            style={{ border: '1px solid rgba(201,168,76,0.45)', ...gold }}
+            className="inline-flex items-center min-h-11 px-4 text-[11px] tracking-[0.16em] uppercase transition-colors hover:bg-[rgba(122,92,36,0.05)]"
+            style={{ border: '1px solid rgba(20,19,15,0.23)', ...gold }}
           >
             {plainService(g.label)}
           </a>
@@ -38,7 +38,7 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
             <p className="text-xs tracking-[0.3em] uppercase mb-2" style={gold}>
               {plainService(g.label)}
             </p>
-            <h2 className="text-2xl md:text-3xl mb-8" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+            <h2 className="text-2xl md:text-3xl mb-8" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
               {g.tagline}
             </h2>
             <div className="space-y-10">
@@ -48,9 +48,9 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
                   const offers = listings.filter((l) => l.subcategory === s.key)
                   return (
                     <div key={s.key} id={`svc-${s.key}`} style={{ scrollMarginTop: '6rem' }}>
-                      <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid #1e2e1f' }}>
+                      <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 mb-4 pb-3" style={{ borderBottom: '1px solid #d6cfbf' }}>
                         <div>
-                          <h3 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                          <h3 className="text-xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                             {plainService(s.label)}
                           </h3>
                           <p className="text-sm leading-relaxed max-w-2xl mt-1" style={text}>
@@ -65,7 +65,7 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
                           ))}
                         </div>
                       ) : (
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
                           <p className="text-sm" style={text}>
                             Our concierge can arrange a vetted professional for you today.
                           </p>
@@ -73,7 +73,7 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
                             topic={s.label}
                             label={`Request ${plainService(s.label)}`}
                             className="shrink-0 inline-flex items-center justify-center gap-2 min-h-11 px-5 text-[11px] tracking-[0.14em] uppercase"
-                            style={{ border: '1px solid rgba(201,168,76,0.45)', ...gold }}
+                            style={{ border: '1px solid rgba(20,19,15,0.23)', ...gold }}
                           >
                             <MessageCircle size={14} /> Request {plainService(s.label)}
                           </RequestButton>
@@ -86,8 +86,8 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
           </section>
         ))}
 
-        <section className="p-8 md:p-10 text-center" style={{ background: '#0f1a10', border: '1px solid rgba(201,168,76,0.25)' }}>
-          <h2 className="text-2xl md:text-3xl mb-3" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+        <section className="p-8 md:p-10 text-center" style={{ background: '#fbf9f4', border: '1px solid rgba(20,19,15,0.14)' }}>
+          <h2 className="text-2xl md:text-3xl mb-3" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Are you a chef, therapist, barber or stylist?
           </h2>
           <p className="text-sm leading-relaxed max-w-xl mx-auto mb-6" style={text}>
@@ -96,7 +96,7 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
           <Link
             href="/partners/apply"
             className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.2em] uppercase"
-            style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+            style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
           >
             Apply to join
           </Link>

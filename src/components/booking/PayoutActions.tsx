@@ -33,32 +33,32 @@ export default function PayoutActions({ id, amount, ready }: { id: string; amoun
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2">
-        <button type="button" disabled={!ready || !!busy} onClick={() => act('approve')} className={btn} style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }} title={ready ? undefined : 'The partner needs to add bank details first'}>
+        <button type="button" disabled={!ready || !!busy} onClick={() => act('approve')} className={btn} style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }} title={ready ? undefined : 'The partner needs to add bank details first'}>
           {busy === 'approve' && <Loader2 size={13} className="animate-spin" />} Approve payout
         </button>
         {!manual && (
-          <button type="button" onClick={() => setManual(true)} className={btn} style={{ border: '1px solid rgba(201,168,76,0.4)', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+          <button type="button" onClick={() => setManual(true)} className={btn} style={{ border: '1px solid rgba(20,19,15,0.20)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
             Mark as paid manually
           </button>
         )}
         {!cancelling && (
-          <button type="button" onClick={() => setCancelling(true)} className={btn} style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <button type="button" onClick={() => setCancelling(true)} className={btn} style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             Cancel payout
           </button>
         )}
       </div>
       {manual && (
         <div className="flex flex-wrap gap-2">
-          <input value={txRef} onChange={(e) => setTxRef(e.target.value)} placeholder="Bank transfer reference" className="h-11 px-3 text-sm flex-1 min-w-48" style={{ background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }} />
-          <button type="button" disabled={!!busy || txRef.trim().length < 4} onClick={() => act('mark_paid')} className={btn} style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+          <input value={txRef} onChange={(e) => setTxRef(e.target.value)} placeholder="Bank transfer reference" className="h-11 px-3 text-sm flex-1 min-w-48" style={{ background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }} />
+          <button type="button" disabled={!!busy || txRef.trim().length < 4} onClick={() => act('mark_paid')} className={btn} style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
             {busy === 'mark_paid' && <Loader2 size={13} className="animate-spin" />} Record as paid
           </button>
         </div>
       )}
       {cancelling && (
         <div className="flex flex-wrap gap-2">
-          <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Why (kept on record)" className="h-11 px-3 text-sm flex-1 min-w-48" style={{ background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }} />
-          <button type="button" disabled={!!busy || reason.trim().length < 5} onClick={() => act('cancel')} className={btn} style={{ border: '1px solid rgba(232,92,76,0.4)', color: '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
+          <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Why (kept on record)" className="h-11 px-3 text-sm flex-1 min-w-48" style={{ background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }} />
+          <button type="button" disabled={!!busy || reason.trim().length < 5} onClick={() => act('cancel')} className={btn} style={{ border: '1px solid rgba(138,59,46,0.4)', color: '#8a3b2e', fontFamily: 'var(--font-inter)' }}>
             {busy === 'cancel' && <Loader2 size={13} className="animate-spin" />} Confirm cancel
           </button>
         </div>

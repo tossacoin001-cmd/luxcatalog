@@ -30,13 +30,13 @@ export default async function CatalogPage() {
   const plainListings = listings.map((l) => ({ ...l, mode: String(l.mode), price: l.price ? Number(l.price) : null }))
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <Navbar />
 
       {/* Page header */}
       <div
         className="pt-28 md:pt-32 pb-12 px-5 md:px-12"
-        style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}
+        style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="mb-6">
@@ -44,13 +44,13 @@ export default async function CatalogPage() {
           </div>
           <p
             className="text-xs tracking-[0.3em] uppercase mb-4"
-            style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+            style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
           >
             Full Collection
           </p>
           <h1
             className="text-4xl md:text-5xl"
-            style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}
+            style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}
           >
             Luxury Asset Catalog
           </h1>

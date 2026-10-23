@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import UserMenu from '@/components/UserMenu'
 import ConciergeButton from '@/components/ConciergeButton'
@@ -25,7 +24,7 @@ function CurrencyToggle() {
   return (
     <div
       className="hidden md:flex items-center text-[11px] tracking-[0.1em]"
-      style={{ fontFamily: 'var(--font-inter)', border: '1px solid rgba(201,168,76,0.25)' }}
+      style={{ fontFamily: 'var(--font-inter)', border: '1px solid rgba(20,19,15,0.14)' }}
     >
       {(['NGN', 'USD'] as const).map((c) => (
         <button
@@ -33,8 +32,8 @@ function CurrencyToggle() {
           onClick={() => setCurrency(c)}
           className="px-3 h-9 transition-colors"
           style={{
-            background: currency === c ? '#C9A84C' : 'transparent',
-            color: currency === c ? '#080c08' : '#9a8f7a',
+            background: currency === c ? '#14130f' : 'transparent',
+            color: currency === c ? '#f4f0e8' : '#5e584c',
           }}
         >
           {c}
@@ -48,11 +47,11 @@ function CartIcon() {
   const { count } = useCart()
   return (
     <Link href="/cart" className="relative flex items-center justify-center w-11 h-11 -mx-2" aria-label="Cart">
-      <ShoppingBag size={18} style={{ color: '#9a8f7a' }} />
+      <ShoppingBag size={18} style={{ color: '#5e584c' }} />
       {count > 0 && (
         <span
           className="absolute top-1 right-1 flex items-center justify-center min-w-4 h-4 px-1 text-[10px] leading-none rounded-full"
-          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
         >
           {count > 9 ? '9+' : count}
         </span>
@@ -65,10 +64,10 @@ function MobileCurrencyToggle() {
   const { currency, setCurrency } = useCurrency()
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs tracking-[0.2em] uppercase" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+      <span className="text-xs tracking-[0.2em] uppercase" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
         Currency
       </span>
-      <div className="flex" style={{ border: '1px solid rgba(201,168,76,0.25)' }}>
+      <div className="flex" style={{ border: '1px solid rgba(20,19,15,0.14)' }}>
         {(['NGN', 'USD'] as const).map((c) => (
           <button
             key={c}
@@ -76,8 +75,8 @@ function MobileCurrencyToggle() {
             className="px-4 h-11 text-xs tracking-wider transition-colors"
             style={{
               fontFamily: 'var(--font-inter)',
-              background: currency === c ? '#C9A84C' : 'transparent',
-              color: currency === c ? '#080c08' : '#9a8f7a',
+              background: currency === c ? '#14130f' : 'transparent',
+              color: currency === c ? '#f4f0e8' : '#5e584c',
             }}
           >
             {c}
@@ -117,26 +116,15 @@ export default function Navbar() {
           scrolled ? 'h-16 md:h-[68px]' : 'h-20'
         )}
         style={{
-          background: scrolled ? 'rgba(8,12,8,0.78)' : 'linear-gradient(180deg, rgba(8,12,8,0.75) 0%, rgba(8,12,8,0) 100%)',
-          backdropFilter: scrolled ? 'blur(18px) saturate(140%)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(18px) saturate(140%)' : 'none',
-          borderBottom: `1px solid ${scrolled ? 'rgba(201,168,76,0.14)' : 'transparent'}`,
-          // Paint the gradient under the border too; otherwise its dark top edge
-          // repeats into the transparent 1px border as a hard line.
-          backgroundOrigin: 'border-box',
-          boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.35)' : 'none',
+          background: scrolled ? 'rgba(244,240,232,0.94)' : '#f4f0e8',
+          backdropFilter: scrolled ? 'blur(14px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'none',
+          borderBottom: '1px solid #d6cfbf',
         }}
       >
         {/* Logo */}
-        <Link href="/" className="flex-shrink-0">
-          <Image
-            src="/logo-horizontal.svg"
-            alt="Lux Catalog"
-            width={200}
-            height={46}
-            priority
-            className={cn('h-auto transition-[width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]', scrolled ? 'w-[150px] md:w-[170px]' : 'w-[160px] md:w-[200px]')}
-          />
+        <Link href="/" className="flex-shrink-0 inline-flex items-center min-h-11" aria-label="Lux Catalog, home">
+          <span data-wordmark className="text-[1.45rem] md:text-[1.65rem] leading-none" style={{ color: '#14130f' }}>Lux Catalog</span>
         </Link>
 
         {/* Desktop nav */}
@@ -148,7 +136,7 @@ export default function Navbar() {
               className={cn(
                 'group relative py-3 text-xs font-inter tracking-[0.2em] uppercase transition-colors duration-200',
                 pathname === link.href || pathname.startsWith(`${link.href}/`)
-                  ? 'text-lux-gold'
+                  ? 'text-lux-text'
                   : 'text-lux-text-muted hover:text-lux-text'
               )}
               style={{ fontFamily: 'var(--font-inter)' }}
@@ -157,7 +145,7 @@ export default function Navbar() {
               <span
                 aria-hidden
                 className={cn(
-                  'absolute left-0 right-0 bottom-1.5 h-px origin-left bg-lux-gold transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
+                  'absolute left-0 right-0 bottom-1.5 h-px origin-left bg-lux-text transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
                   pathname === link.href || pathname.startsWith(`${link.href}/`) ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                 )}
               />
@@ -174,20 +162,20 @@ export default function Navbar() {
           {/* Book a call CTA */}
           <Link
             href="/contact"
-            className="hidden md:inline-flex items-center gap-2 px-5 py-2 text-xs tracking-[0.16em] uppercase transition-all duration-300 hover:scale-105"
+            className="hidden md:inline-flex items-center gap-2 px-5 py-2 text-xs tracking-[0.16em] uppercase transition-colors duration-300"
             style={{
               fontFamily: 'var(--font-inter)',
-              border: '1px solid #C9A84C',
-              color: '#C9A84C',
+              border: '1px solid #14130f',
+              color: '#14130f',
               background: 'transparent',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#C9A84C'
-              e.currentTarget.style.color = '#080c08'
+              e.currentTarget.style.background = '#14130f'
+              e.currentTarget.style.color = '#f4f0e8'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'transparent'
-              e.currentTarget.style.color = '#C9A84C'
+              e.currentTarget.style.color = '#14130f'
             }}
           >
             Book a Call
@@ -211,10 +199,10 @@ export default function Navbar() {
           className="fixed inset-0 z-40 md:hidden"
           onClick={() => setOpen(false)}
         >
-          <div className="absolute inset-0" style={{ background: 'rgba(8,12,8,0.6)' }} />
+          <div className="absolute inset-0" style={{ background: 'rgba(20,19,15,0.35)' }} />
           <nav
             className={cn("absolute left-0 right-0 px-6 py-8 flex flex-col gap-6 max-h-[calc(100dvh-4rem)] overflow-y-auto", scrolled ? "top-16" : "top-20")}
-            style={{ background: '#0f1a10', borderBottom: '1px solid #1e2e1f' }}
+            style={{ background: '#fbf9f4', borderBottom: '1px solid #d6cfbf' }}
             onClick={(e) => e.stopPropagation()}
           >
             {navLinks.map((link) => (
@@ -242,7 +230,7 @@ export default function Navbar() {
             <Link
               href="/contact"
               className="inline-flex w-fit items-center px-6 py-3 text-xs tracking-[0.18em] uppercase"
-              style={{ border: '1px solid #C9A84C', color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+              style={{ border: '1px solid #14130f', color: '#14130f', fontFamily: 'var(--font-inter)' }}
               onClick={() => setOpen(false)}
             >
               Book a Call

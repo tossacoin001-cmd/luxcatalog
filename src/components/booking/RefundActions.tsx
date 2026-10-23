@@ -33,19 +33,19 @@ export default function RefundActions({ id, amount }: { id: string; amount: stri
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2">
-        <button type="button" disabled={!!busy} onClick={() => act('approve')} className={btn} style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}>
+        <button type="button" disabled={!!busy} onClick={() => act('approve')} className={btn} style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
           {busy === 'approve' && <Loader2 size={13} className="animate-spin" />} Approve refund
         </button>
         {!rejecting && (
-          <button type="button" onClick={() => setRejecting(true)} className={btn} style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <button type="button" onClick={() => setRejecting(true)} className={btn} style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             Reject
           </button>
         )}
       </div>
       {rejecting && (
         <div className="flex flex-wrap gap-2">
-          <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Why (kept on record)" className="h-11 px-3 text-sm flex-1 min-w-48" style={{ background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }} />
-          <button type="button" disabled={!!busy || reason.trim().length < 5} onClick={() => act('reject')} className={btn} style={{ border: '1px solid rgba(232,92,76,0.4)', color: '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
+          <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Why (kept on record)" className="h-11 px-3 text-sm flex-1 min-w-48" style={{ background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }} />
+          <button type="button" disabled={!!busy || reason.trim().length < 5} onClick={() => act('reject')} className={btn} style={{ border: '1px solid rgba(138,59,46,0.4)', color: '#8a3b2e', fontFamily: 'var(--font-inter)' }}>
             {busy === 'reject' && <Loader2 size={13} className="animate-spin" />} Confirm reject
           </button>
         </div>

@@ -18,8 +18,8 @@ type Info = {
   policy: { key: string; label: string; summary: string }
 }
 
-const text = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
-const field = { background: '#080c08', border: '1px solid #1e2e1f', color: '#f5f0e8', fontFamily: 'var(--font-inter)' }
+const text = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
+const field = { background: '#f4f0e8', border: '1px solid #d6cfbf', color: '#14130f', fontFamily: 'var(--font-inter)' }
 const WEEK = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 const monthStart = (day: string) => `${day.slice(0, 7)}-01`
 const addMonths = (first: string, n: number) => {
@@ -219,7 +219,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
     return (
       <p className="text-sm" style={text}>
         Availability couldn&apos;t load.{' '}
-        <button type="button" onClick={() => setAttempt((n) => n + 1)} className="underline" style={{ color: '#C9A84C' }}>
+        <button type="button" onClick={() => setAttempt((n) => n + 1)} className="underline" style={{ color: '#7a5c24' }}>
           Try again
         </button>
       </p>
@@ -241,7 +241,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
     <div data-session-panel className="space-y-6">
       {/* 1. Package */}
       <div>
-        <p className={label} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+        <p className={label} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
           Choose a package
         </p>
         <div className="space-y-2">
@@ -255,13 +255,13 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
                 aria-pressed={on}
                 onClick={() => choosePackage(p.id)}
                 className="w-full text-left p-4 transition-colors"
-                style={{ background: on ? 'rgba(201,168,76,0.1)' : '#080c08', border: `1px solid ${on ? '#C9A84C' : '#1e2e1f'}` }}
+                style={{ background: on ? 'rgba(122,92,36,0.06)' : '#f4f0e8', border: `1px solid ${on ? '#14130f' : '#d6cfbf'}` }}
               >
                 <span className="flex items-start justify-between gap-3">
-                  <span className="text-base" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>
+                  <span className="text-base" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
                     {p.name}
                   </span>
-                  <span className="text-sm shrink-0 text-right" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+                  <span className="text-sm shrink-0 text-right" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                     {priceLabel(p)}
                   </span>
                 </span>
@@ -284,14 +284,14 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
         <>
           {/* 2. Guests */}
           <div className="flex items-center justify-between gap-3">
-            <span className="text-sm" style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)' }}>
+            <span className="text-sm" style={{ color: '#3a362d', fontFamily: 'var(--font-inter)' }}>
               Guests
             </span>
             <span className="flex items-center gap-1">
               <button type="button" data-guests="dec" aria-label="Fewer guests" disabled={g <= minG} onClick={() => setGuests(g - 1)} className="w-11 h-11 inline-flex items-center justify-center disabled:opacity-30" style={field}>
                 <Minus size={14} />
               </button>
-              <span data-guests-count className="w-10 text-center text-base" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+              <span data-guests-count className="w-10 text-center text-base" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                 {g}
               </span>
               <button type="button" data-guests="inc" aria-label="More guests" disabled={g >= maxG} onClick={() => setGuests(g + 1)} className="w-11 h-11 inline-flex items-center justify-center disabled:opacity-30" style={field}>
@@ -303,19 +303,19 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
           {/* 3. Day */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <button type="button" aria-label="Previous month" disabled={view <= minMonth} onClick={() => setView(addMonths(view, -1))} className="w-11 h-11 inline-flex items-center justify-center disabled:opacity-30" style={{ color: '#C9A84C' }}>
+              <button type="button" aria-label="Previous month" disabled={view <= minMonth} onClick={() => setView(addMonths(view, -1))} className="w-11 h-11 inline-flex items-center justify-center disabled:opacity-30" style={{ color: '#7a5c24' }}>
                 <ChevronLeft size={18} />
               </button>
-              <span className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>
+              <span className="text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
                 {monthLabel(view)}
               </span>
-              <button type="button" aria-label="Next month" disabled={view >= maxMonth} onClick={() => setView(addMonths(view, 1))} className="w-11 h-11 inline-flex items-center justify-center disabled:opacity-30" style={{ color: '#C9A84C' }}>
+              <button type="button" aria-label="Next month" disabled={view >= maxMonth} onClick={() => setView(addMonths(view, 1))} className="w-11 h-11 inline-flex items-center justify-center disabled:opacity-30" style={{ color: '#7a5c24' }}>
                 <ChevronRight size={18} />
               </button>
             </div>
             <div className="grid grid-cols-7 gap-1 text-center">
               {WEEK.map((w) => (
-                <span key={w} className="text-[10px] tracking-wider uppercase py-1" style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+                <span key={w} className="text-[10px] tracking-wider uppercase py-1" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   {w}
                 </span>
               ))}
@@ -338,9 +338,9 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
                     className="h-10 text-sm disabled:cursor-not-allowed"
                     style={{
                       fontFamily: 'var(--font-inter)',
-                      background: on ? '#C9A84C' : 'transparent',
-                      color: on ? '#080c08' : free ? '#f5f0e8' : '#4a4f45',
-                      border: `1px solid ${on ? '#C9A84C' : free ? '#1e2e1f' : 'transparent'}`,
+                      background: on ? '#14130f' : 'transparent',
+                      color: on ? '#f4f0e8' : free ? '#14130f' : '#4a4f45',
+                      border: `1px solid ${on ? '#14130f' : free ? '#d6cfbf' : 'transparent'}`,
                       textDecoration: free ? 'none' : 'line-through',
                     }}
                   >
@@ -364,7 +364,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
           {/* 4. Time */}
           {date && (
             <div>
-              <p className={label} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <p className={label} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 {longLabel(date)}: start time
               </p>
               {slots === null ? (
@@ -381,7 +381,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
                       aria-pressed={t === time}
                       onClick={() => setTime(t)}
                       className="min-h-11 text-sm"
-                      style={{ fontFamily: 'var(--font-inter)', background: t === time ? '#C9A84C' : '#080c08', color: t === time ? '#080c08' : '#f5f0e8', border: `1px solid ${t === time ? '#C9A84C' : '#1e2e1f'}` }}
+                      style={{ fontFamily: 'var(--font-inter)', background: t === time ? '#14130f' : '#f4f0e8', color: t === time ? '#f4f0e8' : '#14130f', border: `1px solid ${t === time ? '#14130f' : '#d6cfbf'}` }}
                     >
                       {t}
                     </button>
@@ -403,7 +403,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
                 type="button"
                 onClick={() => applyStay(st)}
                 className="w-full text-left p-3 text-sm"
-                style={{ background: 'rgba(201,168,76,0.08)', border: '1px dashed rgba(201,168,76,0.5)', color: '#e4c878', fontFamily: 'var(--font-inter)' }}
+                style={{ background: 'rgba(122,92,36,0.05)', border: '1px dashed rgba(20,19,15,0.25)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
               >
                 At my Lux Catalog stay: {st.title}
                 <span className="block text-xs mt-0.5" style={text}>
@@ -412,7 +412,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
               </button>
             ))}
             <label className="block">
-              <span className={label} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <span className={label} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 Area
               </span>
               <select name="area" value={area} onChange={(e) => setArea(e.target.value)} className="w-full h-11 px-3 text-sm" style={field}>
@@ -426,7 +426,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
               </select>
             </label>
             <label className="block">
-              <span className={label} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <span className={label} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 Full address
               </span>
               <textarea
@@ -443,7 +443,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
               </span>
             </label>
             <label className="block">
-              <span className={label} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+              <span className={label} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                 Notes (optional)
               </span>
               <textarea
@@ -461,7 +461,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
           {/* Price */}
           <div aria-live="polite">
             {q && !q.ok && (
-              <p className="text-sm p-3" style={{ background: 'rgba(232,92,76,0.08)', color: '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
+              <p className="text-sm p-3" style={{ background: 'rgba(138,59,46,0.08)', color: '#8a3b2e', fontFamily: 'var(--font-inter)' }}>
                 {q.error}
               </p>
             )}
@@ -469,7 +469,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
               <div className="space-y-2 text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
                 <Row label={pkg.pricing === 'per_guest' ? `${q.guests} guests × ${naira(q.rate)}` : pkg.name} value={naira(q.base)} />
                 {q.travelFee > 0 && <Row label={`Travel (${area})`} value={naira(q.travelFee)} />}
-                <div style={{ height: 1, background: '#1e2e1f' }} />
+                <div style={{ height: 1, background: '#ece6d9' }} />
                 <div data-total>
                   <Row label="Total" value={naira(q.total)} strong />
                 </div>
@@ -479,7 +479,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
           </div>
 
           {sent ? (
-            <p className="flex items-start gap-2 text-sm p-3" style={{ background: 'rgba(111,191,115,0.08)', color: '#b9e0bb', fontFamily: 'var(--font-inter)' }}>
+            <p className="flex items-start gap-2 text-sm p-3" style={{ background: 'rgba(47,107,69,0.08)', color: '#2f6b45', fontFamily: 'var(--font-inter)' }}>
               <CalendarCheck2 size={16} className="shrink-0 mt-0.5" />
               <span>
                 Request sent. The professional replies within 12 hours and you only pay once they accept.{' '}
@@ -494,7 +494,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
               onClick={book}
               disabled={!ready || sending || sessionPending}
               className="sheen w-full inline-flex items-center justify-center gap-2 min-h-[52px] text-xs tracking-[0.2em] uppercase disabled:opacity-50"
-              style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+              style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
             >
               {sending && <Loader2 size={14} className="animate-spin" />}
               {!date || !time ? 'Choose a day and time' : !area ? 'Choose your area' : !addressOk ? 'Add your address' : q?.ok ? (info.instantBook ? `Reserve & pay ${naira(q.total)}` : 'Request to book') : 'Check your choice'}
@@ -511,10 +511,10 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
       )}
 
       <p className="flex items-start gap-2 text-xs leading-relaxed" style={text}>
-        <ShieldCheck size={14} className="shrink-0 mt-0.5" style={{ color: '#C9A84C' }} />
+        <ShieldCheck size={14} className="shrink-0 mt-0.5" style={{ color: '#7a5c24' }} />
         <span>
           Every professional is identity and police checked by Lux Catalog.{' '}
-          <strong style={{ color: '#d6cdbd', fontWeight: 500 }}>{info.policy.label} cancellation.</strong> {info.policy.summary}
+          <strong style={{ color: '#3a362d', fontWeight: 500 }}>{info.policy.label} cancellation.</strong> {info.policy.summary}
         </span>
       </p>
     </div>
@@ -524,8 +524,8 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
 function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
   return (
     <div className="flex justify-between gap-3">
-      <span style={{ color: '#d6cdbd' }}>{label}</span>
-      <span style={{ color: strong ? '#f5f0e8' : '#d6cdbd', fontWeight: strong ? 600 : 400 }}>{value}</span>
+      <span style={{ color: '#3a362d' }}>{label}</span>
+      <span style={{ color: strong ? '#14130f' : '#3a362d', fontWeight: strong ? 600 : 400 }}>{value}</span>
     </div>
   )
 }

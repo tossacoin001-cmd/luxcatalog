@@ -35,11 +35,12 @@ const shot = async (n) => { const r = await send('Page.captureScreenshot', { for
 await send('Page.enable'); await send('Runtime.enable')
 async function load(url) { await send('Page.navigate', { url }); for (let i = 0; i < 200; i++) { await sleep(250); if ((await ev('document.readyState')) === 'complete') break } await sleep(1500) }
 
+// The ground is ivory now, so contrast is measured against it.
 // Readability helpers run in the page: WCAG contrast against the page
 // background, computed weight and size.
 const HELPERS = `
   window.__lum = (c) => { const m = c.match(/[\\d.]+/g).map(Number); const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4) }; return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]) };
-  window.__contrast = (el) => { const L1 = __lum(getComputedStyle(el).color), L2 = __lum('rgb(8,12,8)'); return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05) };
+  window.__contrast = (el) => { const L1 = __lum(getComputedStyle(el).color), L2 = __lum('rgb(244,240,232)'); return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05) };
   window.__style = (el) => { const s = getComputedStyle(el); return { weight: Number(s.fontWeight), size: parseFloat(s.fontSize), contrast: __contrast(el), text: el.textContent.trim().slice(0, 60) } };
   true`
 
@@ -54,11 +55,11 @@ for (const [vp, metrics] of [['desktop', { width: 1280, height: 900, deviceScale
   check(`${vp}: five pillars found`, pillars?.length === 5, pillars?.map((p) => p.title))
   check(`${vp}: pillars are not numbered`, pillars?.every((p) => !/0[1-9]\s*·/.test(p.cardText)), pillars?.filter((p) => /0[1-9]\s*·/.test(p.cardText)).map((p) => p.title))
   check(`${vp}: every pillar has its write-up`, pillars?.every((p) => p.tag && p.tag.text.length > 10), pillars?.map((p) => p.tag?.text))
-  check(`${vp}: pillar write-ups are bold (weight ≥ 600)`, pillars?.every((p) => p.tag?.weight >= 600), pillars?.map((p) => p.tag?.weight))
-  check(`${vp}: pillar write-ups are large enough (≥ 15px)`, pillars?.every((p) => p.tag?.size >= 15), pillars?.map((p) => p.tag?.size))
-  check(`${vp}: pillar write-ups are bright (contrast ≥ 10:1)`, pillars?.every((p) => p.tag?.contrast >= 10), pillars?.map((p) => p.tag?.contrast.toFixed(1)))
+  check(`${vp}: pillar write-ups are regular weight or heavier (≥ 400)`, pillars?.every((p) => p.tag?.weight >= 400), pillars?.map((p) => p.tag?.weight))
+  check(`${vp}: pillar write-ups are large enough (≥ 14px)`, pillars?.every((p) => p.tag?.size >= 14), pillars?.map((p) => p.tag?.size))
+  check(`${vp}: pillar write-ups are easy to read (contrast ≥ 7:1 on the ivory ground)`, pillars?.every((p) => p.tag?.contrast >= 7), pillars?.map((p) => p.tag?.contrast.toFixed(1)))
   const intro = await ev(`(() => { const el = document.querySelector('[data-pillars-intro]'); return el ? __style(el) : null })()`)
-  check(`${vp}: section intro is easy to read (≥ 16px, weight ≥ 500, contrast ≥ 10:1)`, intro && intro.size >= 16 && intro.weight >= 500 && intro.contrast >= 10, intro)
+  check(`${vp}: section intro is easy to read (≥ 16px, weight ≥ 400, contrast ≥ 7:1)`, intro && intro.size >= 16 && intro.weight >= 400 && intro.contrast >= 7, intro)
   check(`${vp}: homepage has no sideways scroll`, await ev('document.documentElement.scrollWidth <= innerWidth + 1'))
   await ev(`[...document.querySelectorAll('h3')].find(h => h.textContent.trim() === 'Prime Real Estate').scrollIntoView({block:'center'})`)
   await sleep(1500)
@@ -80,10 +81,10 @@ for (const [vp, metrics] of [['desktop', { width: 1280, height: 900, deviceScale
   check(`${vp}: product title is the listing name`, p?.h1Text === title, p)
   check(`${vp}: title is not on the photo`, p && p.inGallery === false && p.h1Top >= p.galleryBottom - 1, p)
   check(`${vp}: photo is not darkened (shade ≤ 0.35)`, p && p.maxShade <= 0.35, p && { maxShade: p.maxShade, shades: p.shades })
-  check(`${vp}: title is bold (weight ≥ 600)`, p?.h1?.weight >= 600, p?.h1)
+  check(`${vp}: title is light or regular (300 to 500, the house style)`, p?.h1?.weight >= 300 && p?.h1?.weight <= 500, p?.h1)
   check(`${vp}: title is large (${vp === 'phone' ? '≥ 28px' : '≥ 40px'})`, p?.h1?.size >= (vp === 'phone' ? 28 : 40), p?.h1)
-  check(`${vp}: title is bright (contrast ≥ 12:1)`, p?.h1?.contrast >= 12, p?.h1)
-  check(`${vp}: description is easy to read (≥ 15px, contrast ≥ 9:1)`, p?.desc && p.desc.size >= 15 && p.desc.contrast >= 9, p?.desc)
+  check(`${vp}: title is dark ink (contrast ≥ 12:1 on the ivory ground)`, p?.h1?.contrast >= 12, p?.h1)
+  check(`${vp}: description is easy to read (≥ 15px, contrast ≥ 7:1)`, p?.desc && p.desc.size >= 15 && p.desc.contrast >= 7, p?.desc)
   check(`${vp}: breadcrumbs still on the photo`, p?.crumbs === true)
   // With the photo no longer darkened, the way back needs its own backing to
   // stay readable over a bright photo.

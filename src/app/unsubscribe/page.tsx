@@ -6,7 +6,7 @@ import { findPrefsByToken, isUnsubKind, UNSUB_KINDS } from '@/lib/notify/unsubsc
 export const metadata: Metadata = { title: 'Email Preferences', robots: { index: false } }
 export const dynamic = 'force-dynamic'
 
-const button = { background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }
+const button = { background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }
 
 export default async function UnsubscribePage({ searchParams }: { searchParams: Promise<{ t?: string; k?: string; done?: string }> }) {
   const { t, k, done } = await searchParams
@@ -34,7 +34,7 @@ export default async function UnsubscribePage({ searchParams }: { searchParams: 
           <Link href="/account/notifications" className="flex items-center justify-center min-h-12 text-xs tracking-[0.18em] uppercase" style={button}>
             Choose What You Receive
           </Link>
-          <Link href="/" className="flex items-center justify-center min-h-11 text-xs tracking-[0.18em] uppercase" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+          <Link href="/" className="flex items-center justify-center min-h-11 text-xs tracking-[0.18em] uppercase" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
             Back to Lux Catalog
           </Link>
         </div>
@@ -50,7 +50,7 @@ export default async function UnsubscribePage({ searchParams }: { searchParams: 
         <button type="submit" className="w-full min-h-12 text-xs tracking-[0.18em] uppercase" style={button}>
           Yes, Unsubscribe
         </button>
-        <Link href="/account/notifications" className="flex items-center justify-center min-h-11 text-xs tracking-[0.18em] uppercase" style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}>
+        <Link href="/account/notifications" className="flex items-center justify-center min-h-11 text-xs tracking-[0.18em] uppercase" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
           Change how often instead
         </Link>
       </form>

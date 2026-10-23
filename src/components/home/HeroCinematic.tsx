@@ -67,6 +67,7 @@ export default function HeroCinematic() {
   return (
     <section
       className="relative min-h-[100svh] flex flex-col justify-end overflow-hidden"
+      style={{ background: '#14130f' }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -75,7 +76,7 @@ export default function HeroCinematic() {
       aria-label="Lux Catalog collections"
     >
       {/* Imagery: crossfade between slides, each drifting slowly (Ken Burns). */}
-      <div className="absolute inset-0 bg-lux-bg">
+      <div className="absolute inset-0" style={{ background: '#14130f' }}>
         {slides.map((sl, i) => {
           const active = i === index
           return (
@@ -119,12 +120,12 @@ export default function HeroCinematic() {
         <div className="max-w-3xl">
           <p
             className="hero-rise text-[11px] md:text-xs tracking-[0.32em] uppercase mb-5 md:mb-6"
-            style={{ color: '#e4c878', fontFamily: 'var(--font-inter)', textShadow: '0 1px 14px rgba(0,0,0,0.65)', animationDelay: '0.1s' }}
+            style={{ color: '#e8dfcf', fontFamily: 'var(--font-inter)', animationDelay: '0.1s' }}
           >
             The Luxury Asset Platform &middot; Lagos to the World
           </p>
 
-          <h1 className="text-[2.6rem] leading-[1.04] sm:text-6xl md:text-7xl md:leading-[1.02] mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8', textShadow: '0 2px 30px rgba(0,0,0,0.45)' }}>
+          <h1 className="text-[2.6rem] leading-[1.04] sm:text-6xl md:text-7xl md:leading-[1.02] mb-6" style={{ fontFamily: 'var(--font-playfair)', color: '#f4f0e8' }}>
             <span className="sr-only">Every Luxury Asset. One Destination.</span>
             <span aria-hidden>
               <span
@@ -157,7 +158,7 @@ export default function HeroCinematic() {
               </span>
               <em
                 className="block hero-rise"
-                style={{ color: '#C9A84C', fontStyle: 'italic', animationDelay: '0.35s' }}
+                style={{ color: '#e4d3a8', fontStyle: 'italic', animationDelay: '0.35s' }}
               >
                 One Destination.
               </em>
@@ -166,7 +167,7 @@ export default function HeroCinematic() {
 
           <p
             className="hero-rise text-base md:text-lg mb-9 max-w-xl leading-relaxed"
-            style={{ color: '#d6cdbd', fontFamily: 'var(--font-inter)', textShadow: '0 1px 18px rgba(0,0,0,0.6)', animationDelay: '0.5s' }}
+            style={{ color: '#ece6d9', fontFamily: 'var(--font-inter)', animationDelay: '0.5s' }}
           >
             Prime real estate, supercars, superyachts and private protection, bought, sold and booked through one private
             concierge. In Lagos today, and around the world.
@@ -178,15 +179,15 @@ export default function HeroCinematic() {
           >
             <Link
               href="/catalog"
-              className="sheen group inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-transform duration-300 active:scale-[0.98]"
-              style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+              className="group inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-transform duration-300 active:scale-[0.98]"
+              style={{ background: '#f4f0e8', color: '#14130f', fontFamily: 'var(--font-inter)' }}
             >
               Explore the Collection
               <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <OpenConcierge
-              className="inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-[rgba(201,168,76,0.1)]"
-              style={{ border: '1px solid rgba(201,168,76,0.55)', color: '#e4c878', fontFamily: 'var(--font-inter)', backdropFilter: 'blur(6px)' }}
+              className="inline-flex items-center justify-center gap-3 min-h-[52px] px-8 text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:bg-[rgba(244,240,232,0.12)]"
+              style={{ border: '1px solid rgba(244,240,232,0.55)', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
             >
               <MessageCircle size={15} />
               Speak to a Concierge
@@ -208,12 +209,12 @@ export default function HeroCinematic() {
                 onClick={() => go(i)}
                 className="group text-left min-h-11 pt-3"
               >
-                <span className="block h-px w-full overflow-hidden" style={{ background: 'rgba(245,240,232,0.18)' }}>
+                <span className="block h-px w-full overflow-hidden" style={{ background: 'rgba(244,240,232,0.3)' }}>
                   <span
                     key={active ? `${index}-${paused}` : 'idle'}
                     className="block h-full origin-left"
                     style={{
-                      background: '#C9A84C',
+                      background: '#f4f0e8',
                       transform: active ? undefined : 'scaleX(0)',
                       animation: active && !reduce && !paused ? `heroProgress ${SLIDE_MS}ms linear forwards` : undefined,
                       ...(active && (reduce || paused) ? { transform: 'scaleX(1)' } : {}),
@@ -222,7 +223,7 @@ export default function HeroCinematic() {
                 </span>
                 <span
                   className="hidden sm:block mt-3 text-[11px] tracking-[0.2em] uppercase transition-colors duration-300"
-                  style={{ color: active ? '#e4c878' : '#908673', fontFamily: 'var(--font-inter)' }}
+                  style={{ color: active ? '#f4f0e8' : 'rgba(244,240,232,0.7)', fontFamily: 'var(--font-inter)' }}
                 >
                   {s.label}
                 </span>

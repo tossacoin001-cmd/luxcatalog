@@ -39,7 +39,7 @@ export default function TwoFactorForm({ redirectUrl }: { redirectUrl: string | n
       title="Verify It's You"
       subtitle={useBackup ? 'Enter one of your saved backup codes.' : 'Enter the 6-digit code from your authenticator app.'}
       footer={
-        <Link href="/sign-in" className="text-lux-gold hover:text-lux-gold-light">
+        <Link href="/sign-in" className="inline-flex items-center min-h-11 text-lux-text underline underline-offset-4">
           Back to sign in
         </Link>
       }
@@ -55,8 +55,8 @@ export default function TwoFactorForm({ redirectUrl }: { redirectUrl: string | n
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
-        <label className="flex items-center gap-3 text-sm cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
-          <input type="checkbox" checked={trustDevice} onChange={(e) => setTrustDevice(e.target.checked)} className="accent-[#C9A84C]" />
+        <label className="flex items-center gap-3 text-sm cursor-pointer" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+          <input type="checkbox" checked={trustDevice} onChange={(e) => setTrustDevice(e.target.checked)} className="accent-[#7a5c24]" />
           Trust this device for 30 days
         </label>
         <AuthSubmit loading={loading}>Verify</AuthSubmit>

@@ -11,9 +11,9 @@ import { floorMessage } from '@/lib/services'
 
 
 const inputStyle = {
-  background: '#0f1a10',
-  border: '1px solid #1e2e1f',
-  color: '#f5f0e8',
+  background: '#fbf9f4',
+  border: '1px solid #d6cfbf',
+  color: '#14130f',
   fontFamily: 'var(--font-inter)',
 }
 
@@ -152,16 +152,16 @@ export default function QuickListingForm({
     <form onSubmit={handleSubmit} className="space-y-8">
       <div
         className="p-4 text-xs leading-relaxed"
-        style={{ background: 'rgba(201,168,76,0.06)', border: '1px solid rgba(201,168,76,0.2)', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+        style={{ background: 'rgba(122,92,36,0.04)', border: '1px solid rgba(20,19,15,0.14)', color: '#5e584c', fontFamily: 'var(--font-inter)' }}
       >
         Write it however comes naturally, our team polishes the copy and reviews every submission before it appears on the storefront.
       </div>
 
-      <div className="p-8" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
+      <div className="p-8" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              What are you listing? <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              What are you listing? <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <input
               type="text"
@@ -182,10 +182,10 @@ export default function QuickListingForm({
           />
 
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               {isService ? (
                 <>
-                  Starting price (NGN) <span style={{ color: '#C9A84C' }}>*</span>
+                  Starting price (NGN) <span style={{ color: '#7a5c24' }}>*</span>
                 </>
               ) : (
                 'Price (NGN)'
@@ -201,7 +201,7 @@ export default function QuickListingForm({
               className={fieldClass}
               style={inputStyle}
             />
-            <p className="mt-1.5 text-[11px]" style={{ color: isService ? '#C9A84C' : '#908673', fontFamily: 'var(--font-inter)' }}>
+            <p className="mt-1.5 text-[11px]" style={{ color: isService ? '#7a5c24' : '#5e584c', fontFamily: 'var(--font-inter)' }}>
               {isService
                 ? `${floor ? `Minimum ₦${floor.toLocaleString('en-NG')}` : 'Required'}${form.subcategory === 'private_chef' ? ' per guest, ingredients included' : ''}.`
                 : 'Leave blank if it’s price on application.'}
@@ -209,8 +209,8 @@ export default function QuickListingForm({
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Location <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Location <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <input
               type="text"
@@ -224,8 +224,8 @@ export default function QuickListingForm({
           </div>
 
           <div>
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Country <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Country <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <input
               type="text"
@@ -236,22 +236,22 @@ export default function QuickListingForm({
             />
           </div>
 
-          <div className="md:col-span-2 flex items-start gap-3 p-4" style={{ background: '#162318' }}>
+          <div className="md:col-span-2 flex items-start gap-3 p-4" style={{ background: '#ece6d9' }}>
             <input
               type="checkbox"
               id="marginRequested"
               checked={form.marginRequested}
               onChange={(e) => set('marginRequested', e.target.checked)}
               className="w-4 h-4 cursor-pointer mt-0.5"
-              style={{ accentColor: '#C9A84C' }}
+              style={{ accentColor: '#7a5c24' }}
             />
-            <label htmlFor="marginRequested" className="text-xs leading-relaxed cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+            <label htmlFor="marginRequested" className="text-xs leading-relaxed cursor-pointer" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Add Lux Catalog&rsquo;s margin to this price before it goes live. Leave unchecked if the price above already reflects our agreement.
             </label>
           </div>
 
           {form.category === 'supercar' && (
-            <div className="md:col-span-2 p-5" style={{ background: '#162318' }}>
+            <div className="md:col-span-2 p-5" style={{ background: '#ece6d9' }}>
               <div className="flex items-center gap-3 mb-4">
                 <input
                   type="checkbox"
@@ -259,9 +259,9 @@ export default function QuickListingForm({
                   checked={form.hireAvailable}
                   onChange={(e) => set('hireAvailable', e.target.checked)}
                   className="w-4 h-4 cursor-pointer"
-                  style={{ accentColor: '#C9A84C' }}
+                  style={{ accentColor: '#7a5c24' }}
                 />
-                <label htmlFor="hireAvailable" className="text-sm cursor-pointer" style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}>
+                <label htmlFor="hireAvailable" className="text-sm cursor-pointer" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
                   Also available for chauffeur-driven hire
                 </label>
               </div>
@@ -279,8 +279,8 @@ export default function QuickListingForm({
           )}
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Tell us about it <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Tell us about it <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <textarea
               value={form.description}
@@ -294,14 +294,14 @@ export default function QuickListingForm({
           </div>
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Highlights <span className="normal-case tracking-normal" style={{ color: '#908673' }}>(optional, we&apos;ll extract them from your description if you skip this)</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Highlights <span className="normal-case tracking-normal" style={{ color: '#5e584c' }}>(optional, we&apos;ll extract them from your description if you skip this)</span>
             </label>
             <HighlightsEditor value={form.features} onChange={(v) => set('features', v)} />
           </div>
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
               Additional Details
             </label>
             <div className="space-y-2">
@@ -327,7 +327,7 @@ export default function QuickListingForm({
                     type="button"
                     onClick={() => removeSpecRow(i)}
                     className="px-3 flex-shrink-0"
-                    style={{ color: '#908673' }}
+                    style={{ color: '#5e584c' }}
                     aria-label="Remove detail"
                   >
                     <X size={14} />
@@ -339,15 +339,15 @@ export default function QuickListingForm({
               type="button"
               onClick={addSpecRow}
               className="mt-2 flex items-center gap-1.5 text-xs tracking-wider"
-              style={{ color: '#C9A84C', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
             >
               <Plus size={12} /> Add Detail
             </button>
           </div>
 
           <div className="md:col-span-2">
-            <label className={labelClass} style={{ color: '#908673', fontFamily: 'var(--font-inter)' }}>
-              Photos <span style={{ color: '#C9A84C' }}>*</span>
+            <label className={labelClass} style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+              Photos <span style={{ color: '#7a5c24' }}>*</span>
             </label>
             <input
               type="file"
@@ -356,10 +356,10 @@ export default function QuickListingForm({
               disabled={uploading}
               onChange={(e) => handleFiles(e.target.files)}
               className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:tracking-wider file:uppercase disabled:opacity-60"
-              style={{ color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+              style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
             />
             {uploading && (
-              <p className="flex items-center gap-2 mt-2 text-xs" style={{ color: '#9a8f7a' }}>
+              <p className="flex items-center gap-2 mt-2 text-xs" style={{ color: '#5e584c' }}>
                 <Loader2 size={12} className="animate-spin" /> Uploading…
               </p>
             )}
@@ -373,7 +373,7 @@ export default function QuickListingForm({
                       type="button"
                       onClick={() => removeImage(url)}
                       className="absolute top-1 right-1 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                      style={{ background: 'rgba(8,12,8,0.8)', color: '#f5f0e8' }}
+                      style={{ background: 'rgba(244,240,232,0.94)', color: '#14130f' }}
                       aria-label="Remove photo"
                     >
                       <X size={12} />
@@ -391,7 +391,7 @@ export default function QuickListingForm({
           type="submit"
           disabled={loading || uploading}
           className="px-10 py-4 text-xs tracking-[0.2em] uppercase transition-all disabled:opacity-60"
-          style={{ background: '#C9A84C', color: '#080c08', fontFamily: 'var(--font-inter)' }}
+          style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
         >
           {loading ? 'Submitting…' : 'Submit for Review'}
         </button>
@@ -399,7 +399,7 @@ export default function QuickListingForm({
           type="button"
           onClick={() => router.back()}
           className="px-8 py-4 text-xs tracking-[0.2em] uppercase transition-all"
-          style={{ border: '1px solid #1e2e1f', color: '#9a8f7a', fontFamily: 'var(--font-inter)' }}
+          style={{ border: '1px solid #d6cfbf', color: '#5e584c', fontFamily: 'var(--font-inter)' }}
         >
           Cancel
         </button>

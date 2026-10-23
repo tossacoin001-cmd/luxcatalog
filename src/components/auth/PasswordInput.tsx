@@ -25,7 +25,7 @@ export default function PasswordInput({ className, style, ...props }: React.Inpu
         aria-label={visible ? 'Hide password' : 'Show password'}
         aria-pressed={visible}
         className="absolute inset-y-0 right-0 flex items-center justify-center w-11 transition-colors hover:text-lux-gold focus-visible:outline-none focus-visible:text-lux-gold"
-        style={{ color: '#9a8f7a' }}
+        style={{ color: '#5e584c' }}
       >
         {visible ? <EyeOff size={16} /> : <Eye size={16} />}
       </button>

@@ -9,8 +9,8 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = { title: 'My Profile' }
 export const dynamic = 'force-dynamic'
 
-const gold = { color: '#C9A84C', fontFamily: 'var(--font-inter)' }
-const muted = { color: '#9a8f7a', fontFamily: 'var(--font-inter)' }
+const gold = { color: '#7a5c24', fontFamily: 'var(--font-inter)' }
+const muted = { color: '#5e584c', fontFamily: 'var(--font-inter)' }
 const ACTION_WORDS: Record<string, string> = {
   'listing.create': 'Submitted a listing',
   'listing.edit': 'Edited a listing',
@@ -27,11 +27,11 @@ export default async function ProfilePage() {
   if (role === 'partner') {
     const profile = await prisma.partnerProfile.findUnique({ where: { userId } })
     return (
-      <div style={{ background: '#080c08', minHeight: '100vh' }}>
+      <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
         <AdminNavbar role={role} />
-        <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+        <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
           <div className="max-w-3xl mx-auto">
-            <h1 className="text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>My Profile</h1>
+            <h1 className="text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>My Profile</h1>
             <p className="mt-2 text-sm" style={muted}>This is how you appear on listings once they&rsquo;re approved and live.</p>
           </div>
         </div>
@@ -49,12 +49,12 @@ export default async function ProfilePage() {
   const mine = AREAS.filter((a) => areas.includes(a.key))
 
   return (
-    <div style={{ background: '#080c08', minHeight: '100vh' }}>
+    <div style={{ background: '#f4f0e8', minHeight: '100vh' }}>
       <AdminNavbar role={role} />
-      <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+      <div className="pt-32 pb-10 px-6 md:px-12" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-3xl mx-auto">
           <p className="text-xs tracking-[0.3em] uppercase mb-4" style={gold}>{role === 'team' ? 'Lux Catalog team' : 'Administration'}</p>
-          <h1 className="text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#f5f0e8' }}>{user?.name ?? 'My Profile'}</h1>
+          <h1 className="text-4xl" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>{user?.name ?? 'My Profile'}</h1>
           <p className="mt-2 text-sm" style={muted}>{user?.email}</p>
         </div>
       </div>
@@ -67,8 +67,8 @@ export default async function ProfilePage() {
           ) : mine.length ? (
             <ul className="space-y-3">
               {mine.map((a) => (
-                <li key={a.key} className="p-4" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-                  <p className="text-sm" style={{ color: '#f5f0e8', fontFamily: 'var(--font-inter)' }}>{a.label}</p>
+                <li key={a.key} className="p-4" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+                  <p className="text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>{a.label}</p>
                   <p className="text-xs mt-1" style={muted}>{a.key === 'listings' ? 'Add and edit listings. Everything you submit goes to an admin for approval before customers see it.' : a.help}</p>
                 </li>
               ))}
@@ -80,8 +80,8 @@ export default async function ProfilePage() {
 
         <section>
           <h2 className="text-xs tracking-[0.2em] uppercase mb-4" style={gold}>Security</h2>
-          <div className="p-4 flex flex-wrap items-center justify-between gap-3" style={{ background: '#0f1a10', border: '1px solid #1e2e1f' }}>
-            <p className="text-sm" style={{ color: user?.twoFactorEnabled ? '#7fb98a' : '#e8b4b4', fontFamily: 'var(--font-inter)' }}>
+          <div className="p-4 flex flex-wrap items-center justify-between gap-3" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
+            <p className="text-sm" style={{ color: user?.twoFactorEnabled ? '#2f6b45' : '#8a3b2e', fontFamily: 'var(--font-inter)' }}>
               {user?.twoFactorEnabled ? 'Two-step verification is on.' : 'Two-step verification is off. Staff access needs it.'}
             </p>
             <Link href="/account" className="text-xs tracking-wider underline" style={gold}>Account &amp; Security</Link>
@@ -95,8 +95,8 @@ export default async function ProfilePage() {
               {activity.map((a, i) => {
                 const title = (a.detail as { title?: string } | null)?.title
                 return (
-                  <li key={i} className="flex flex-wrap justify-between gap-2 text-sm py-2" style={{ borderBottom: '1px solid #1e2e1f', fontFamily: 'var(--font-inter)' }}>
-                    <span style={{ color: '#d8cfbc' }}>{ACTION_WORDS[a.action] ?? a.action}{title ? `: ${title}` : ''}</span>
+                  <li key={i} className="flex flex-wrap justify-between gap-2 text-sm py-2" style={{ borderBottom: '1px solid #d6cfbf', fontFamily: 'var(--font-inter)' }}>
+                    <span style={{ color: '#3a362d' }}>{ACTION_WORDS[a.action] ?? a.action}{title ? `: ${title}` : ''}</span>
                     <span style={muted}>{a.createdAt.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                   </li>
                 )

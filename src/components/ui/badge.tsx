@@ -7,12 +7,12 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        gold: 'border border-lux-gold text-lux-gold bg-transparent',
-        'gold-filled': 'bg-lux-gold text-lux-bg',
+        gold: 'border border-lux-border2 text-lux-gold bg-transparent',
+        'gold-filled': 'bg-lux-text text-lux-bg',
         dark: 'bg-lux-surface border border-lux-border text-lux-text-muted',
-        available: 'bg-lux-available/10 border border-lux-available/30 text-lux-available',
-        under_offer: 'bg-lux-under-offer/10 border border-lux-under-offer/30 text-lux-under-offer',
-        sold: 'bg-lux-sold/10 border border-lux-sold/30 text-lux-sold',
+        available: 'bg-[#eaf1ec] border border-lux-available/40 text-lux-available',
+        under_offer: 'bg-[#f3ecdc] border border-lux-under-offer/40 text-lux-under-offer',
+        sold: 'bg-[#f4e6e2] border border-lux-sold/40 text-lux-sold',
       },
     },
     defaultVariants: { variant: 'gold' },
