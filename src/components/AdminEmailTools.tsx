@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useConfirm } from '@/components/ConfirmProvider'
 import { toast } from 'sonner'
 import { Activity, MailPlus } from 'lucide-react'
 
@@ -22,6 +23,7 @@ const OUTCOME: Record<string, string> = {
 }
 
 export default function AdminEmailTools({ lastRun }: { lastRun: { at: string; status: Check['status'] } | null }) {
+  const confirm = useConfirm()
   const [running, setRunning] = useState(false)
   const [result, setResult] = useState<RunResult | null>(null)
   const [invitees, setInvitees] = useState<string[] | null>(null)
@@ -47,7 +49,7 @@ export default function AdminEmailTools({ lastRun }: { lastRun: { at: string; st
   }
 
   async function sendInvites() {
-    if (!invitees?.length || !confirm(`Send the one-time "choose your emails" invite to ${invitees.length} member(s)?`)) return
+    if (!invitees?.length || !(await confirm({ title: `Send the one-time invite to ${invitees.length} member(s)?`, body: 'It lets them choose which emails they receive.', yes: 'Send', no: 'Not yet', danger: false }))) return
     setSending(true)
     try {
       const res = await fetch('/api/admin/email-tools', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'consent_send' }) })

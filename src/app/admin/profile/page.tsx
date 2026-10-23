@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import AdminNavbar from '@/components/AdminNavbar'
 import PartnerProfileForm from '@/components/PartnerProfileForm'
+import TeamProfileForm from '@/components/TeamProfileForm'
+import { maskAccount } from '@/lib/payouts-server'
 import { prisma } from '@/lib/prisma'
 import { requireStaff } from '@/lib/admin-auth'
 import { AREAS } from '@/lib/access'
@@ -42,8 +44,9 @@ export default async function ProfilePage() {
     )
   }
 
-  const [user, activity] = await Promise.all([
-    prisma.user.findUnique({ where: { id: userId }, select: { name: true, email: true, createdAt: true, twoFactorEnabled: true } }),
+  const [user, payout, activity] = await Promise.all([
+    prisma.user.findUnique({ where: { id: userId }, select: { name: true, email: true, phone: true, createdAt: true, twoFactorEnabled: true } }),
+    prisma.payoutAccount.findUnique({ where: { userId } }),
     prisma.auditLog.findMany({ where: { actorId: userId, action: { startsWith: 'listing.' } }, orderBy: { createdAt: 'desc' }, take: 8, select: { action: true, createdAt: true, detail: true } }),
   ])
   const mine = AREAS.filter((a) => areas.includes(a.key))
@@ -60,6 +63,13 @@ export default async function ProfilePage() {
       </div>
 
       <div className="max-w-3xl mx-auto px-6 md:px-12 py-10 space-y-10">
+        <TeamProfileForm
+          name={user?.name ?? ''}
+          phone={user?.phone ?? ''}
+          email={user?.email ?? ''}
+          payout={payout ? { bankName: payout.bankName, accountName: payout.accountName, account: maskAccount(payout.accountNumber) } : null}
+        />
+
         <section>
           <h2 className="text-xs tracking-[0.2em] uppercase mb-4" style={gold}>What you can do</h2>
           {role === 'admin' ? (

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useConfirm } from '@/components/ConfirmProvider'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -34,11 +35,12 @@ export default function AdminListingsTable({
   showSubmittedBy?: boolean
 }) {
   const router = useRouter()
+  const confirm = useConfirm()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [publishingId, setPublishingId] = useState<string | null>(null)
 
   const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Delete "${title}"? This can't be undone.`)) return
+    if (!(await confirm({ title: `Delete “${title}”?`, body: 'This cannot be undone.', yes: 'Delete', no: 'Keep it' }))) return
     setDeletingId(id)
     try {
       const res = await fetch(`/api/admin/listings/${id}`, { method: 'DELETE' })

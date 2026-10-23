@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useConfirm } from '@/components/ConfirmProvider'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
@@ -13,6 +14,7 @@ const box = { background: '#fbf9f4', border: '1px solid #d6cfbf', color: '#14130
 // nobody receives an unexplained decision.
 export default function ApplicationDecision({ id, status, internalNote }: { id: string; status: string; internalNote: string }) {
   const router = useRouter()
+  const confirm = useConfirm()
   const [note, setNote] = useState('')
   const [internal, setInternal] = useState(internalNote)
   const [busy, setBusy] = useState<string | null>(null)
@@ -22,8 +24,8 @@ export default function ApplicationDecision({ id, status, internalNote }: { id: 
     if ((action === 'request_info' || action === 'reject') && !note.trim()) {
       return toast.error(action === 'reject' ? 'Give the applicant a reason.' : 'Say what you need from them.')
     }
-    if (action === 'approve' && !confirm('Approve this partner? They will be able to submit listings.')) return
-    if (action === 'reject' && !confirm('Reject this application? The applicant will be emailed your reason.')) return
+    if (action === 'approve' && !(await confirm({ title: 'Approve this partner?', body: 'They will be able to submit listings.', yes: 'Approve', no: 'Not yet', danger: false }))) return
+    if (action === 'reject' && !(await confirm({ title: 'Reject this application?', body: 'The applicant will be emailed your reason.', yes: 'Reject', no: 'Keep reviewing' }))) return
     setBusy(action)
     try {
       const res = await fetch(`/api/admin/applications/${id}`, {

@@ -72,13 +72,13 @@ export default async function BookingPage({ params }: { params: Promise<{ refere
   const state = b.needsRefund
     ? { icon: <AlertTriangle size={22} style={{ color: '#7a5c24' }} />, title: 'We’ll refund this payment', body: 'Your payment came through after these dates were taken by another guest. Our team will refund you in full and help you find an alternative.' }
     : b.status === 'confirmed' || b.status === 'completed'
-      ? { icon: <CheckCircle2 size={22} style={{ color: '#2f6b45' }} />, title: 'Your booking is confirmed', body: isSession ? 'A confirmation and receipt are on their way to your email. Your professional will arrive at the time below; our concierge is on hand if anything changes.' : 'A confirmation and receipt are on their way to your email. Our concierge will send arrival details before your stay.' }
+      ? { icon: <CheckCircle2 size={22} style={{ color: '#2f6b45' }} />, title: 'Your booking is confirmed', body: isSession ? 'A confirmation and receipt are on their way to your email. Your professional will arrive at the time below; our team is on hand if anything changes.' : 'A confirmation and receipt are on their way to your email. our team will send arrival details before your stay.' }
       : b.status === 'cancelled' && b.paidAt
         ? { icon: <XCircle size={22} style={{ color: '#8a3b2e' }} />, title: 'This booking is cancelled', body: b.cancelledBy === 'guest' ? 'You cancelled this booking. Any refund due is shown below.' : `This booking was cancelled by the ${b.cancelledBy ?? 'team'}. You will receive a full refund.` }
       : requestLive
         ? { icon: <Clock size={22} style={{ color: '#7a5c24' }} />, title: 'Waiting for the host to accept', body: `We’ve sent your request. The host replies by ${until} (Lagos time), and your dates are held until then. No payment has been taken.` }
       : b.status === 'declined'
-        ? { icon: <XCircle size={22} style={{ color: '#8a3b2e' }} />, title: 'The host can’t accept this request', body: `${b.declineReason ? `${b.declineReason}. ` : ''}No payment was taken. Our concierge can suggest similar options for your dates.` }
+        ? { icon: <XCircle size={22} style={{ color: '#8a3b2e' }} />, title: 'The host can’t accept this request', body: `${b.declineReason ? `${b.declineReason}. ` : ''}No payment was taken. our team can suggest similar options for your dates.` }
       : accepted
         ? { icon: <CheckCircle2 size={22} style={{ color: '#2f6b45' }} />, title: 'Accepted: complete your booking', body: `The host has accepted. Pay by ${until} (Lagos time) to confirm; your dates are held until then.` }
       : holdLive

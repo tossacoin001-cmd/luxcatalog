@@ -154,6 +154,8 @@ check('queue lists the professional', await ev(`document.body.textContent.includ
 await load(`${BASE}/admin/applications/${app.id}`)
 check('review shows vetting documents', await ev(`['Police character certificate','Portfolio','Two references','Training or certification'].every(l => document.body.textContent.includes(l))`))
 check('click Approve partner', await clickText('button', 'Approve partner'))
+// The "are you sure?" is now an in-page box (browsers can block their own pop-ups).
+check('the in-page question appears and is answered Yes', await waitFor(`!!document.querySelector('[data-confirm]')`, 5000) && await ev(`(document.querySelector('[data-confirm-yes]')?.click(), true)`))
 // Wait for the screen to confirm, then read the database once (the local
 // PGlite database mixes up queries that overlap a server transaction).
 check('admin sees the approval confirmed', await waitFor(`[...document.querySelectorAll('[data-sonner-toast]')].some(t => t.textContent.includes('Approved'))`, 15000), await toast())

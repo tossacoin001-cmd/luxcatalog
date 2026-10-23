@@ -19,7 +19,7 @@ export default function DiscoverPage() {
       <div className="pt-32 pb-10 px-6 md:px-12 text-center" style={{ borderBottom: '1px solid rgba(20,19,15,0.14)' }}>
         <div className="max-w-2xl mx-auto">
           <p className="text-xs tracking-[0.3em] uppercase mb-4" style={{ color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
-            Concierge Discovery
+            Discovery
           </p>
           <h1 className="text-4xl md:text-5xl mb-4" style={{ fontFamily: 'var(--font-playfair)', color: '#14130f' }}>
             Find exactly what you want

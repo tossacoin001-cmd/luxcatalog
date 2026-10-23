@@ -21,7 +21,7 @@ export default function ReportConcern({ reference }: { reference: string }) {
     try {
       const res = await fetch(`/api/bookings/${reference}/concern`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ kind, message }) })
       const d = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(d.error || 'Could not send your report. Please try again or message the concierge.')
+      if (!res.ok) throw new Error(d.error || 'Could not send your report. Please try again or message us.')
       setDone(true)
     } catch (err) {
       toast.error((err as Error).message)

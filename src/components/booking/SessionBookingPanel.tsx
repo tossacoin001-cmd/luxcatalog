@@ -356,7 +356,7 @@ export default function SessionBookingPanel({ listingId }: { listingId: string }
             )}
             {monthDaysFree && !Object.values(monthDaysFree).some((s) => s.length) && (
               <p className="mt-2 text-xs" style={text}>
-                No free days this month. Try the next month or ask the concierge.
+                No free days this month. Try the next month or ask Lux.
               </p>
             )}
           </div>

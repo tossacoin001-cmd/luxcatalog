@@ -20,7 +20,8 @@ import { categoryLabels, specLabel, splitHighlights, getAppUrl, categoryHrefs } 
 import { findSubcategory } from '@/lib/taxonomy'
 import { priceCaption } from '@/lib/listing-views'
 import { prisma } from '@/lib/prisma'
-import { MapPin, Check } from 'lucide-react'
+import { MapPin, Check, MessageCircle } from 'lucide-react'
+import OpenConcierge from '@/components/concierge/OpenConcierge'
 import type { Metadata } from 'next'
 
 const categorySlugMap: Record<string, string> = {
@@ -272,9 +273,17 @@ export default async function AssetDetailPage({ params }: { params: Promise<{ ca
             <div style={{ height: 1, background: '#ece6d9' }} />
 
             {booking ? (
-              <p className="text-[11px] leading-relaxed text-center" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
-                Questions before you book? Tap the concierge button and a specialist will help.
-              </p>
+              <div className="text-center space-y-2">
+                <p className="text-[11px] leading-relaxed" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
+                  Questions before you book? Ask Lux and a specialist will help if needed.
+                </p>
+                <OpenConcierge
+                  className="inline-flex items-center justify-center gap-2 min-h-11 px-4 text-xs tracking-[0.14em] uppercase"
+                  style={{ border: '1px solid #14130f', color: '#14130f', fontFamily: 'var(--font-inter)' }}
+                >
+                  <MessageCircle size={14} /> Ask Lux about this
+                </OpenConcierge>
+              </div>
             ) : listing.category === 'decor' ? (
               <AddToCartPanel
                 listingId={listing.id}

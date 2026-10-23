@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useConfirm } from '@/components/ConfirmProvider'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
@@ -9,13 +10,14 @@ import { Loader2 } from 'lucide-react'
 export default function PayoutActions({ id, amount, ready }: { id: string; amount: string; ready: boolean }) {
   const router = useRouter()
   const [busy, setBusy] = useState<'approve' | 'cancel' | 'mark_paid' | null>(null)
+  const confirm = useConfirm()
   const [cancelling, setCancelling] = useState(false)
   const [manual, setManual] = useState(false)
   const [reason, setReason] = useState('')
   const [txRef, setTxRef] = useState('')
 
   async function act(action: 'approve' | 'cancel' | 'mark_paid') {
-    if (action === 'approve' && !confirm(`Send ${amount} to the partner now?`)) return
+    if (action === 'approve' && !(await confirm({ title: `Send ${amount} to the partner now?`, body: 'The transfer goes out through Paystack and cannot be recalled.', yes: 'Send now', no: 'Not yet', danger: false }))) return
     setBusy(action)
     try {
       const res = await fetch(`/api/admin/payouts/${id}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action, reason, reference: txRef }) })

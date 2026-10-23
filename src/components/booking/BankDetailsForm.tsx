@@ -11,7 +11,7 @@ const inputStyle = { background: '#f4f0e8', border: '1px solid #d6cfbf', color: 
 
 // Partner bank details. The account holder's name comes from the bank via
 // Paystack, so a mistyped number can't send money to someone else.
-export default function BankDetailsForm({ initial }: { initial: Account | null }) {
+export default function BankDetailsForm({ initial, endpoint = '/api/partner/payout-account' }: { initial: Account | null; endpoint?: string }) {
   const [account, setAccount] = useState<Account | null>(initial)
   const [editing, setEditing] = useState(!initial)
   const [banks, setBanks] = useState<{ name: string; code: string }[]>([])
@@ -23,7 +23,7 @@ export default function BankDetailsForm({ initial }: { initial: Account | null }
   useEffect(() => {
     if (!editing || banks.length) return
     let cancelled = false
-    fetch('/api/partner/payout-account?banks=1')
+    fetch(`${endpoint}?banks=1`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error())))
       .then((d) => !cancelled && setBanks(d.banks ?? []))
       .catch(() => !cancelled && toast.error('Could not load the list of banks'))
@@ -36,7 +36,7 @@ export default function BankDetailsForm({ initial }: { initial: Account | null }
     setBusy('check')
     setResolved(null)
     try {
-      const res = await fetch('/api/partner/payout-account', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ bankCode, accountNumber: number }) })
+      const res = await fetch(endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ bankCode, accountNumber: number }) })
       const d = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(d.error || 'Could not check the account')
       setResolved(d.accountName)
@@ -51,7 +51,7 @@ export default function BankDetailsForm({ initial }: { initial: Account | null }
     setBusy('save')
     try {
       const bankName = banks.find((b) => b.code === bankCode)?.name ?? ''
-      const res = await fetch('/api/partner/payout-account', { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ bankCode, bankName, accountNumber: number }) })
+      const res = await fetch(endpoint, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ bankCode, bankName, accountNumber: number }) })
       const d = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(d.error || 'Could not save')
       setAccount(d.account)

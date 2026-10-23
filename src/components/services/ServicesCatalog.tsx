@@ -67,7 +67,7 @@ export default function ServicesCatalog({ listings }: { listings: Card[] }) {
                       ) : (
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4" style={{ background: '#fbf9f4', border: '1px solid #d6cfbf' }}>
                           <p className="text-sm" style={text}>
-                            Our concierge can arrange a vetted professional for you today.
+                            We can arrange a vetted professional for you today.
                           </p>
                           <RequestButton
                             topic={s.label}

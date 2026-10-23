@@ -30,7 +30,7 @@ export default function NotFound() {
           This address is <em style={{ color: '#7a5c24' }}>off the map</em>
         </h1>
         <p className="relative max-w-md text-base leading-relaxed mb-10" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
-          The page you are looking for has moved or no longer exists. Our concierge can find exactly what you need.
+          The page you are looking for has moved or no longer exists. Lux can find exactly what you need.
         </p>
         <div className="relative flex flex-col sm:flex-row gap-4 mb-14">
           <Link
@@ -46,7 +46,7 @@ export default function NotFound() {
             className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.2em] uppercase transition-colors hover:bg-[rgba(122,92,36,0.05)]"
             style={{ border: '1px solid rgba(20,19,15,0.25)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
           >
-            Ask the Concierge
+            Ask Lux
           </RequestButton>
         </div>
         <nav aria-label="Popular collections" className="relative flex flex-wrap justify-center gap-3">

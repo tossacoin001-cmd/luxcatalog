@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: 'Enquiries | Admin' }
 export const dynamic = 'force-dynamic'
 
 export default async function AdminInquiriesPage() {
-  await requireArea('enquiries')
+  const staff = await requireArea('enquiries')
 
   const inquiries = await prisma.inquiry.findMany({
     orderBy: { createdAt: 'desc' },
@@ -40,7 +40,7 @@ export default async function AdminInquiriesPage() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 md:px-12 py-8">
-        <AdminInquiriesTable inquiries={plainInquiries} />
+        <AdminInquiriesTable inquiries={plainInquiries} canDelete={staff.role === 'admin'} />
       </div>
     </div>
   )

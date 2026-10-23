@@ -5,13 +5,13 @@ import { Search, ShieldCheck, KeyRound, Clock, BadgeCheck, Globe2, Lock } from '
 import Reveal, { EASE_OUT_EXPO } from '@/components/motion/Reveal'
 
 const steps = [
-  { icon: Search, title: 'Choose', body: 'Browse vetted residences, cars, yachts and protection, or tell the concierge what you have in mind.' },
+  { icon: Search, title: 'Choose', body: 'Browse vetted residences, cars, yachts and protection, or tell Lux what you have in mind.' },
   { icon: ShieldCheck, title: 'Reserve', body: 'Secure it with a refundable holding deposit while we verify every detail with the owner.' },
   { icon: KeyRound, title: 'Arrive', body: 'Keys, chauffeur, crew or close protection ready on your dates. We stay on call throughout.' },
 ]
 
 const promises = [
-  { icon: Clock, title: '24/7 Concierge', body: 'A real person on WhatsApp, day or night' },
+  { icon: Clock, title: 'Always on hand', body: 'A real person on WhatsApp, day or night' },
   { icon: BadgeCheck, title: 'Verified Partners', body: 'Every owner and operator vetted by us' },
   { icon: Lock, title: 'Private & Discreet', body: 'Your details shared only when you say so' },
   { icon: Globe2, title: 'Lagos to the World', body: 'Starting at home, expanding worldwide' },

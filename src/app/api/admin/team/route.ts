@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { audit, requireAdminApi } from '@/lib/admin-auth'
 import { cleanAreas } from '@/lib/access'
 import { createStaffInvitation } from '@/lib/invitations'
+import { parseDetailsEdit } from '@/lib/team-profile'
 import { prisma } from '@/lib/prisma'
 import { ONLY_ONE_ADMIN } from '@/lib/owner'
 
@@ -84,6 +85,19 @@ export async function PATCH(req: Request) {
 
   const body = await req.json().catch(() => ({}))
   const { userId, role } = body
+
+  // Correct someone's name or phone (a typo at sign-up) without removing and
+  // re-inviting them. Never touches role, areas or email.
+  if (body && typeof body === 'object' && 'details' in body && typeof userId === 'string') {
+    const parsed = parseDetailsEdit(body.details)
+    if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 })
+    const member = await prisma.user.findUnique({ where: { id: userId }, select: { role: true, name: true, phone: true } })
+    if (!member || (member.role !== 'team' && member.role !== 'admin')) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    await prisma.user.update({ where: { id: userId }, data: parsed.data })
+    await audit(admin.userId, 'team.member.details', userId, { changed: Object.keys(parsed.data), from: { name: member.name, phone: member.phone } })
+    return NextResponse.json({ success: true })
+  }
+
   if (role === 'admin') return NextResponse.json({ error: ONLY_ONE_ADMIN }, { status: 400 })
   if (typeof userId !== 'string' || !isTeamRole(role)) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   if (userId === admin.userId) return NextResponse.json({ error: 'You cannot change your own access' }, { status: 400 })

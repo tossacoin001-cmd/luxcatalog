@@ -55,7 +55,7 @@ export default function SeasonStrip() {
             style={{ border: '1px solid rgba(20,19,15,0.23)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
           >
             <MessageCircle size={15} />
-            Ask the Concierge
+            Ask Lux
           </OpenConcierge>
         </Reveal>
       </div>

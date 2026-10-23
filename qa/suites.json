@@ -8,7 +8,9 @@
     "discover-unit",
     "listing-policy-unit",
     "seo-unit",
-    "owner-unit"
+    "owner-unit",
+    "team-profile-unit",
+    "lux-chat-unit"
   ],
   "e2e": [
     "phase-a-e2e",
@@ -29,7 +31,10 @@
     "seo-e2e",
     "owner-e2e",
     "partner-privacy-e2e",
-    "turnstile-e2e"
+    "turnstile-e2e",
+    "team-profile-e2e",
+    "lux-chat-e2e",
+    "security-e2e"
   ],
   "ui": [
     "phase-a-ui",
@@ -47,6 +52,8 @@
     "discover-ui",
     "polish-ui",
     "site-audit-ui",
-    "design-ui"
+    "design-ui",
+    "team-manage-ui",
+    "lux-chat-ui"
   ]
 }

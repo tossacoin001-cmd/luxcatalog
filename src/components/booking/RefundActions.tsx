@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useConfirm } from '@/components/ConfirmProvider'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
@@ -9,11 +10,12 @@ import { Loader2 } from 'lucide-react'
 export default function RefundActions({ id, amount }: { id: string; amount: string }) {
   const router = useRouter()
   const [busy, setBusy] = useState<'approve' | 'reject' | null>(null)
+  const confirm = useConfirm()
   const [rejecting, setRejecting] = useState(false)
   const [reason, setReason] = useState('')
 
   async function act(action: 'approve' | 'reject') {
-    if (action === 'approve' && !confirm(`Send ${amount} back to the guest through Paystack?`)) return
+    if (action === 'approve' && !(await confirm({ title: `Send ${amount} back to the guest?`, body: 'The refund goes out through Paystack and cannot be recalled.', yes: 'Send refund', no: 'Not yet', danger: false }))) return
     setBusy(action)
     try {
       const res = await fetch(`/api/admin/refunds/${id}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ action, reason }) })

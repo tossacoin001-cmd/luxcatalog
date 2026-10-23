@@ -3,6 +3,7 @@ import { Newsreader, Hanken_Grotesk } from 'next/font/google'
 import { Toaster } from 'sonner'
 import CurrencyProvider from '@/components/CurrencyProvider'
 import CartProvider from '@/components/CartProvider'
+import ConfirmProvider from '@/components/ConfirmProvider'
 import { MotionProvider } from '@/components/motion/Reveal'
 import { getAppUrl } from '@/lib/utils'
 import { SITE, homeTitle, homeDescription } from '@/lib/seo'
@@ -47,7 +48,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen" style={{ fontFamily: 'var(--font-inter)' }}>
         <MotionProvider>
           <CurrencyProvider>
-            <CartProvider>{children}</CartProvider>
+            <CartProvider>
+              <ConfirmProvider>{children}</ConfirmProvider>
+            </CartProvider>
           </CurrencyProvider>
         </MotionProvider>
         <Toaster

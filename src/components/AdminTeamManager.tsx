@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { X, Mail, Copy, Check } from 'lucide-react'
 import { AREAS, PRESETS, areaLabel, type Area } from '@/lib/access'
+import { useConfirm } from '@/components/ConfirmProvider'
 
 interface Member {
   id: string
@@ -171,6 +172,8 @@ export default function AdminTeamManager({
   currentUserId: string
 }) {
   const router = useRouter()
+  const confirm = useConfirm()
+  const [detailsFor, setDetailsFor] = useState<string | null>(null)
   const [email, setEmail] = useState('')
   const [role, setRole] = useState<'admin' | 'team'>('team')
   const [areas, setAreas] = useState<Area[]>([])
@@ -224,8 +227,13 @@ export default function AdminTeamManager({
     }
   }
 
-  const handleRemove = async (type: 'member' | 'invitation', id: string) => {
-    if (!confirm(type === 'member' ? 'Remove this person from the team? They lose all admin access at once.' : 'Revoke this invitation?')) return
+  const handleRemove = async (type: 'member' | 'invitation', id: string, who: string) => {
+    const ok = await confirm(
+      type === 'member'
+        ? { title: `Remove ${who} from the team?`, body: 'They lose all access at once and are signed out everywhere.', yes: 'Remove', no: 'Keep them' }
+        : { title: `Cancel the invitation for ${who}?`, body: 'The link stops working straight away. You can invite them again later.', yes: 'Cancel invitation', no: 'Keep it' },
+    )
+    if (!ok) return
     setBusyId(id)
     try {
       await api('DELETE', { type, id })
@@ -355,7 +363,7 @@ export default function AdminTeamManager({
           {members.map((m) => {
             const self = m.userId === currentUserId
             return (
-              <div key={m.id} className="p-4" style={card}>
+              <div key={m.id} data-member-row={m.email} className="p-4" style={card}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 space-y-1.5">
                     <p className="text-sm" style={{ color: '#14130f', fontFamily: 'var(--font-inter)' }}>
@@ -371,6 +379,16 @@ export default function AdminTeamManager({
                     <span className="text-[11px] tracking-[0.15em] uppercase px-2.5 py-1" style={{ border: '1px solid rgba(20,19,15,0.15)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}>
                       {roleLabel(m.role)}
                     </span>
+                    {!self && detailsFor !== m.id && (
+                      <button
+                        data-edit-details
+                        onClick={() => setDetailsFor(m.id)}
+                        className="min-h-11 px-3 text-[11px] tracking-[0.14em] uppercase"
+                        style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}
+                      >
+                        Edit details
+                      </button>
+                    )}
                     {!self && editing !== m.id && (
                       <button
                         onClick={() => setEditing(m.id)}
@@ -382,9 +400,10 @@ export default function AdminTeamManager({
                     )}
                     {!self && (
                       <button
-                        onClick={() => handleRemove('member', m.userId!)}
+                        data-remove-member
+                        onClick={() => handleRemove('member', m.userId!, m.name || m.email || 'this person')}
                         disabled={busyId === m.userId}
-                        className="inline-flex items-center justify-center w-11 h-11 transition-colors hover:text-lux-sold disabled:opacity-60"
+                        className="inline-flex shrink-0 items-center justify-center min-w-11 min-h-11 w-11 h-11 transition-colors hover:text-lux-sold disabled:opacity-60"
                         style={{ color: '#5e584c' }}
                         aria-label={`Remove ${m.name || m.email}`}
                       >
@@ -393,6 +412,16 @@ export default function AdminTeamManager({
                     )}
                   </div>
                 </div>
+                {detailsFor === m.id && (
+                  <DetailsEditor
+                    member={m}
+                    onDone={() => {
+                      setDetailsFor(null)
+                      router.refresh()
+                    }}
+                    onCancel={() => setDetailsFor(null)}
+                  />
+                )}
                 {editing === m.id && (
                   <AccessEditor
                     initialRole={m.role === 'admin' ? 'admin' : 'team'}
@@ -416,7 +445,7 @@ export default function AdminTeamManager({
           </p>
           <div className="space-y-3">
             {invitations.map((inv) => (
-              <div key={inv.id} className="p-4" style={card}>
+              <div key={inv.id} data-invite-row={inv.email} className="p-4" style={card}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 space-y-1.5">
                     <p className="flex items-center gap-2 text-sm break-all" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
@@ -453,9 +482,9 @@ export default function AdminTeamManager({
                       </button>
                     )}
                     <button
-                      onClick={() => handleRemove('invitation', inv.id)}
+                      onClick={() => handleRemove('invitation', inv.id, inv.email)}
                       disabled={busyId === inv.id}
-                      className="inline-flex items-center justify-center w-11 h-11 transition-colors hover:text-lux-sold disabled:opacity-60"
+                      className="inline-flex shrink-0 items-center justify-center min-w-11 min-h-11 w-11 h-11 transition-colors hover:text-lux-sold disabled:opacity-60"
                       style={{ color: '#5e584c' }}
                       aria-label={`Revoke invitation for ${inv.email}`}
                     >
@@ -477,6 +506,54 @@ export default function AdminTeamManager({
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// Correct a member's name or phone (a typo made when they applied) without
+// removing and re-inviting them. Role, areas and email are not touched here.
+function DetailsEditor({ member, onDone, onCancel }: { member: Member; onDone: () => void; onCancel: () => void }) {
+  const [name, setName] = useState(member.name ?? '')
+  const [phone, setPhone] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const save = async () => {
+    const details: Record<string, string> = {}
+    if (name.trim()) details.name = name.trim()
+    if (phone.trim()) details.phone = phone.trim()
+    if (!Object.keys(details).length) return toast.error('Enter a name or a phone number.')
+    setSaving(true)
+    try {
+      await api('PATCH', { userId: member.userId, details })
+      toast.success('Details updated.')
+      onDone()
+    } catch (err) {
+      toast.error((err as Error).message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="mt-4 pt-4 space-y-3" style={{ borderTop: '1px solid #d6cfbf' }}>
+      <div className="grid sm:grid-cols-2 gap-3">
+        <label className="block text-[11px] tracking-[0.15em] uppercase" style={muted}>
+          Full name
+          <input name="name" value={name} onChange={(e) => setName(e.target.value)} className="mt-2 w-full h-11 px-3 text-sm normal-case tracking-normal" style={inputStyle} autoComplete="off" />
+        </label>
+        <label className="block text-[11px] tracking-[0.15em] uppercase" style={muted}>
+          Phone (leave empty to keep it)
+          <input name="phone" value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" placeholder="0803 123 4567" className="mt-2 w-full h-11 px-3 text-sm normal-case tracking-normal" style={inputStyle} autoComplete="off" />
+        </label>
+      </div>
+      <div className="flex gap-3">
+        <button type="button" data-save-details onClick={save} disabled={saving} className="min-h-11 px-5 text-xs tracking-[0.16em] uppercase disabled:opacity-60" style={{ background: '#14130f', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}>
+          {saving ? 'Saving…' : 'Save details'}
+        </button>
+        <button type="button" onClick={onCancel} className="min-h-11 px-4 text-xs tracking-[0.14em] uppercase" style={{ border: '1px solid #d6cfbf', ...muted }}>
+          Cancel
+        </button>
+      </div>
     </div>
   )
 }

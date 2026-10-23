@@ -23,7 +23,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         Something didn&apos;t load as it should
       </h1>
       <p className="max-w-md text-base leading-relaxed mb-10" style={{ color: '#5e584c', fontFamily: 'var(--font-inter)' }}>
-        Please try again. If it keeps happening, our concierge is a message away.
+        Please try again. If it keeps happening, Lux is a message away.
       </p>
       <div className="flex flex-col sm:flex-row gap-4">
         <button
@@ -42,7 +42,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
           className="inline-flex items-center justify-center min-h-12 px-8 text-xs tracking-[0.2em] uppercase"
           style={{ border: '1px solid rgba(20,19,15,0.25)', color: '#7a5c24', fontFamily: 'var(--font-inter)' }}
         >
-          Message the Concierge
+          Ask Lux
         </a>
         <Link
           href="/"

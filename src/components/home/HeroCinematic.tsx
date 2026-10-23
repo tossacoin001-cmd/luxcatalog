@@ -170,7 +170,7 @@ export default function HeroCinematic() {
             style={{ color: '#ece6d9', fontFamily: 'var(--font-inter)', animationDelay: '0.5s' }}
           >
             Prime real estate, supercars, superyachts and private protection, bought, sold and booked through one private
-            concierge. In Lagos today, and around the world.
+            team. In Lagos today, and around the world.
           </p>
 
           <div
@@ -190,7 +190,7 @@ export default function HeroCinematic() {
               style={{ border: '1px solid rgba(244,240,232,0.55)', color: '#f4f0e8', fontFamily: 'var(--font-inter)' }}
             >
               <MessageCircle size={15} />
-              Speak to a Concierge
+              Ask Lux
             </OpenConcierge>
           </div>
         </div>
