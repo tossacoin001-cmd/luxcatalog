@@ -1,7 +1,7 @@
 // Lux, the chat: the pure rules (greeting by the visitor's hour, tappable
 // questions, reading a plain-language message). Written before the build,
 // 2026-10-22. Run: npx tsx qa/suites/lux-chat-unit.ts
-import { greeting, starters, readMessage, bandKeyFor, mergeReads } from '../../src/lib/lux-chat'
+import { greeting, starters, readMessage, bandKeyFor, mergeReads, nudgeText } from '../../src/lib/lux-chat'
 
 let pass = 0, fail = 0
 const check = (n: string, ok: boolean, x: unknown = '') => (ok ? (pass++, console.log(`  PASS ${n}`)) : (fail++, console.log(`  FAIL ${n} ${typeof x === 'string' ? x : JSON.stringify(x)}`)))
@@ -116,6 +116,11 @@ m = rd('hello', 'thanks')
 check('greetings do not invent a request', !m.kind && m.thanks, m)
 check('only the latest message decides what is being asked now', rd('how do I pay?', 'a villa to buy').asks.length === 0)
 check('an empty conversation does not crash', (() => { try { mergeReads([]); return true } catch { return false } })())
+
+console.log('8. The one-line hello next to the icon')
+check('morning, afternoon, evening', nudgeText(9) === 'Good morning. Need a hand?' && nudgeText(14) === 'Good afternoon. Need a hand?' && nudgeText(19) === 'Good evening. Need a hand?', [nudgeText(9), nudgeText(14), nudgeText(19)])
+check('late night and a bad hour stay warm', nudgeText(2) === 'Still up? Need a hand?' && nudgeText(NaN) === 'Hello. Need a hand?', [nudgeText(2), nudgeText(NaN)])
+check('short enough to read at a glance', [0, 6, 13, 20].every((h) => nudgeText(h).length < 40))
 
 console.log(`\n${pass} passed, ${fail} failed`)
 process.exit(fail ? 1 : 0)

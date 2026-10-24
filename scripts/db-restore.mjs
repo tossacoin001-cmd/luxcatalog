@@ -63,8 +63,7 @@ export async function restore({ url, dir, schema = 'public', log = () => {} }) {
       }
       log(`${t}: ${lines.length} rows loaded`)
     }
-    await client.query('COMMIT')
-    // 3. Prove it.
+    // 3. Prove it, still inside the transaction: a bad copy is undone, never kept.
     const problems = []
     for (const t of tables) {
       const want = manifest.tables[t]
@@ -73,6 +72,7 @@ export async function restore({ url, dir, schema = 'public', log = () => {} }) {
       else if (got.rows[0].s !== want.md5) problems.push(`${t}: contents differ from the backup`)
     }
     if (problems.length) throw new Error('Restore did not match the backup:\n  ' + problems.join('\n  '))
+    await client.query('COMMIT')
     return { tables: tables.length, rows: tables.reduce((n, t) => n + manifest.tables[t].rows, 0) }
   } catch (e) {
     await client.query('ROLLBACK').catch(() => {})

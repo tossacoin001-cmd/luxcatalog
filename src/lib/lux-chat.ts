@@ -297,3 +297,10 @@ export function mergeReads(reads: Read[]): Read {
   }
   return out
 }
+
+// The one-line hello that floats next to the icon: the greeting without the
+// introduction, then a short offer. Never repeats a question mark.
+export function nudgeText(hour: number): string {
+  const head = greeting(hour).split(/(?<=[.?])\s/)[0]
+  return `${head} Need a hand?`
+}

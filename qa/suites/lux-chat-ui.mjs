@@ -64,8 +64,20 @@ for (const [vp, metrics] of [['desktop', { width: 1280, height: 900, deviceScale
 
   console.log(`1. ${vp}: it opens as a chat, with a greeting from the visitor's own hour`)
   await load(BASE + '/')
+  await ev(`try { sessionStorage.clear(); localStorage.clear() } catch {} ; true`)
+  await load(BASE + '/')
   await hour(9)
   check(`${vp}: the floating button appears after scrolling and says Lux, not concierge`, await waitFor(`(window.scrollTo(0, innerHeight * 1.2), !!document.querySelector('[data-lux-button]'))`, 6000) && await ev(`!/concierge/i.test(document.querySelector('[data-lux-button]').getAttribute('aria-label') + document.querySelector('[data-lux-button]').textContent)`))
+  check(`${vp}: the icon is a round monogram (an image with a circle and an "L"), at least 56px, never a plain box`, await ev(`(() => { const b = document.querySelector('[data-lux-button]'); const r = b.getBoundingClientRect(); const svg = b.querySelector('svg'); return r.width >= 56 && Math.abs(r.width - r.height) < 2 && !!svg && svg.querySelectorAll('circle').length >= 3 && /L/.test(svg.textContent) && !/ask lux/i.test([...b.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent).join('')) })()`))
+  check(`${vp}: it is alive: it breathes, a ring pulses, an arc circles and a green dot blinks`, await ev(`(() => { const n = (sel) => document.querySelector('[data-lux-button] ' + sel); return ['.lux-orb-body', '.lux-pulse', '.lux-orbit', '.lux-dot'].every(s => getComputedStyle(n(s)).animationName !== 'none') })()`))
+  await sleep(1000) // let it finish sliding in
+  check(`${vp}: it sits in the bottom corner, clear of the screen edge`, await ev(`(() => { const r = document.querySelector('[data-lux-button]').getBoundingClientRect(); return r.right <= innerWidth - 8 && r.bottom <= innerHeight - 8 && r.left > innerWidth / 2 && r.top > innerHeight / 2 })()`))
+  check(`${vp}: after a few seconds it says hello once, in the visitor's own hour, with a 44px close button`, await waitFor(`!!document.querySelector('[data-lux-nudge]')`, 9000) && await ev(`/^(Good (morning|afternoon|evening)|Still up|Hello).*Need a hand\\?$/.test(document.querySelector('[data-lux-nudge]').innerText.trim()) && document.querySelector('[data-lux-nudge] button[aria-label="Dismiss"]').getBoundingClientRect().width >= 44`))
+  await shot(`${vp}-lux-orb.jpg`)
+  check(`${vp}: dismissing the hello removes it and it does not come back this visit`, (await click('[data-lux-nudge] button[aria-label="Dismiss"]')) && await waitFor(`!document.querySelector('[data-lux-nudge]')`, 3000) && !(await waitFor(`!!document.querySelector('[data-lux-nudge]')`, 3500)))
+  await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] })
+  check(`${vp}: for people who asked for reduced motion nothing on the icon moves`, await ev(`(() => { const n = (sel) => document.querySelector('[data-lux-button] ' + sel); return ['.lux-orb-body', '.lux-pulse', '.lux-orbit', '.lux-dot'].every(s => getComputedStyle(n(s)).animationName === 'none') })()`))
+  await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'no-preference' }] })
   check(`${vp}: tapping it opens the chat`, await openChat())
   check(`${vp}: morning greeting at 9am`, await ev(`/^Good morning/.test(document.querySelector('[data-lux-greeting]')?.innerText ?? '')`))
   check(`${vp}: the greeting ends with a question and the panel is called Lux`, await ev(`/\\?\\s*$/.test(document.querySelector('[data-lux-greeting]').innerText) && /^Lux/.test(document.querySelector('[data-lux-chat] [data-wordmark]').innerText)`))
@@ -120,7 +132,7 @@ for (const [vp, metrics] of [['desktop', { width: 1280, height: 900, deviceScale
   check(`${vp}: send to the team`, await click('[data-lux-handoff] button[type=submit]'))
   check(`${vp}: a thank-you appears in the chat`, await waitFor(`/thank you/i.test(document.querySelector('[data-lux-log]').innerText)`, 10000))
   let row; for (let i = 0; i < 30 && !row; i++) { row = (await q(`select kind, message, "userId" from "Inquiry" where email=$1`, [`ife.lux.${vp}${stamp}@example.com`]))[0]; if (!row) await sleep(300) }
-  check(`${vp}: the team receives it as one request with the whole conversation`, row?.kind === 'brief' && /Visitor:/.test(row.message) && /Lux:/.test(row.message) && /speak to a person/i.test(row.message), row)
+  check(`${vp}: the team receives it as one request with the whole conversation`, row?.kind === 'brief' && /Visitor:/.test(row.message) && /Lux:/.test(row.message) && /speak to a person/i.test(row.message), JSON.stringify({ row, recent: await q(`select email, kind, "createdAt" from "Inquiry" order by "createdAt" desc limit 3`), log: await ev(`document.querySelector('[data-lux-log]')?.innerText.slice(-300)`) }))
   await closeChat()
 
   console.log(`6. ${vp}: it still works when browser storage is blocked`)

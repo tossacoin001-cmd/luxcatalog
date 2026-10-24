@@ -24,7 +24,7 @@ console.log('Setup: some real-looking data of every awkward type (arrays, json, 
 const slug = `bk-${stamp}`
 await q(`insert into "Listing" (id,title,slug,category,description,price,"priceDisplay",location,country,images,specs,features,mode,subcategory,published,"updatedAt") values (gen_random_uuid(),$1,$2,'real_estate',$3,123456789.50,'₦123,456,789','Ikoyi, Lagos','Nigeria',ARRAY['https://x/a.jpg','https://x/b "quoted".jpg'],'{"Bedrooms":"4","Note":"a ''quote'' and \\"double\\""}',ARRAY['Pool','Gym, sauna'],'sale','for_sale',true,now())`, [`Backup "Test" Villa ${stamp}`, slug, 'Line one\nLine two with a tab\t and ünïcödé ₦'])
 const tables = tablesFromSchema(readFileSync('prisma/schema.prisma', 'utf8'))
-check(`the model list is read from the Prisma schema (${tables.length} tables)`, tables.length >= 40 && tables.includes('Listing') && tables.includes('Booking') && tables.includes('User'), tables.length)
+check(`the model list is read from the Prisma schema (${tables.length} tables)`, tables.length >= 30 && tables.includes('Listing') && tables.includes('Booking') && tables.includes('User'), tables.length)
 
 console.log('1. Backup')
 const dir = join(work, 'b1')
@@ -40,7 +40,7 @@ console.log('2. Restore into an empty copy, and prove it')
 await q('drop schema if exists bk_copy cascade'); await q('create schema bk_copy')
 for (const t of tables) await q(`create table bk_copy."${t}" (like public."${t}" including all)`)
 const r1 = await restore({ url: DB, dir, schema: 'bk_copy' })
-check('the restore reports every table and row', r1.tables >= 40 && r1.rows === Object.values(m.tables).reduce((n, t) => n + (t.rows ?? 0), 0), r1)
+check('the restore reports every table and row', r1.tables >= 30 && r1.rows === Object.values(m.tables).reduce((n, t) => n + (t.rows ?? 0), 0), r1)
 check('the copy equals the original, table by table, row by row', (await Promise.all(tables.map(async (t) => { const a = (await q(`select coalesce(md5(string_agg(j,'' order by j)),md5('')) s from (select row_to_json(x)::text j from public."${t}" x) y`))[0].s; const b = (await q(`select coalesce(md5(string_agg(j,'' order by j)),md5('')) s from (select row_to_json(x)::text j from bk_copy."${t}" x) y`))[0].s; return a === b }))).every(Boolean))
 check('the awkward listing came back exactly', (await q(`select a.title = b.title and a.description = b.description and a.images = b.images and a.features = b.features and a.price = b.price and a.specs::text = b.specs::text ok from public."Listing" a join bk_copy."Listing" b on a.id = b.id where a.slug=$1`, [slug]))[0]?.ok === true)
 

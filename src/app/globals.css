@@ -262,3 +262,50 @@ a, button, [role='button'], label, summary {
 .hero-rise {
   animation: heroRise 0.9s var(--ease-out-expo) both;
 }
+
+/* =====================================================================
+   LUX ORB: the floating chat icon. All of it is still for people who asked
+   for reduced motion, and hidden from the keyboard-less screen-reader tree.
+   ===================================================================== */
+.lux-orb-body {
+  transform-origin: 50% 50%;
+}
+.lux-pulse {
+  opacity: 0;
+  transform-origin: 32px 32px;
+}
+.lux-orbit {
+  transform-origin: 32px 32px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lux-orb-body {
+    animation: luxBreathe 4.2s ease-in-out infinite;
+  }
+  .lux-pulse {
+    animation: luxPulse 4.2s ease-out infinite;
+  }
+  .lux-pulse-late {
+    animation-delay: 2.1s;
+  }
+  .lux-orbit {
+    animation: luxOrbit 14s linear infinite;
+  }
+  .lux-dot {
+    animation: luxDot 2.4s ease-in-out infinite;
+  }
+}
+@keyframes luxBreathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.045); }
+}
+@keyframes luxPulse {
+  0% { opacity: 0.55; transform: scale(1); }
+  70%, 100% { opacity: 0; transform: scale(1.38); }
+}
+@keyframes luxOrbit {
+  to { transform: rotate(360deg); }
+}
+@keyframes luxDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
