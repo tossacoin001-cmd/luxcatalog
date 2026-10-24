@@ -34,7 +34,9 @@
     "turnstile-e2e",
     "team-profile-e2e",
     "lux-chat-e2e",
-    "security-e2e"
+    "security-e2e",
+    "health-e2e",
+    "db-backup-e2e"
   ],
   "ui": [
     "phase-a-ui",

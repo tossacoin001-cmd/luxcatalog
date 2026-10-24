@@ -46,3 +46,6 @@ next-env.d.ts
 /qa/mail/
 /qa/suites/.agreements-list.generated.mjs
 /qa/out-*.txt
+
+# database backups hold customer data: never commit them
+/backups/
